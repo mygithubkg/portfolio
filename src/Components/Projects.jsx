@@ -8,7 +8,7 @@ const projects = [
   {
     title: 'EIC PEC Website',
     description:
-      'Designed and maintained the official website for EIC PEC, streamlining event listings, real-time updates, and dynamic registration workflows. Integrated Firebase for authentication and form data collection, reducing manual entry effort by 60%. Implemented a responsive design ensuring mobile accessibility.',
+      'Designed and maintained the official website for EIC PEC, streamlining event listings, real-time updates, and dynamic registration workflows. Integrated Firebase for authentication and data collection, reducing manual entry effort by 60%. Implemented a responsive design ensuring mobile accessibility.',
     link: 'https://eicpec.in',
     tech: [<FaHtml5 key="html" />, <FaCss3Alt key="css" />, <SiFirebase key="firebase" />],
   },
@@ -42,7 +42,7 @@ const projects = [
   {
     title: 'Heart Disease Predictor',
     description:
-      'Built a predictive machine learning model to detect the likelihood of heart disease using real-world medical data (UCI dataset). Applied data preprocessing, feature engineering, and model selection (Logistic Regression, Random Forest, SVM) to reach 85% accuracy. Deployed the model on a Flask app for interactive predictions.',
+      'Built a predictive machine learning model to detect the likelihood of heart disease using real-world medical data (UCI dataset). Applied data preprocessing, feature engineering, and model selection (Logistic Regression, Random Forest, SVM) to reach 85% accuracy.',
     link: 'https://github.com/mygithubkg/HeartDiseasePredictor',
     tech: [<FaPython key="python" />, <SiScikitlearn key="sklearn" />],
   },

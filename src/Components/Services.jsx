@@ -51,7 +51,7 @@ export default function Services() {
           animate={{ scale: 1 }}
           transition={{ duration: 0.6 }}
         >
-          My Interests
+          My Interest
         </motion.h2>
         <motion.p
           className="text-center text-gray-400 mb-16 max-w-3xl mx-auto text-lg"
