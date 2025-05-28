@@ -1,6 +1,6 @@
 // import './App.css' 
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './Pages/HomePage';
 import AboutPage from './Pages/AboutPage';
 import ServicesPage from './Pages/ServicesPage';
@@ -9,11 +9,31 @@ import ContactPage from './Pages/ContactPage';
 import Footer from './Components/Footer'
 import Header from './Components/header';
 import ErrorBoundary from './Components/ErrorBoundary';
+import LoadingPage from './Components/LoadingPage';
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    // Simulate loading and error handling
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // Simulate a 2-second loading time
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
+  if (hasError) {
+    return <LoadingPage />; // You can customize this for error-specific messages
+  }
+
   return (
     <>
-      {console.log("Rendering App")}
       <Router>
         <ErrorBoundary>
           <Routes>
