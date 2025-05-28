@@ -26,7 +26,7 @@ export default function Hero() {
             Hello! I'm <span className="text-[#00B0FF] animate-pulse">Karrtik Gupta</span>,
           </h1>
           <p className="text-2xl text-gray-300 font-medium">
-            Creative Web Designer & Full-Stack Developer Enthusiast
+            Turning Ideas into Interactive Reality
           </p>
           <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-4">
             <Link to="/projects">

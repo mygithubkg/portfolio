@@ -6,10 +6,31 @@ import { SiFirebase, SiJavascript, SiScikitlearn ,SiTailwindcss,SiPostgresql, Si
 
 const projects = [
   {
+    title: 'EIC PEC Website',
+    description:
+      'Designed and maintained the official website for EIC PEC, streamlining event listings, real-time updates, and dynamic registration workflows. Integrated Firebase for authentication and form data collection, reducing manual entry effort by 60%. Implemented a responsive design ensuring mobile accessibility.',
+    link: 'https://eicpec.in',
+    tech: [<FaHtml5 key="html" />, <FaCss3Alt key="css" />, <SiFirebase key="firebase" />],
+  },
+  {
+    title: 'Personal Portfolio Website',
+    description:
+      'Designed and developed a modern, fully responsive personal portfolio using React and Tailwind CSS. Showcases projects, skills, and resume with smooth animations and scroll-based transitions. Integrated dark mode and deployed using GitHub Pages. Helps build a strong digital presence.',
+    link: 'https://portfolio-tau-kohl-30.vercel.app/',
+    tech: [<FaReact key="react" />, <SiTailwindcss key="tailwind" />, <SiJavascript key="js" />],
+  },
+  {
+    title: 'Simon Game',
+    description:
+      'Recreated the classic memory-based Simon Game using vanilla JavaScript and jQuery. Implemented dynamic color patterns, progressive difficulty scaling. A fun and challenging browser game that demonstrates core DOM manipulation and event handling skills.',
+    link: 'https://mygithubkg.github.io/mysimongame/',
+    tech: [<SiJavascript key="js" />, <FaHtml5 key="html" />, <FaCss3Alt key="css" />],
+  },
+  {
     title: 'TradeMyTicket – Ticket Reselling Platform',
   description:
     'Engineered the backend architecture of a full-stack ticket reselling platform using PostgreSQL for scalable data management and Express.js for RESTful APIs. Implemented secure authentication workflows including user sign-up, login, and session handling. Built auction-style live bidding and instant buy functionality. Also contributed to UI development with React, focusing on dynamic components and real-time bid updates for seamless user interaction.',
-  link: 'https://github.com/mygithubkg/TradeMyTicket',
+  link: 'https://github.com/mygithubkg/ticket_resellingt',
   tech: [
     <FaReact key="react" />,
     <SiPostgresql key="postgresql" />,
@@ -25,27 +46,9 @@ const projects = [
     link: 'https://github.com/mygithubkg/HeartDiseasePredictor',
     tech: [<FaPython key="python" />, <SiScikitlearn key="sklearn" />],
   },
-  {
-    title: 'EIC PEC Website',
-    description:
-      'Designed and maintained the official website for EIC PEC, streamlining event listings, real-time updates, and dynamic registration workflows. Integrated Firebase for authentication and form data collection, reducing manual entry effort by 60%. Implemented a responsive design ensuring mobile accessibility.',
-    link: 'https://eicpec.in',
-    tech: [<FaHtml5 key="html" />, <FaCss3Alt key="css" />, <SiFirebase key="firebase" />],
-  },
-  {
-    title: 'Simon Game',
-    description:
-      'Recreated the classic memory-based Simon Game using vanilla JavaScript and jQuery. Implemented dynamic color patterns, progressive difficulty scaling. A fun and challenging browser game that demonstrates core DOM manipulation and event handling skills.',
-    link: 'https://mygithubkg.github.io/mysimongame/',
-    tech: [<SiJavascript key="js" />, <FaHtml5 key="html" />, <FaCss3Alt key="css" />],
-  },
-  {
-    title: 'Personal Portfolio Website',
-    description:
-      'Designed and developed a modern, fully responsive personal portfolio using React and Tailwind CSS. Showcases projects, skills, and resume with smooth animations and scroll-based transitions. Integrated dark mode and deployed using GitHub Pages. Helps build a strong digital presence.',
-    link: 'https://portfolio-tau-kohl-30.vercel.app/',
-    tech: [<FaReact key="react" />, <SiTailwindcss key="tailwind" />, <SiJavascript key="js" />],
-  },
+  
+  
+  
 ];
 
 
