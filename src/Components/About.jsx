@@ -6,7 +6,7 @@ export default function About() {
     <section
       id="about"
       className="relative w-full min-h-screen bg-cover bg-center flex items-center justify-center text-[#ECEFF1]"
-      style={{ backgroundImage: "url('backgroundimage.jpg')" }} // update with actual path
+      style={{ backgroundImage: "url('/backgroundimage.jpg')" }} // update with actual path
     >
       {/* Overlay */}
       <div className="absolute inset-0  bg-opacity-60 backdrop-blur-sm" />
