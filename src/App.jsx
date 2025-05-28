@@ -1,36 +1,45 @@
 // import './App.css' 
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import HomePage from './Pages/HomePage';
 import AboutPage from './Pages/AboutPage';
 import ServicesPage from './Pages/ServicesPage';
 import ProjectsPage from './Pages/ProjectsPage';
 import ContactPage from './Pages/ContactPage';
-import Footer from './Components/Footer'
-import Header from './Components/header';
 import ErrorBoundary from './Components/ErrorBoundary';
 import LoadingPage from './Components/LoadingPage';
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Simulate loading and error handling
+    // Show loading page during navigation
+    setIsLoading(true);
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000); // Simulate a 2-second loading time
+    }, 1000); // Simulate a 1-second loading time
 
     return () => clearTimeout(timer);
   }, []);
 
   if (isLoading) {
-    return <LoadingPage />;
+      return (
+        <ErrorBoundary>
+          <LoadingPage />
+        </ErrorBoundary>
+     
+    );
+    
   }
 
-  if (hasError) {
-    return <LoadingPage />; // You can customize this for error-specific messages
-  }
+  // if (hasError) {
+  //   return (
+  //       <ErrorBoundary>
+  //         <LoadingPage />
+  //       </ErrorBoundary>
+     
+  //   ); // Customize for error-specific messages
+  // }
 
   return (
     <>

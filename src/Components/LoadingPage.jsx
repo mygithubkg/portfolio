@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-export default function LoadingPage() {
+export default function FancyLoadingPage() {
   const quotes = [
     "Believe in yourself and all that you are.",
     "Success is not final, failure is not fatal: It is the courage to continue that counts.",
@@ -9,40 +11,38 @@ export default function LoadingPage() {
     "Act as if what you do makes a difference. It does.",
   ];
 
-  const [quote, setQuote] = useState("");
+  const [quote, setQuote] = useState('');
 
   useEffect(() => {
-    // Select a random quote
-    setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+    const pickQuote = () =>
+      setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+    pickQuote();
+    const interval = setInterval(pickQuote, 8000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
-      <div className="text-center">
-        <p className="text-sm mb-4">{quote}</p>
-        <div className="loader"></div>
-      </div>
-
-      {/* Loader CSS */}
-      <style jsx>{`
-        .loader {
-          border: 4px solid rgba(255, 255, 255, 0.3);
-          border-top: 4px solid white;
-          border-radius: 50%;
-          width: 40px;
-          height: 40px;
-          animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-      `}</style>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-blue-700 text-white font-sans px-4">
+      <motion.div
+        className="p-8 bg-black bg-opacity-70 border border-blue-500 rounded-2xl shadow-xl w-full max-w-md text-center"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6 }}
+      >
+        <AnimatePresence exitBeforeEnter>
+          <motion.p
+            key={quote}
+            className="text-base italic mb-6"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.5 }}
+          >
+            {quote}
+          </motion.p>
+        </AnimatePresence>
+        <Loader2 className="w-12 h-12 animate-spin text-blue-400 mx-auto" />
+      </motion.div>
     </div>
   );
 }
