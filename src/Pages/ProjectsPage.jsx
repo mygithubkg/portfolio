@@ -1,15 +1,12 @@
 import React from 'react';
-import Header from '../Components/header';
-import Footer from '../Components/Footer';
+import Layout from '../Components/Layout';
 import Projects from '../Components/Projects';
 
 function ProjectsPage() {
   return (
-    <>
-      <Header />
+    <Layout>
       <Projects />
-      <Footer />
-    </>
+    </Layout>
   );
 }
 

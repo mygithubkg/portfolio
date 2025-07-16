@@ -1,15 +1,12 @@
 import React from 'react';
-import Header from '../Components/header';
-import Footer from '../Components/Footer';
+import Layout from '../Components/Layout';
 import Contact from '../Components/Contact';
 
 function ContactPage() {
   return (
-    <>
-      <Header />
+    <Layout>
       <Contact />
-      <Footer  />
-    </>
+    </Layout>
   );
 }
 

@@ -1,15 +1,12 @@
 import React from 'react';
-import Header from '../Components/header';
-import Footer from '../Components/Footer';
+import Layout from '../Components/Layout';
 import Services from '../Components/Services';
 
 function ServicesPage() {
   return (
-    <>
-      <Header />
+    <Layout>
       <Services />
-      <Footer />
-    </>
+    </Layout>
   );
 }
 

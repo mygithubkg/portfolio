@@ -1,89 +1,167 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaRobot, FaLaptopCode, FaCompass, FaBrain, FaCloud, FaUsers } from 'react-icons/fa';
+import { FaReact, FaNodeJs, FaPython, FaHtml5, FaCss3Alt, FaDatabase } from 'react-icons/fa';
+import { SiJavascript, SiTailwindcss, SiFirebase, SiPostgresql, SiScikitlearn } from 'react-icons/si';
+import { Card, Section, Button } from './ui';
 
-const interests = [
-  {
-    title: 'AI & Machine Learning',
-    desc: 'Built and deployed machine learning models using Scikit-learn and OpenCV. Gained hands-on experience in supervised learning, image processing, and data preprocessing. Participated in the Microsoft x AICTE program, delivering impactful solutions for real-world datasets.',
-    Icon: FaRobot,
-    color: 'indigo'
-  },
-  {
-    title: 'Full-Stack Development',
-    desc: 'Engineered responsive and robust full-stack applications using React, Node.js, Firebase, and MySQL. Led the development of TradeMyTicket—a secure platform enabling peer-to-peer ticket reselling with real-time data updates and user authentication.',
-    Icon: FaLaptopCode,
-    color: 'green'
-  },
-  {
-    title: 'Tech Leadership',
-    desc: 'Directed flagship events such as E-Summit’25 and Startup Fair’24 at PEC, empowering the student community with opportunities in entrepreneurship, innovation, and networking. Mentored peers and led multi-disciplinary teams through successful execution.',
-    Icon: FaCompass,
-    color: 'yellow'
-  },
-  {
-    title: 'Problem Solving & DSA',
-    desc: 'Proficient in algorithms and data structures with a focus on writing clean and efficient code in C++ and Python. Actively practice on platforms like LeetCode and Codeforces, with a keen interest in optimizing time and space complexities.',
-    Icon: FaBrain,
-    color: 'pink'
-  },
-  {
-    title: 'Cloud & DevOps',
-    desc: 'Gained practical exposure to cloud services such as Firebase and Microsoft Azure. Deployed scalable web apps with CI/CD pipelines, real-time databases, and cloud functions. Explored DevOps tools to automate deployment and improve system reliability.',
-    Icon: FaCloud,
-    color: 'cyan'
-  },
-  {
-    title: 'Community & Learning',
-    desc: 'Actively engaged with PEC’s EIC, fostering a collaborative and inclusive environment. Contributed to workshops, hackathons, and mentorship programs, promoting a culture of peer learning and continuous growth within the tech ecosystem.',
-    Icon: FaUsers,
-    color: 'teal'
-  }
+const skills = [
+  { name: 'React', icon: <FaReact />, level: 100, color: '#61dafb', description: 'Building modern, interactive user interfaces' },
+  { name: 'Node.js', icon: <FaNodeJs />, level: 100, color: '#8cc84b', description: 'Scalable server-side applications' },
+  { name: 'JavaScript', icon: <SiJavascript />, level: 100, color: '#f7df1e', description: 'Full-stack development expertise' },
+  { name: 'Tailwind CSS', icon: <SiTailwindcss />, level: 100, color: '#38bdf8', description: 'Rapid, responsive UI development' },
+  { name: 'Python', icon: <FaPython />, level: 100, color: '#3776ab', description: 'Data science and automation' },
+  { name: 'HTML5', icon: <FaHtml5 />, level: 100, color: '#e34c26', description: 'Semantic web development' },
+  { name: 'CSS3', icon: <FaCss3Alt />, level: 100, color: '#264de4', description: 'Advanced styling and animations' },
+  { name: 'Firebase', icon: <SiFirebase />, level: 100, color: '#ffca28', description: 'Backend-as-a-Service solutions' },
+  { name: 'PostgreSQL', icon: <SiPostgresql />, level: 100, color: '#336791', description: 'Relational database management' },
+  { name: 'Scikit-learn', icon: <SiScikitlearn />, level: 100, color: '#f7931e', description: 'Machine learning applications' },
+  { name: 'Databases', icon: <FaDatabase />, level: 100 , color: '#a0aec0', description: 'Data modeling and optimization' },
 ];
 
-export default function Services() {
+export default function Skills() {
   return (
-    <section id="interests" className="py-24 bg-[#0a192f] text-white font-inter">
-      <div className="container mx-auto px-6">
-        <motion.h2
-          className="text-5xl font-bold text-center mb-4"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.6 }}
+    <Section className="py-16 sm:py-24 lg:py-32 relative overflow-hidden" container={false}>
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-surface/10 to-background" />
+      <motion.div
+        className="absolute top-1/3 left-1/3 w-48 h-48 sm:w-96 sm:h-96 bg-accent/5 rounded-full blur-3xl"
+        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+        transition={{ duration: 8, repeat: Infinity }}
+      />
+      <motion.div
+        className="absolute bottom-1/3 right-1/3 w-48 h-48 sm:w-96 sm:h-96 bg-accentLight/5 rounded-full blur-3xl"
+        animate={{ scale: [1.2, 1, 1.2], opacity: [0.6, 0.3, 0.6] }}
+        transition={{ duration: 10, repeat: Infinity }}
+      />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
+        {/* Section Header */}
+        <motion.div
+          className="text-center mb-12 sm:mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
         >
-          My Interest
-        </motion.h2>
-        <motion.p
-          className="text-center text-gray-400 mb-16 max-w-3xl mx-auto text-lg"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-        >
-          Blending technology, leadership, and community to deliver impactful solutions and cultivate continuous learning.
-        </motion.p>
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
-          {interests.map(({ title, desc, Icon, color }, i) => (
+          <motion.div
+            className="text-accent font-semibold mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            Technical Expertise
+          </motion.div>
+          <motion.h2
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            Skills That{' '}
+            <span className="bg-gradient-to-r from-accent to-accentLight bg-clip-text text-blue-300">
+              Drive Innovation
+            </span>
+          </motion.h2>
+          <motion.p
+            className="text-lg sm:text-xl text-textSecondary max-w-3xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            A comprehensive toolkit of modern technologies and frameworks that enable me to 
+            build robust, scalable, and user-friendly applications.
+          </motion.p>
+        </motion.div>
+
+        {/* Skills Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16">
+          {skills.map((skill, idx) => (
             <motion.div
-              key={i}
-              className={`bg-[#112240] min-h-[320px] flex flex-col justify-between rounded-2xl p-6 shadow-xl border-l-4 border-${color}-400 hover:shadow-2xl transition-shadow duration-300`}
-              whileHover={{ rotate: [0, -1, 1, 0], scale: 1.03 }}
-              transition={{ type: 'spring', damping: 12 }}
+              key={skill.name}
+              className="group"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1, duration: 0.8 }}
+              viewport={{ once: true }}
             >
-              <div>
-                <div className="flex items-center mb-4">
-                  <span className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-${color}-500 bg-opacity-20 text-${color}-300 text-2xl`}>
-                    <Icon />
-                  </span>
-                  <h3 className="ml-4 text-2xl font-semibold text-white">{title}</h3>
+              <Card className="p-6 sm:p-8 h-full hover:bg-surface/80 transition-all duration-300">
+                <div className="flex items-start gap-4 sm:gap-6">
+                  <motion.div
+                    className="text-3xl sm:text-4xl md:text-5xl flex-shrink-0"
+                    style={{ color: skill.color }}
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {skill.icon}
+                  </motion.div>
+                  
+                  <div className="flex-1">
+                    <div className="flex justify-between items-center mb-2 sm:mb-3">
+                      <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-accent transition-colors">
+                        {skill.name}
+                      </h3>
+                      {/* <span className="text-accent font-semibold text-lg">
+                        {skill.level}%
+                      </span> */}
+                    </div>
+                    
+                    <p className="text-textSecondary text-xs sm:text-sm mb-3 sm:mb-4">
+                      {skill.description}
+                    </p>
+                    
+                    {/* Progress Bar */}
+                    <div className="relative">
+                      <div className="w-full h-2 sm:h-3 bg-surface rounded-full overflow-hidden">
+                        <motion.div
+                          className="h-2 sm:h-3 rounded-full relative"
+                          style={{ background: `linear-gradient(90deg, ${skill.color}, ${skill.color}80)` }}
+                          initial={{ width: 0 }}
+                          whileInView={{ width: `${skill.level}%` }}
+                          transition={{ duration: 1.5, delay: idx * 0.1 }}
+                          viewport={{ once: true }}
+                        >
+                          <motion.div
+                            className="absolute inset-0 bg-white/20 rounded-full"
+                            animate={{ opacity: [0.5, 1, 0.5] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                          />
+                        </motion.div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-gray-300 leading-relaxed text-base">
-                  {desc}
-                </p>
-              </div>
+              </Card>
             </motion.div>
           ))}
         </div>
+
+        {/* CTA Section */}
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          <div className="bg-gradient-to-r from-accent/10 to-accentLight/10 border border-accent/20 rounded-card p-6 sm:p-8 mb-8">
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">
+              Ready to Collaborate?
+            </h3>
+            <p className="text-textSecondary mb-6 max-w-2xl mx-auto text-sm sm:text-base">
+              I'm always excited to work on new projects and explore cutting-edge technologies. 
+              Let's discuss how we can bring your ideas to life.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button href="/contact" variant="primary" size="md" className="w-full sm:w-auto">
+                Start a Project
+              </Button>
+              <Button href="/projects" variant="secondary" size="md" className="w-full sm:w-auto">
+                View My Work
+              </Button>
+            </div>
+          </div>
+        </motion.div>
       </div>
-    </section>
+    </Section>
   );
 }

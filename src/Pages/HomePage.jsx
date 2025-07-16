@@ -1,16 +1,13 @@
 import React from 'react';
-import Header from '../Components/header';
-import Footer from '../Components/Footer';
+import Layout from '../Components/Layout';
 import Hero from '../Components/Home';
 import About from '../Components/About';
 
 function HomePage() {
   return (
-    <>
-      <Header />
-      <Hero/>
-      <Footer />
-    </>
+    <Layout>
+      <Hero />
+    </Layout>
   );
 }
 

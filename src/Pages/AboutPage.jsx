@@ -1,15 +1,12 @@
 import React from 'react';
-import Header from '../Components/header';
-import Footer from '../Components/Footer';
+import Layout from '../Components/Layout';
 import About from '../Components/About';
 
 function AboutPage() {
   return (
-    <>
-      <Header />
+    <Layout>
       <About />
-      <Footer />
-    </>
+    </Layout>
   );
 }
 
