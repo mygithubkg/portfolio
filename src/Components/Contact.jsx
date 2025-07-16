@@ -381,26 +381,28 @@ export default function Contact() {
               {/* Social Links */}
               <Card className="p-6 sm:p-8">
                 <h3 className="text-xl sm:text-2xl font-bold text-white mb-6">Follow me</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {socials.map((social, index) => (
                     <motion.a
-                      key={social.label}
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`group flex flex-col items-center gap-3 p-4 bg-surface/50 backdrop-blur-sm border border-border rounded-xl hover:bg-surface/80 hover:border-accent/30 transition-all duration-300 ${social.color}`}
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <social.Icon className="text-2xl sm:text-3xl" />
-                      <div className="text-center">
-                        <p className="text-white font-medium text-sm sm:text-base">{social.label}</p>
-                        <p className="text-textSecondary text-xs sm:text-sm">{social.description}</p>
-                      </div>
-                    </motion.a>
+                    key={social.label}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`group flex flex-col items-center justify-center text-center gap-2 p-4 bg-surface/50 backdrop-blur-sm border border-border rounded-xl hover:bg-surface/80 hover:border-accent/30 transition-all duration-300 ${social.color} w-full min-h-[120px]`}
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <social.Icon className="text-2xl sm:text-3xl" />
+                    <div className="text-center space-y-1">
+                      <p className="text-white font-medium text-sm sm:text-base">{social.label}</p>
+                      <p className="text-textSecondary text-xs sm:text-sm whitespace-normal">{social.description}</p>
+                    </div>
+                  </motion.a>
+                  
+                  
                   ))}
                 </div>
               </Card>

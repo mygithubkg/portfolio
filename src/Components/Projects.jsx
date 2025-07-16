@@ -46,7 +46,7 @@ const projects = [
     ],
     details: 'A full-stack ticket reselling platform with live bidding, instant buy, and secure authentication.',
     image: '/trade.png',
-    category: 'Full Stack Web Development',
+    category: 'Web Development',
     featured: true,
     year: '2024'
   },
@@ -78,7 +78,7 @@ const projects = [
   },
 ];
 
-const categories = ['All', 'Web Development', 'Full Stack', 'Machine Learning', 'Game Development'];
+const categories = ['All', 'Web Development', 'Machine Learning', 'Game Development'];
 
 export default function Projects() {
   const [selected, setSelected] = useState(null);

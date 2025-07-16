@@ -1,13 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const quotes = [
+  "“Code is like humor. When you have to explain it, it’s bad.” – Cory House",
+  "“First, solve the problem. Then, write the code.” – John Johnson",
+  "“Simplicity is the soul of efficiency.” – Austin Freeman",
+  "“Experience is the name everyone gives to their mistakes.” – Oscar Wilde",
+  "“Make it work, make it right, make it fast.” – Kent Beck",
+  "“The only way to learn a new programming language is by writing programs in it.” – Dennis Ritchie",
+  "“Innovation is saying no to a thousand things.” – Steve Jobs",
+  "“It’s not a bug – it’s an undocumented feature.” – Anonymous",
+];
+
 const LoadingPage = ({ onComplete }) => {
   const [progress, setProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const [quote, setQuote] = useState("");
 
   useEffect(() => {
-    const duration = 4000; // 4 seconds total
-    const interval = 100; // Update every 100ms
+    // Pick a random quote once
+    setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+
+    const duration = 4000;
+    const interval = 100;
     const steps = duration / interval;
     let currentStep = 0;
 
@@ -96,7 +111,7 @@ const LoadingPage = ({ onComplete }) => {
 
             {/* Loading Text */}
             <motion.p
-              className="text-lg text-textSecondary mb-4"
+              className="text-lg text-textSecondary mb-2"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.2 }}
@@ -106,12 +121,22 @@ const LoadingPage = ({ onComplete }) => {
 
             {/* Percentage */}
             <motion.p
-              className="text-accent font-medium text-xl"
+              className="text-accent font-medium text-xl mb-6"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.4 }}
             >
               {Math.round(progress)}%
+            </motion.p>
+
+            {/* Inspirational Quote */}
+            <motion.p
+              className="text-sm italic text-white/70 max-w-xl mx-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.6 }}
+            >
+              {quote}
             </motion.p>
           </div>
         </motion.div>
