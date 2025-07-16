@@ -13,7 +13,7 @@ const projects = [
     github: 'https://github.com/karrtik/eic-website',
     tech: [<FaHtml5 key="html" />, <FaCss3Alt key="css" />, <SiFirebase key="firebase" />],
     details: 'A full-featured event platform for EIC PEC with real-time updates, Firebase integration, and mobile-first design.',
-    image: '/karrtik.png',
+    image: '/eic.png',
     category: 'Web Development',
     featured: true,
     year: '2024'
@@ -26,7 +26,7 @@ const projects = [
     github: 'https://github.com/karrtik/portfolio',
     tech: [<FaReact key="react" />, <SiTailwindcss key="tailwind" />, <SiJavascript key="js" />],
     details: 'A showcase of my work, skills, and resume, built with React and Tailwind, featuring smooth animations and dark mode.',
-    image: '/karrtik.png',
+    image: '/portfolio.png',
     category: 'Web Development',
     featured: true,
     year: '2025'
@@ -45,7 +45,7 @@ const projects = [
       <SiJavascript key="js" />
     ],
     details: 'A full-stack ticket reselling platform with live bidding, instant buy, and secure authentication.',
-    image: '/karrtik.png',
+    image: '/trade.png',
     category: 'Full Stack Web Development',
     featured: true,
     year: '2024'
@@ -58,7 +58,7 @@ const projects = [
     github: 'https://github.com/mygithubkg/HeartDiseasePredictor',
     tech: [<FaPython key="python" />, <SiScikitlearn key="sklearn" />],
     details: 'A machine learning model for heart disease prediction using real-world data and multiple algorithms.',
-    image: '/karrtik.png',
+    image: '/heart.png',
     category: 'Machine Learning',
     featured: false,
     year: '2025'
@@ -71,7 +71,7 @@ const projects = [
     github: 'https://github.com/mygithubkg/mysimongame',
     tech: [<SiJavascript key="js" />, <FaHtml5 key="html" />, <FaCss3Alt key="css" />],
     details: 'A browser-based Simon Game with dynamic color patterns and progressive difficulty.',
-    image: '/karrtik.png',
+    image: '/simon.png',
     category: 'Game Development',
     featured: false,
     year: '2023'
