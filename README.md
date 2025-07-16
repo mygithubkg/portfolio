@@ -8,8 +8,8 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0.0-3178C6?style=for-the-badge&logo=typescript)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-12.12.1-0055FF?style=for-the-badge&logo=framer)
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-View_Website-00C853?style=for-the-badge&logo=vercel)](https://your-portfolio-url.vercel.app)
-[![License](https://img.shields.io/badge/License-Private-red?style=for-the-badge)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-View_Website-00C853?style=for-the-badge&logo=vercel)]((https://portfolio-tau-kohl-30.vercel.app/))
+
 
 *A modern, responsive portfolio website showcasing full-stack development skills and AI expertise*
 
