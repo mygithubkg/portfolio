@@ -2,24 +2,68 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const quotes = [
-  "“Code is like humor. When you have to explain it, it’s bad.” – Cory House",
-  "“First, solve the problem. Then, write the code.” – John Johnson",
-  "“Simplicity is the soul of efficiency.” – Austin Freeman",
-  "“Experience is the name everyone gives to their mistakes.” – Oscar Wilde",
-  "“Make it work, make it right, make it fast.” – Kent Beck",
-  "“The only way to learn a new programming language is by writing programs in it.” – Dennis Ritchie",
-  "“Innovation is saying no to a thousand things.” – Steve Jobs",
-  "“It’s not a bug – it’s an undocumented feature.” – Anonymous",
+  {
+    text: "Code is like humor. When you have to explain it, it’s bad.",
+    author: "Cory House"
+  },
+  {
+    text: "First, solve the problem. Then, write the code.",
+    author: "John Johnson"
+  },
+  {
+    text: "Simplicity is the soul of efficiency.",
+    author: "Austin Freeman"
+  },
+  {
+    text: "Experience is the name everyone gives to their mistakes.",
+    author: "Oscar Wilde"
+  },
+  {
+    text: "Make it work, make it right, make it fast.",
+    author: "Kent Beck"
+  },
+  {
+    text: "The only way to learn a new programming language is by writing programs in it.",
+    author: "Dennis Ritchie"
+  },
+  {
+    text: "Innovation is saying no to a thousand things.",
+    author: "Steve Jobs"
+  },
+  {
+    text: "It’s not a bug – it’s an undocumented feature.",
+    author: "Anonymous"
+  },
+  {
+    text: "The best way to predict the future is to invent it.",
+    author: "Alan Kay"
+  },
+  {
+    text: "Programs must be written for people to read, and only incidentally for machines to execute.",
+    author: "Harold Abelson"
+  },
+  {
+    text: "Opportunities don't happen. You create them.",
+    author: "Chris Grosser"
+  },
+  {
+    text: "Success is not the key to happiness. Happiness is the key to success.",
+    author: "Albert Schweitzer"
+  },
+  {
+    text: "Great things are done by a series of small things brought together.",
+    author: "Vincent Van Gogh"
+  },
 ];
 
 const LoadingPage = ({ onComplete }) => {
   const [progress, setProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
-  const [quote, setQuote] = useState("");
+  const [quote, setQuote] = useState({ text: '', author: '' });
 
   useEffect(() => {
     // Pick a random quote once
-    setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+  setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
 
     const duration = 4000;
     const interval = 100;
@@ -67,24 +111,24 @@ const LoadingPage = ({ onComplete }) => {
               animate={{ scale: 1, rotate: 0 }}
               transition={{ duration: 1, type: "spring" }}
             >
-              <div className="w-40 h-40 mx-auto bg-gradient-to-br from-accent to-accentLight rounded-full flex items-center justify-center shadow-2xl">
-                <span className="text-5xl font-bold text-white">K</span>
+              <div className="w-40 h-40 mx-auto rounded-full flex items-center justify-center shadow-2xl border-4 border-white/20">
+                <span className="text-5xl font-extrabold bg-gradient-to-r from-fuchsia-400 via-sky-400 to-emerald-400 bg-clip-text text-transparent">K</span>
               </div>
             </motion.div>
 
             {/* Name */}
             <motion.h1
-              className="text-6xl md:text-8xl font-extrabold text-white mb-6"
+              className="text-6xl md:text-8xl font-extrabold mb-6 bg-gradient-to-r from-fuchsia-400 via-sky-400 to-emerald-400 bg-clip-text text-transparent drop-shadow-glow"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
-              <span className="gradient-text">Karrtik</span> Gupta
+              Karrtik <span className="font-black">Gupta</span>
             </motion.h1>
 
             {/* Role */}
             <motion.p
-              className="text-2xl md:text-3xl text-textSecondary mb-12"
+              className="text-2xl md:text-3xl mb-12 bg-gradient-to-r from-fuchsia-400 via-sky-400 to-emerald-400 bg-clip-text text-transparent font-semibold"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7 }}
@@ -95,13 +139,13 @@ const LoadingPage = ({ onComplete }) => {
             {/* Progress Bar */}
             <div className="w-80 mx-auto mb-6">
               <motion.div
-                className="w-full h-3 bg-surface rounded-full overflow-hidden"
+                className="w-full h-3 bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 rounded-full overflow-hidden shadow-lg"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1 }}
               >
                 <motion.div
-                  className="h-full bg-gradient-to-r from-accent to-accentLight rounded-full"
+                  className="h-full bg-gradient-to-r from-fuchsia-400 via-sky-400 to-emerald-400 rounded-full shadow-md"
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.1 }}
@@ -130,14 +174,15 @@ const LoadingPage = ({ onComplete }) => {
             </motion.p>
 
             {/* Inspirational Quote */}
-            <motion.p
-              className="text-sm italic text-white/70 max-w-xl mx-auto"
+            <motion.div
+              className="mt-8 max-w-xl mx-auto"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.6 }}
             >
-              {quote}
-            </motion.p>
+              <p className="text-lg font-medium text-white/90 italic mb-2">“{quote.text}”</p>
+              <p className="text-sm text-sky-300 font-semibold text-right pr-2">— {quote.author}</p>
+            </motion.div>
           </div>
         </motion.div>
       )}

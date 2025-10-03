@@ -8,7 +8,7 @@ html {
   background: #0d1117;
   color: #e5e7eb;
   font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  font-size: 16px; /* Base size for mobile */
+  font-size: 12px; /* Base size for mobile */
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -78,7 +78,7 @@ button {
   color: #fff;
   border-radius: 0.75rem;
   font-weight: 600;
-  padding: 0.75em 1.5em;
+  /* padding: 0.75em 1.5em; */
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px 0 rgba(31, 38, 135, 0.08);
   border: none;
@@ -239,7 +239,7 @@ a:hover {
 
 @media (min-width: 1536px) {
   html {
-    font-size: 20px; /* Large screens */
+    font-size: 14px; /* Large screens */
   }
   
   h1 {

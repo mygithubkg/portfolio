@@ -100,9 +100,9 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              Turning Ideas into{' '}
+              Building Intelligent {' '}
               <span className="bg-gradient-to-r from-accent via-accentLight to-accent bg-clip-text text-blue-300">
-                Interactive Reality
+                Web Experiences
               </span>
             </motion.h1>
             
@@ -112,8 +112,7 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              Full-stack developer and AI enthusiast crafting modern web experiences. 
-              I build scalable applications that solve real-world problems with cutting-edge technology.
+              I'm a Full-Stack Developer with a specialization in AI, bridging the gap between hardware and software. I engineer scalable, data-driven applications that solve complex problems.
             </motion.p>
             
             <motion.div
@@ -124,7 +123,7 @@ export default function Hero() {
             >
               <Link to="/projects">
                 <Button variant="gradient" size="lg" className="group w-full sm:w-auto">
-                  View My Work
+                  Explore My Projects
                   <motion.span
                     className="ml-2 group-hover:translate-x-1 transition-transform"
                     initial={{ x: 0 }}
@@ -238,11 +237,12 @@ export default function Hero() {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                I'm a passionate full-stack developer currently pursuing B.Tech in ECE with a minor in AI at PEC Chandigarh. 
-                My journey in tech started with curiosity and has evolved into a love for creating impactful solutions.
-                Whether it's crafting responsive UIs, building scalable backends, or training AI models, 
-                I approach every project with enthusiasm and attention to detail.
-              </motion.p>
+                My journey in tech began at the intersection of hardware and software. While studying Electronics & Communication at PEC Chandigarh, I was fascinated by how signals travel through circuits, but I became captivated by how lines of code could bring that hardware to life.{<br></br>}
+
+                This curiosity led me to a minor in AI, where I discovered my passion for building intelligent systems from the ground up—from training machine learning models to deploying them within scalable, full-stack applications.
+
+                Today, I use my understanding of core engineering principles to build software that is not just functional, but also smart and intuitive.
+                </motion.p>
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}

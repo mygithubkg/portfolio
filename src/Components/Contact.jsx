@@ -104,7 +104,7 @@ export default function Contact() {
   
 
   return (
-    <Section className="py-16 sm:py-24 lg:py-32 relative" container={false}>
+    <Section className="py-16 sm:py-24 lg:py-4 relative" container={false}>
       {/* Background Elements */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-surface/10 to-background" />
       <motion.div
