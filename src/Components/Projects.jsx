@@ -22,7 +22,7 @@ const projects = [
      title: 'AI Summary Pro GenAI Problem Solver',
     description:
       'Leveraged the Gemini GenAI API to transform vague problem statements into structured, clear outputs. Developed sophisticated prompt strategies to handle complex input ambiguities, demonstrating deep problem-solving acumen.',
-    link: 'https://ai-use-solver.onrender.com/', // Add live link if available
+    link: '', //'https://ai-use-solver.onrender.com/', // Add live link if available
     github: 'https://github.com/mygithubkg/ai_use_solver', // Add GitHub link if available
     tech: [<FaPython key="python" />], // Assuming an icon for Gemini
     details: 'A GenAI tool that refines problem statements using the Gemini API and advanced prompt engineering.',
@@ -48,7 +48,7 @@ const projects = [
     title: 'TradeMyTicket – Ticket Reselling Platform',
     description:
       'Engineered the backend architecture of a full-stack ticket reselling platform using PostgreSQL for scalable data management and Express.js for RESTful APIs. Implemented secure authentication workflows including user sign-up, login, and session handling. Built auction-style live bidding and instant buy functionality.',
-    link: 'https://github.com/mygithubkg/ticket_reselling',
+    link: '',
     github: 'https://github.com/mygithubkg/ticket_reselling',
     tech: [
       <FaReact key="react" />,
@@ -86,7 +86,7 @@ const projects = [
     title: 'Voice-Enabled E-Commerce Platform',
     description:
       'Developed a scalable, voice-interactive shopping prototype to improve accessibility. Integrated the Web Speech API for hands-free navigation and real-time cart updates, and included PDF invoice generation.',
-    link: 'https://voice-ecommerce-33wx.onrender.com/', 
+    link: '',//'https://voice-ecommerce-33wx.onrender.com/', 
     github: 'https://github.com/mygithubkg/voice-ecommerce', 
     tech: [<FaReact key="react" />, <SiJavascript key="js" />], // Assuming an icon for jsPDF
     details: 'An accessible e-commerce prototype with voice navigation and PDF invoice functionality.',
