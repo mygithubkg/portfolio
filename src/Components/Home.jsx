@@ -1,336 +1,327 @@
-import React, { useEffect, useState } from 'react';
-import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Button, Section, Card } from './ui';
-import { FaReact, FaNodeJs, FaPython, FaHtml5, FaCss3Alt, FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
-import { SiJavascript, SiTailwindcss, SiFirebase, SiPostgresql, SiMongodb, SiTypescript, SiNextdotjs, SiVercel } from 'react-icons/si';
-import { TbBrandVscode, TbBrandFigma } from 'react-icons/tb';
+import { Button } from './ui'; 
+import { FaReact, FaNodeJs, FaPython, FaGithub, FaLinkedin, FaArrowRight, FaBrain, FaCloud, FaLayerGroup } from 'react-icons/fa';
+import { SiOpenai, SiTypescript, SiNextdotjs, SiTailwindcss, SiPostgresql, SiFirebase, SiExpress } from 'react-icons/si';
 
+// --- AUTHENTIC DATA: TECH STACK (Filtered) ---
 const techStack = [
-  { icon: <FaReact />, name: 'React', color: '#61dafb', category: 'Frontend' },
-  { icon: <SiJavascript />, name: 'JavaScript', color: '#f7df1e', category: 'Language' },
-  { icon: <SiTypescript />, name: 'TypeScript', color: '#3178c6', category: 'Language' },
-  { icon: <FaNodeJs />, name: 'Node.js', color: '#8cc84b', category: 'Backend' },
-  { icon: <SiTailwindcss />, name: 'Tailwind', color: '#38bdf8', category: 'Styling' },
-  { icon: <FaPython />, name: 'Python', color: '#3776ab', category: 'Language' },
-  { icon: <SiFirebase />, name: 'Firebase', color: '#ffca28', category: 'Backend' },
-  { icon: <SiPostgresql />, name: 'PostgreSQL', color: '#336791', category: 'Database' },
-  { icon: <SiMongodb />, name: 'MongoDB', color: '#00ed64', category: 'Database' },
-  { icon: <SiNextdotjs />, name: 'Next.js', color: '#000000', category: 'Framework' },
-  { icon: <SiVercel />, name: 'Vercel', color: '#000000', category: 'Deployment' },
-  { icon: <TbBrandFigma />, name: 'Figma', color: '#f24e1e', category: 'Design' },
+  { icon: <SiOpenai />, name: 'Gemini API', color: '#10a37f' },
+  { icon: <FaReact />, name: 'React', color: '#61dafb' },
+  { icon: <FaNodeJs />, name: 'Node.js', color: '#8cc84b' },
+  { icon: <SiExpress />, name: 'Express.js', color: '#000000' },
+  { icon: <SiFirebase />, name: 'Firebase', color: '#ffca28' },
+  { icon: <FaPython />, name: 'Python', color: '#3776ab' },
+  { icon: <SiTailwindcss />, name: 'Tailwind', color: '#38bdf8' },
 ];
 
-const socialLinks = [
-  { icon: <FaGithub />, href: 'https://github.com/mygithubkg', label: 'GitHub' },
-  { icon: <FaLinkedin />, href: 'https://www.linkedin.com/in/karrtik-gupta/', label: 'LinkedIn' },
-];
+// --- SUB-COMPONENT: Tech Ticker ---
+const TechTicker = () => (
+  <div className="w-full overflow-hidden border-y border-white/5 bg-black/40 backdrop-blur-sm py-6">
+    <div className="flex w-[200%]">
+      {[0, 1].map((i) => (
+        <motion.div
+          key={i}
+          className="flex gap-16 pr-16 min-w-full"
+          animate={{ x: ["0%", "-100%"] }}
+          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+        >
+          {techStack.map((tech, index) => (
+            <div key={index} className="flex items-center gap-3 text-gray-500 group cursor-default">
+              <span className="text-3xl filter grayscale group-hover:grayscale-0 transition-all duration-300" style={{ color: tech.color }}>
+                {tech.icon}
+              </span>
+              <span className="font-mono text-sm font-bold tracking-wider uppercase group-hover:text-white transition-colors">
+                {tech.name}
+              </span>
+            </div>
+          ))}
+        </motion.div>
+      ))}
+    </div>
+  </div>
+);
 
-export default function Hero() {
-  const { scrollYProgress } = useScroll();
-  const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+// --- SUB-COMPONENT: Service Card ---
+const ServiceCard = ({ icon: Icon, title, desc, delay }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay }}
+      className="group p-8 bg-[#0a0a0a] border border-white/5 hover:border-cyan-500/30 rounded-2xl transition-all duration-300 hover:-translate-y-2"
+    >
+      <div className="w-12 h-12 bg-white/5 rounded-lg flex items-center justify-center mb-6 group-hover:bg-cyan-500/20 transition-colors">
+        <Icon size={24} className="text-gray-400 group-hover:text-cyan-400 transition-colors" />
+      </div>
+      <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">{title}</h3>
+      <p className="text-gray-400 leading-relaxed text-sm">{desc}</p>
+    </motion.div>
+  );
+};
+
+export default function Home() {
+  const { scrollY } = useScroll();
+  const y1 = useTransform(scrollY, [0, 500], [0, 200]);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-
+    const handleMouseMove = (e) => setMousePosition({ x: e.clientX, y: e.clientY });
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   return (
-    <div className="relative overflow-hidden">
-      {/* Hero Section */}
-      <Section className="min-h-screen flex items-center justify-center relative" container={false} fullHeight>
-        {/* Animated Background */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-br from-background via-surface/20 to-background"
-          style={{ y }}
-        />
+    <div className="relative bg-[#050505] text-white overflow-hidden">
+      
+      {/* ==================== SECTOR 1: THE HERO ==================== */}
+      <section className="relative min-h-screen flex flex-col justify-center pt-20">
         
-        {/* Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-r from-accent/5 via-transparent to-accent/5" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
-        
-        {/* Floating Elements */}
-        <motion.div
-          className="absolute top-20 left-20 w-16 h-16 sm:w-32 sm:h-32 bg-accent/10 rounded-full blur-xl"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 4, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-20 w-24 h-24 sm:w-48 sm:h-48 bg-accentLight/10 rounded-full blur-xl"
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.6, 0.3, 0.6] }}
-          transition={{ duration: 6, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute top-1/2 left-1/4 w-12 h-12 sm:w-24 sm:h-24 bg-accent/5 rounded-full blur-lg"
-          animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.5, 0.2] }}
-          transition={{ duration: 5, repeat: Infinity }}
+        {/* Background Grid */}
+        <div className="absolute inset-0 pointer-events-none opacity-20"
+             style={{
+               backgroundImage: `linear-gradient(to right, #333 1px, transparent 1px), linear-gradient(to bottom, #333 1px, transparent 1px)`,
+               backgroundSize: '50px 50px',
+               transform: 'perspective(500px) rotateX(60deg) translateY(-150px) scale(1.5)',
+               maskImage: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 80%)'
+             }}
         />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
-          {/* Content */}
-          <motion.div
-            className="flex-1 text-center lg:text-left order-2 lg:order-1"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <motion.div
-              className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-accent/10 border border-accent/20 rounded-full text-accent text-sm sm:text-lg font-medium mb-4 sm:mb-7"
+        {/* Ambient Glows */}
+        <motion.div 
+          className="absolute top-0 right-0 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"
+          animate={{ x: mousePosition.x * -0.05, y: mousePosition.y * -0.05 }}
+        />
+
+        <div className="container mx-auto px-6 relative z-10 grid lg:grid-cols-2 gap-12 items-center">
+          
+          {/* Text Content */}
+          <div className="space-y-8">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded border border-cyan-500/30 bg-cyan-500/5"
+            >
+              <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+              <span className="text-cyan-400 text-xs font-mono tracking-widest uppercase">
+                System Status: Active
+              </span>
+            </motion.div>
+
+            <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.1 }}
+              className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9]"
             >
-              <motion.div
-                className="w-2 h-2 sm:w-3 sm:h-3 bg-accent rounded-full"
-                animate={{ scale: [1, 1.5, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-              👋 Hello, I'm Karrtik
-            </motion.div>
-            
-            <motion.h1
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-extrabold text-white mb-4 sm:mb-7 leading-tight"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              Building Intelligent {' '}
-              <span className="bg-gradient-to-r from-accent via-accentLight to-accent bg-clip-text text-blue-300">
-                Web Experiences
+              ARCHITECTING <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-200 via-gray-500 to-gray-200">
+                INTELLIGENCE.
               </span>
             </motion.h1>
-            
-            <motion.p
-              className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-textSecondary mb-6 sm:mb-10 max-w-4xl leading-relaxed"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-lg text-gray-400 max-w-lg leading-relaxed border-l-2 border-white/10 pl-6"
             >
-              I'm a Full-Stack Developer with a specialization in AI, bridging the gap between hardware and software. I engineer scalable, data-driven applications that solve complex problems.
+              Building scalable web ecosystems and intelligent agents. 
+              Bridging the gap between <span className="text-white">Generative AI</span> and <span className="text-white">Enterprise Engineering</span>.
             </motion.p>
-            
-            <motion.div
-              className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center lg:justify-start mb-6 sm:mb-10"
-              initial={{ opacity: 0, y: 30 }}
+
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.3 }}
+              className="flex flex-wrap gap-4"
             >
               <Link to="/projects">
-                <Button variant="gradient" size="lg" className="group w-full sm:w-auto">
-                  Explore My Projects
-                  <motion.span
-                    className="ml-2 group-hover:translate-x-1 transition-transform"
-                    initial={{ x: 0 }}
-                    whileHover={{ x: 5 }}
-                  >
-                    →
-                  </motion.span>
+                <Button className="bg-white text-black hover:bg-cyan-400 transition-colors px-8 py-4 font-bold rounded-none">
+                  VIEW WORK
                 </Button>
               </Link>
               <Link to="/contact">
-                <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                  Let's Connect
+                <Button variant="outline" className="border-white/20 text-white hover:border-cyan-400 hover:text-cyan-400 px-8 py-4 rounded-none group">
+                  CONTACT <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
             </motion.div>
+          </div>
 
-            {/* Social Links */}
-            <motion.div
-              className="flex justify-center lg:justify-start gap-4 sm:gap-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-            >
-              {socialLinks.map((social, index) => (
-                <motion.a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 sm:p-4 bg-surface/50 backdrop-blur-sm border border-border rounded-xl hover:bg-surface/80 hover:border-accent/30 transition-all duration-300"
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 + index * 0.1 }}
-                >
-                  <span className="text-xl sm:text-2xl text-accent">{social.icon}</span>
-                </motion.a>
-              ))}
-            </motion.div>
-          </motion.div>
-
-          {/* Profile Image */}
-          <motion.div
-            className="flex-1 flex justify-center lg:justify-end order-1 lg:order-2 mb-8 lg:mb-0"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
+          {/* Holographic Visual (Code Logic Only - No hard stats) */}
+          <motion.div 
+            style={{ y: y1 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
+            className="relative hidden lg:block"
           >
-            <div className="relative">
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-accent to-accentLight rounded-full blur-2xl opacity-30"
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 3, repeat: Infinity }}
-              />
-              <motion.div
-                className="relative"
-                animate={{ 
-                  rotateY: [0, 5, 0],
-                  rotateX: [0, -5, 0]
-                }}
-                transition={{ duration: 6, repeat: Infinity }}
-              >
-                <motion.img
-                  src="/karrtik.png"
-                  alt="Karrtik Gupta"
-                  className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 object-cover rounded-full shadow-2xl ring-4 ring-accent/20 ring-offset-4 ring-offset-background"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.3 }}
-                  style={{
-                    transform: `perspective(1000px) rotateY(${(mousePosition.x - window.innerWidth / 2) * 0.01}deg) rotateX(${(mousePosition.y - window.innerHeight / 2) * 0.01}deg)`
-                  }}
-                />
-              </motion.div>
-            </div>
-          </motion.div>
-        </div>
-      </Section>
-
-      {/* About Section */}
-      <Section className="py-16 sm:py-24 lg:py-32 relative" container={false}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <motion.div
-            className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <div>
-              <motion.div
-                className="text-accent font-semibold mb-4 sm:mb-6 text-lg sm:text-xl"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                About Me
-              </motion.div>
-              <motion.h2
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 sm:mb-8"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                Building the Future,{' '}
-                <span className="text-accent">One Line at a Time</span>
-              </motion.h2>
-              <motion.p
-                className="text-lg sm:text-xl text-textSecondary mb-8 sm:mb-10 leading-relaxed"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                My journey in tech began at the intersection of hardware and software. While studying Electronics & Communication at PEC Chandigarh, I was fascinated by how signals travel through circuits, but I became captivated by how lines of code could bring that hardware to life.{<br></br>}
-
-                This curiosity led me to a minor in AI, where I discovered my passion for building intelligent systems from the ground up—from training machine learning models to deploying them within scalable, full-stack applications.
-
-                Today, I use my understanding of core engineering principles to build software that is not just functional, but also smart and intuitive.
-                </motion.p>
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 }}
-              >
-                <Link to="/about">
-                  <Button variant="secondary" size="lg" className="w-full sm:w-auto">
-                    Learn More About Me
-                  </Button>
-                </Link>
-              </motion.div>
-            </div>
-
-            <motion.div
-              className="relative"
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
-                {techStack.map((tech, index) => (
-                  <motion.div
-                    key={tech.name}
-                    className="bg-surface/50 backdrop-blur-sm border border-border rounded-xl p-4 sm:p-6 text-center hover:bg-surface/80 transition-all duration-300 hover:scale-105"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ y: -5, scale: 1.05 }}
-                  >
-                    <div className="text-2xl sm:text-3xl mb-2 sm:mb-3" style={{ color: tech.color }}>
-                      {tech.icon}
-                    </div>
-                    <div className="text-white font-medium text-sm sm:text-base">{tech.name}</div>
-                    <div className="text-textSecondary text-xs sm:text-sm mt-1 sm:mt-2">{tech.category}</div>
-                  </motion.div>
-                ))}
+            <div className="relative w-[500px] h-[550px] bg-gradient-to-b from-white/5 to-transparent rounded-2xl border border-white/10 backdrop-blur-sm p-8 transform rotate-3 hover:rotate-0 transition-transform duration-500 flex flex-col justify-between">
+              
+              {/* Code Snippet Visual */}
+              <div>
+                <div className="flex gap-2 mb-6">
+                  <div className="w-3 h-3 rounded-full bg-red-500/50" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
+                  <div className="w-3 h-3 rounded-full bg-green-500/50" />
+                </div>
+                <div className="font-mono text-sm text-gray-400 space-y-3">
+                  <p><span className="text-purple-400">const</span> <span className="text-yellow-200">Engineer</span> = <span className="text-blue-300">init</span>({'{'}</p>
+                  <p className="pl-4">name: <span className="text-green-300">'Karrtik'</span>,</p>
+                  <p className="pl-4">focus: [<span className="text-green-300">'GenAI'</span>, <span className="text-green-300">'Cloud'</span>],</p>
+                  <p className="pl-4">stack: <span className="text-blue-300">require</span>(<span className="text-green-300">'./FullStack'</span>)</p>
+                  <p>{'}'});</p>
+                  
+                  <p className="mt-4 text-gray-600">// Initializing AI Agents...</p>
+                  <p className="text-cyan-400 animate-pulse"> CONNECTION_ESTABLISHED</p>
+                </div>
               </div>
-            </motion.div>
+
+              {/* Minimal Footer in Card */}
+              <div className="border-t border-white/5 pt-6">
+                 <div className="flex items-center gap-4">
+                    <div className="h-10 w-10 bg-cyan-500/10 rounded-full flex items-center justify-center text-cyan-400">
+                       <FaCloud />
+                    </div>
+                    <div>
+                       <div className="text-white font-bold text-sm">Azure Cloud Ready</div>
+                       <div className="text-gray-500 text-xs">Deployment Protocols Active</div>
+                    </div>
+                 </div>
+              </div>
+
+              {/* Image Overlay */}
+              <img 
+                 src="/karrtik.png" 
+                 alt="Karrtik"
+                 className="absolute bottom-0 right-0 w-64 h-64 object-cover opacity-40 grayscale mask-image-gradient-to-t" 
+              />
+            </div>
           </motion.div>
         </div>
-      </Section>
+      </section>
 
-      {/* CTA Section */}
-      <Section className="py-16 sm:py-20 relative" container={false}>
-        <motion.div
-          className="max-w-4xl mx-auto text-center px-4 sm:px-6"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        >
-          <motion.h2
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 sm:mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            Ready to Build Something{' '}
-            <span className="text-accent">Amazing?</span>
-          </motion.h2>
-          <motion.p
-            className="text-lg sm:text-xl lg:text-2xl text-textSecondary mb-8 sm:mb-10"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            Let's collaborate on your next project and bring your ideas to life.
-          </motion.p>
-          <motion.div
-            className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <Link to="/projects">
-              <Button variant="gradient" size="lg" className="w-full sm:w-auto">
-                View My Work
-              </Button>
-            </Link>
-            <Link to="/contact">
-              <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                Get In Touch
-              </Button>
-            </Link>
-          </motion.div>
-        </motion.div>
-      </Section>
+      {/* ==================== SECTOR 2: AUTHENTIC CAPABILITIES ==================== */}
+      {/* Data source: [cite: 21, 30, 87, 88, 28] */}
+      <section className="py-24 relative z-10 bg-[#080808]">
+         <div className="container mx-auto px-6">
+            <div className="mb-16 md:flex justify-between items-end">
+               <div>
+                  <h2 className="text-4xl font-bold mb-4">CORE <span className="text-cyan-400">COMPETENCIES</span></h2>
+                  <p className="text-gray-400 max-w-md">Developing intelligent applications with a focus on problem-solving and scalability.</p>
+               </div>
+               <div className="hidden md:block w-32 h-1 bg-gradient-to-r from-cyan-500 to-transparent" />
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+               <ServiceCard 
+                  icon={FaBrain}
+                  title="GenAI Solutions"
+                  desc="Developing agentic workflows using the Gemini, OPENAI and more API. Automating complex tasks through prompt engineering and structured AI outputs."
+                  delay={0}
+               />
+               <ServiceCard 
+                  icon={FaLayerGroup}
+                  title="Full Stack Systems"
+                  desc="Building responsive platforms with React, Node.js, and Express. Handling real-time data and dynamic content with Firebase."
+                  delay={0.1}
+               />
+               <ServiceCard 
+                  icon={FaCloud}
+                  title="Cloud & Deployment"
+                  desc="Experience with Microsoft Azure for AI model workflows and data preprocessing. Deploying scalable web applications."
+                  delay={0.2}
+               />
+            </div>
+         </div>
+      </section>
+
+      {/* ==================== SECTOR 3: TECH TICKER ==================== */}
+      <section className="py-0">
+         <TechTicker />
+      </section>
+
+      {/* ==================== SECTOR 4: CORE PHILOSOPHY (Replaces Timeline) ==================== */}
+      <section className="py-24 relative">
+         <div className="container mx-auto px-6">
+            <h2 className="text-3xl font-bold mb-12 text-center md:text-left">ENGINEERING <span className="text-cyan-400">PHILOSOPHY</span></h2>
+            
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+               <div className="space-y-8">
+                  <motion.div 
+                     initial={{ opacity: 0, x: -20 }}
+                     whileInView={{ opacity: 1, x: 0 }}
+                     viewport={{ once: true }}
+                     className="border-l-2 border-cyan-500/50 pl-6"
+                  >
+                     <h3 className="text-xl font-bold text-white mb-2">Scalability First</h3>
+                     <p className="text-gray-400 leading-relaxed">
+                        Architecture matters. Whether it's a summit platform serving thousands or a personal AI tool, I build systems designed to handle growth and maintain performance.
+                     </p>
+                  </motion.div>
+
+                  <motion.div 
+                     initial={{ opacity: 0, x: -20 }}
+                     whileInView={{ opacity: 1, x: 0 }}
+                     viewport={{ once: true }}
+                     transition={{ delay: 0.1 }}
+                     className="border-l-2 border-white/10 pl-6"
+                  >
+                     <h3 className="text-xl font-bold text-white mb-2">Human-AI Synergy</h3>
+                     <p className="text-gray-400 leading-relaxed">
+                        AI shouldn't just exist; it should assist. I focus on creating intuitive interfaces (like Voice-First interactions) that make advanced technology accessible to users.
+                     </p>
+                  </motion.div>
+
+                  <motion.div 
+                     initial={{ opacity: 0, x: -20 }}
+                     whileInView={{ opacity: 1, x: 0 }}
+                     viewport={{ once: true }}
+                     transition={{ delay: 0.2 }}
+                     className="border-l-2 border-white/10 pl-6"
+                  >
+                     <h3 className="text-xl font-bold text-white mb-2">Operational Efficiency</h3>
+                     <p className="text-gray-400 leading-relaxed">
+                        From optimizing event logistics to refining codebases, I believe in streamlining processes to achieve maximum output with minimal friction.
+                     </p>
+                  </motion.div>
+               </div>
+
+               {/* Abstract Visual Filler */}
+               <div className="relative h-full min-h-[300px] flex items-center justify-center">
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 blur-3xl" />
+                  <div className="grid grid-cols-2 gap-4 opacity-50">
+                     <div className="w-32 h-32 border border-white/10 rounded-full flex items-center justify-center animate-pulse">
+                        <span className="font-mono text-xs text-cyan-400">DEPLOY</span>
+                     </div>
+                     <div className="w-32 h-32 border border-white/10 rounded-full flex items-center justify-center mt-12">
+                        <span className="font-mono text-xs text-white">OPTIMIZE</span>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      {/* ==================== SECTOR 5: CURRENT FOCUS (Replaces Stats Grid) ==================== */}
+      <section className="py-12 border-t border-white/5 bg-[#080808]">
+         <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="text-gray-500 font-mono text-sm uppercase tracking-widest">
+               // Current Focus
+            </div>
+            <div className="flex gap-8 text-white font-bold text-lg md:text-xl">
+               <span className="hover:text-cyan-400 transition-colors cursor-default">Agentic Workflows</span>
+               <span className="text-gray-700">/</span>
+               <span className="hover:text-cyan-400 transition-colors cursor-default">Cloud Architecture</span>
+               <span className="text-gray-700">/</span>
+               <span className="hover:text-cyan-400 transition-colors cursor-default">Full Stack Development</span>
+            </div>
+         </div>
+      </section>
+
     </div>
   );
 }

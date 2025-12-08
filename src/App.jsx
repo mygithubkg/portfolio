@@ -8,6 +8,11 @@ import ProjectsPage from './Pages/ProjectsPage';
 import ContactPage from './Pages/ContactPage';
 import LoadingPage from './Components/LoadingPage';
 import ErrorBoundary from './Components/ErrorBoundary';
+import ScrollToTop from './Components/ScrollToTop';
+import AdminLogin from './Pages/AdminLogin';
+import AdminDashboard from './Pages/AdminDashboard';
+import ProtectedRoute from './Components/ProtectedRoute';
+import { AdminAuthProvider } from './context/AdminAuthContext';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -22,15 +27,29 @@ function App() {
 
   return (
     <Router>
-      <ErrorBoundary>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-        </Routes>
-      </ErrorBoundary>
+      <AdminAuthProvider>
+        <ScrollToTop />
+        <ErrorBoundary>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route
+              path="/admin/dashboard"
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </ErrorBoundary>
+      </AdminAuthProvider>
     </Router>
   );
 }

@@ -49,6 +49,15 @@ module.exports = {
         success: '#10b981',
         error: '#ef4444',
         warning: '#f59e0b',
+        neon: {
+          cyan: '#00f0ff', // Cyberpunk Blue
+          purple: '#7000ff', // Deep Learning Purple
+        },
+        neural: {
+          900: '#050505', // Deepest Void
+          800: '#0a0a0a', // Surface
+          700: '#121212', // Card
+        },
         // Gradient colors
         gradient: {
           primary: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
@@ -69,6 +78,7 @@ module.exports = {
         '3xl': '2rem',
       },
       boxShadow: {
+        'neon': '0 0 10px rgba(0, 240, 255, 0.3), 0 0 20px rgba(0, 240, 255, 0.1)',
         card: '0 4px 32px 0 rgba(31, 38, 135, 0.12)',
         cardHover: '0 8px 48px 0 rgba(31, 38, 135, 0.16)',
         accent: '0 0 0 2px #3b82f6',

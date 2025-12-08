@@ -1,146 +1,177 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Card, Section } from './ui';
+import { Cpu, Terminal, History, User, Code, Share2 } from 'lucide-react';
 
+// --- AUTHENTIC DATA: FROM YOUR INPUT ---
 const timeline = [
   {
-    year: 'March 2025 – August 2025',
+    year: '2025',
     title: 'Campus Ambassador',
     place: 'Innovation Mission, Punjab (IMP)',
-    desc: 'Selected to represent IM Punjab on campus. Responsible for promoting key events and workshops, enhancing my communication and networking skills by acting as a liaison between the student body and the IM outreach team.'
+    desc: 'Selected to represent IM Punjab. Bridging the gap between the student body and the startup ecosystem through outreach and event management.',
+    icon: <Share2 size={16} />
   },
   {
     year: '2023 – Present',
-    title: 'EB, Entrepreneurship Cell',
-    place: 'Punjab Engineering College, Chandigarh',
-    desc: 'Co-leading a prominent student organization to foster innovation on campus. Organized and managed two E-Summits and two Startup Fairs, featuring 20+ startups and attracting over 2000+ attendees.'
-  },
-  {
-    year: '2024–Present',
-    title: 'AI & Machine Learning Developer',
-    place: 'Personal & Academic',
-    desc: 'Developing and training machine learning models to solve complex challenges. My work involves data preprocessing, feature engineering, and implementing algorithms for projects like predictive health diagnostics.'
-  },
-  {
-    year: '2024–Present',
-    title: 'Full Stack Developer',
-    place: 'Freelance & Open Source',
-    desc: 'Engineering end-to-end web applications using the Full stack (MongoDB,PostGreSQL Express, React, Node.js). Focused on creating responsive UIs and robust, scalable backends.'
-  },
-  {
-    year: '2023–2027',
-    title: 'B.Tech in Electronics & Communication',
-    place: 'PEC Chandigarh',
-    desc: 'Specializing in the intersection of hardware and software, with a focused minor in Artificial Intelligence to build intelligent, data-driven systems.'
+    title: 'Executive Board',
+    place: 'Entrepreneurship Cell, PEC',
+    desc: 'Co-leading a prominent student organization. Orchestrated 2 E-Summits and 2 Startup Fairs, managing footfall of 2000+ attendees.',
+    icon: <User size={16} />
   },
   {
     year: 'May 2025 – July 2025',
     title: 'AI Intern',
-    place: 'Edunet Foundation (Microsoft & AICTE Initiative)',
-    desc: 'Worked on Azure AI, build project , learn concepts of AI and ML.'
+    place: 'Edunet Foundation (Microsoft Initiative)',
+    desc: 'Executed end-to-end AI workflows on Azure. specialized in data preprocessing and model training for enterprise use cases.',
+    icon: <Cpu size={16} />
+  },
+  {
+    year: '2023 – 2027',
+    title: 'B.Tech Electronics & Comm.',
+    place: 'PEC Chandigarh',
+    desc: 'Specializing in Hardware-Software intersection. Minor in Artificial Intelligence (GPA: 10.0).',
+    icon: <Terminal size={16} />
   }
 ];
 
 const techStack = [
-  'React', 'Node.js', 'JavaScript', 'Tailwind CSS', 'Firebase', 'MySQL', 'MongoDB', 'Git', 'GitHub', 'Scikit-learn', 'NumPy', 'Pandas', 'Matplotlib', 'Azure AI',
+  'React', 'Node.js', 'Next.js', 'TypeScript', 
+  'Azure AI', 'Python', 'Gemini API', 'Scikit-learn',
+  'Firebase', 'PostgreSQL', 'Tailwind', 'Git'
 ];
 
 export default function About() {
   return (
-    <Section maxWidth="4xl" className="py-1 sm:py-2 lg:py-4">
-      <div className="relative z-10 w-full flex flex-col items-center gap-4 sm:gap-4">
-        {/* New Heading */}
-        <motion.h2
-          className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-1 sm:mb-4 bg-gradient-to-r from-fuchsia-500 via-sky-400 to-emerald-400 bg-clip-text text-transparent drop-shadow-glow"
-          initial={{ opacity: 0, y: -30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-        >
-          My Journey & Vision
-        </motion.h2>
-
-        {/* About Me Section */}
-        <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 w-full justify-center">
-          {/* Image */}
-          <motion.img
-            src="/karrtik.png"
-            alt="Karrtik's portrait"
-            className="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-full shadow-2xl"
-            style={{ background: 'linear-gradient(135deg, #f472b6 0%, #38bdf8 100%)' }}
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7 }}
-          />
-          {/* Two Paragraphs */}
-          <div className="flex-1 text-left">
-            <motion.p
-              className="text-lg sm:text-xl md:text-2xl font-medium mb-4 bg-gradient-to-r from-fuchsia-400 via-sky-400 to-emerald-400 bg-clip-text text-transparent"
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1, duration: 0.7 }}
-            >
-              Hi, I’m Karrtik — a passionate developer, innovator, and lifelong learner. My journey began at PEC Chandigarh, where I dove into Electronics & Communication Engineering and discovered my love for building things that matter.
-            </motion.p>
-            <motion.p
-              className="text-base sm:text-lg leading-relaxed text-emerald-200"
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2, duration: 0.7 }}
-            >
-              From leading student teams and organizing tech events to developing full-stack web apps and AI solutions, I thrive at the intersection of creativity and technology. I believe in using code to solve real-world problems and inspire others to build, learn, and grow.
-            </motion.p>
-          </div>
+    <section className="min-h-screen py-24 bg-[#050505] relative overflow-hidden">
+      
+      {/* Background Decorations */}
+      <div className="absolute top-20 right-0 w-[300px] h-[300px] bg-cyan-500/5 rounded-full blur-[80px] pointer-events-none" />
+      
+      <div className="max-w-6xl mx-auto px-6 relative z-10">
+        
+        {/* --- HEADER: IDENTITY VERIFICATION --- */}
+        <div className="mb-20 border-b border-white/10 pb-8">
+           <motion.div 
+             initial={{ opacity: 0, x: -20 }}
+             whileInView={{ opacity: 1, x: 0 }}
+             viewport={{ once: true }}
+             className="flex items-center gap-2 text-cyan-500 font-mono text-xs mb-2"
+           >
+             <User size={14} />
+             <span>/ IDENTITY_VERIFICATION / BIO_DATA</span>
+           </motion.div>
+           <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tight">
+             The <span className="text-gray-600">Developer</span>
+           </h2>
         </div>
 
-        {/* Timeline Feature - Redesigned */}
-        <div className="w-full max-w-3xl mx-auto mt-8">
-          <div className="relative border-l-4 border-fuchsia-400/70 pl-8">
-            {timeline.map((item, idx) => (
-              <motion.div
-                key={idx}
-                className="mb-12 last:mb-0 relative"
-                initial={{ opacity: 0, x: -40 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.2, duration: 0.7 }}
-              >
-                {/* Timeline Dot */}
-                <span className="absolute -left-5 top-2 w-6 h-6 rounded-full bg-gradient-to-br from-fuchsia-400 via-sky-400 to-emerald-400 border-4 border-background shadow-lg flex items-center justify-center animate-pulse">
-                  <span className="w-2.5 h-2.5 bg-white rounded-full block"></span>
-                </span>
-                <Card className="bg-gradient-to-br from-[#1e293b] via-[#0ea5e9]/80 to-[#a21caf]/80 p-6 shadow-2xl border-2 border-fuchsia-400/30 hover:scale-[1.03] transition-transform">
-                  <div className="text-xs font-bold mb-1 bg-gradient-to-r from-fuchsia-400 via-sky-400 to-emerald-400 bg-clip-text text-transparent">{item.year}</div>
-                  <h3 className="text-lg sm:text-xl font-bold text-white mb-1">{item.title}</h3>
-                  <div className="text-sm text-sky-200 mb-2">{item.place}</div>
-                  <div className="text-emerald-200 text-sm">{item.desc}</div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Tech Stack */}
-        <motion.div
-          className="flex flex-wrap justify-center gap-2 sm:gap-3 lg:gap-4 px-2 sm:px-4 mt-8"
-          initial="hidden"
-          whileInView="visible"
-          variants={{
-            hidden: {},
-            visible: { transition: { staggerChildren: 0.07 } },
-          }}
-        >
-          {techStack.map((tech, idx) => (
-            <motion.span
-              key={idx}
-              className="bg-sky-500 text-slate-900 font-semibold px-4 py-2 rounded-full shadow-lg shadow-sky-500/40 hover:shadow-xl hover:shadow-sky-500/60 hover:-translate-y-0.5 transition-all duration-300"
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
+        <div className="grid lg:grid-cols-12 gap-16">
+          
+          {/* --- LEFT COL: PHOTO & BIO (4 Cols) --- */}
+          <div className="lg:col-span-5 space-y-8">
+            {/* Photo Card */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="relative aspect-square w-full max-w-sm mx-auto lg:mx-0 bg-[#0a0a0a] border border-white/10 p-2 rounded-lg"
             >
-              {tech}
-            </motion.span>
-          ))}
-        </motion.div>
+               {/* Decorative Scanner Corners */}
+               <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-cyan-500 z-20" />
+               <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-cyan-500 z-20" />
+               
+               <div className="relative h-full w-full overflow-hidden rounded bg-gray-900 group">
+                  <img 
+                    src="/karrtik.png" 
+                    alt="Karrtik Gupta"
+                    className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500"
+                  />
+                  {/* Scanline Effect */}
+                  <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[size:4px_4px] opacity-20 pointer-events-none" />
+               </div>
+
+               {/* ID Badge Data */}
+               <div className="mt-4 flex justify-between items-end font-mono text-xs text-gray-500">
+                  <div>
+                    <div className="text-white font-bold">KARRTIK GUPTA</div>
+                    <div>ID: DEV_001</div>
+                  </div>
+                  <div className="text-cyan-500">STATUS: ONLINE</div>
+               </div>
+            </motion.div>
+
+            {/* Bio Text */}
+            <motion.div 
+               initial={{ opacity: 0, y: 20 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               viewport={{ once: true }}
+               transition={{ delay: 0.2 }}
+               className="text-gray-400 leading-relaxed space-y-4 text-sm md:text-base"
+            >
+              <p>
+                <strong className="text-white">I don't just write code; I engineer systems.</strong> 
+                My journey began at <span className="text-cyan-400">PEC Chandigarh</span>, exploring the intersection of hardware and intelligence.
+              </p>
+              <p>
+                From organizing massive tech summits to training custom AI models, I thrive in high-stakes environments where precision matters. I believe technology is only as good as the problem it solves.
+              </p>
+            </motion.div>
+
+            {/* Tech Stack Grid */}
+            <div>
+               <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+                 <Code size={16} className="text-cyan-500" />
+                 TECHNICAL ARSENAL
+               </h3>
+               <div className="grid grid-cols-3 gap-2">
+                 {techStack.map((tech, i) => (
+                   <div key={i} className="bg-white/5 border border-white/5 px-3 py-2 text-xs font-mono text-gray-300 text-center hover:bg-cyan-500/10 hover:border-cyan-500/30 transition-colors">
+                     {tech}
+                   </div>
+                 ))}
+               </div>
+            </div>
+          </div>
+
+          {/* --- RIGHT COL: TIMELINE (8 Cols) --- */}
+          <div className="lg:col-span-7">
+             <div className="flex items-center gap-2 mb-8 text-cyan-500 font-mono text-xs">
+                <History size={14} />
+                <span>/ SYSTEM_LOGS / EXPERIENCE</span>
+             </div>
+
+             <div className="relative border-l border-white/10 ml-3 space-y-12">
+                {timeline.map((item, index) => (
+                   <motion.div 
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 }}
+                      className="relative pl-12 group"
+                   >
+                      {/* Timeline Node */}
+                      <div className="absolute -left-[5px] top-0 w-2.5 h-2.5 bg-[#050505] border border-gray-600 group-hover:border-cyan-500 group-hover:bg-cyan-500 transition-colors rotate-45" />
+                      
+                      {/* Content Card */}
+                      <div className="flex flex-col gap-1 mb-2">
+                         <span className="font-mono text-cyan-500 text-xs tracking-wider">{item.year}</span>
+                         <h3 className="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors">
+                           {item.title}
+                         </h3>
+                         <span className="text-sm text-gray-400 font-medium">{item.place}</span>
+                      </div>
+                      
+                      <p className="text-gray-500 text-sm leading-relaxed max-w-lg border-l-2 border-white/5 pl-4 group-hover:border-cyan-500/30 transition-colors">
+                         {item.desc}
+                      </p>
+                   </motion.div>
+                ))}
+             </div>
+          </div>
+
+        </div>
       </div>
-    </Section>
+    </section>
   );
 }
