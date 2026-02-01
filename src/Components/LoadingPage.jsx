@@ -33,7 +33,7 @@ const LoadingPage = ({ onComplete }) => {
   useEffect(() => {
     setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
 
-    const duration = 3500; // Slightly faster for a snappier feel
+    const duration = 1500; // Optimized for faster loading
     const intervalTime = 50;
     const steps = duration / intervalTime;
     let currentStep = 0;

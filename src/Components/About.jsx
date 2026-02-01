@@ -1,13 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Cpu, Terminal, History, User, Code, Share2 } from 'lucide-react';
-import { useTimelineData, useTechStackData } from '../hooks/useData';
+import { useData } from '../context/DataContext';
 
 // Code
 
 export default function About() {
-  const { timeline, loading: timelineLoading } = useTimelineData();
-  const { techStack, loading: techStackLoading } = useTechStackData();
+  const { data, loading } = useData();
+  const timeline = data.timeline;
+  const techStack = data.techStack;
 
   return (
     <section className="min-h-screen py-24 bg-[#050505] relative overflow-hidden">

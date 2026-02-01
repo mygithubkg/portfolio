@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaLinkedin, FaGithub, FaEnvelope, FaInstagram, FaPaperPlane, FaPhoneAlt, FaMapMarkerAlt } from 'react-icons/fa';
 import { Wifi, Clock, Copy, Check } from 'lucide-react';
 import emailjs from 'emailjs-com';
-import { useContactData, useSocialsData } from '../hooks/useData';
+import { useData } from '../context/DataContext';
 
 // Icon mapping for string identifiers
 const iconMap = {
@@ -20,9 +20,10 @@ export default function Contact() {
   const [activeField, setActiveField] = useState(null);
   const [time, setTime] = useState(new Date());
 
-  // Fetch contact data from Firebase
-  const { contactData, loading: contactLoading } = useContactData();
-  const { socials, loading: socialsLoading } = useSocialsData();
+  // Fetch contact data from global context
+  const { data, loading } = useData();
+  const contactData = data.contact;
+  const socials = data.socials;
 
   // Build contactDetails from fetched data with fallback to default icons
   const contactDetails = contactData ? [

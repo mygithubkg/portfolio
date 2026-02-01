@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaReact, FaNodeJs, FaGithub, FaExternalLinkAlt, FaFolder, FaDatabase, FaMicrochip, FaHtml5, FaCss3Alt, FaGamepad, FaHeartbeat } from 'react-icons/fa';
 import { SiFirebase, SiJavascript, SiTailwindcss, SiOpenai, SiPostgresql, SiExpress, SiStreamlit, SiScikitlearn } from 'react-icons/si';
-import { useProjectsData } from '../hooks/useData';
+import { useData } from '../context/DataContext';
 
 // --- ICON MAPPING ---
 // This maps your text strings (e.g., "React") to actual Icons
@@ -25,7 +25,8 @@ const techIcons = {
 
 export default function Projects() {
   const [selectedId, setSelectedId] = useState(null);
-  const { projects, loading, error } = useProjectsData();
+  const { data, loading, error } = useData();
+  const projects = data.projects;
 
   if (loading) {
     return (

@@ -1,6 +1,7 @@
 // import './App.css' 
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { DataProvider } from './context/DataContext';
 import HomePage from './Pages/HomePage';
 import AboutPage from './Pages/AboutPage';
 import ServicesPage from './Pages/ServicesPage';
@@ -30,29 +31,31 @@ function App() {
   return (
     <Router>
       <AdminAuthProvider>
-        <ScrollToTop />
-        <ErrorBoundary>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/services" element={<ServicesPage />} />
-            <Route path="/projects" element={<ProjectsPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/blog/:id" element={<BlogDetailPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            
-            {/* Admin Routes */}
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route
-              path="/admin/dashboard"
-              element={
-                <ProtectedRoute>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </ErrorBoundary>
+        <DataProvider>
+          <ScrollToTop />
+          <ErrorBoundary>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/services" element={<ServicesPage />} />
+              <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/blog/:id" element={<BlogDetailPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route
+                path="/admin/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </ErrorBoundary>
+        </DataProvider>
       </AdminAuthProvider>
     </Router>
   );

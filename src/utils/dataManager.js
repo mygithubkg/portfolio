@@ -431,3 +431,36 @@ export const syncDefaultDataToFirebase = async () => {
     return { success: false, message: error.message };
   }
 };
+
+// ============================================
+// OPTIMIZED: Fetch All Data in Parallel
+// ============================================
+
+/**
+ * Fetch all website data in parallel for optimal performance
+ * This function is used by the DataContext to load all data at once
+ */
+export const fetchAllData = async () => {
+  try {
+    const [projects, timeline, techStack, contact, socials, services] = await Promise.all([
+      getProjects(),
+      getTimeline(),
+      getTechStack(),
+      getContactContent(),
+      getSocials(),
+      getServicesContent()
+    ]);
+
+    return {
+      projects,
+      timeline,
+      techStack,
+      contact,
+      socials,
+      services
+    };
+  } catch (error) {
+    console.error('Error fetching all data:', error);
+    throw error;
+  }
+};
