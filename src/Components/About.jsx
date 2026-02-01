@@ -93,7 +93,7 @@ export default function About() {
                  TECHNICAL ARSENAL
                </h3>
                <div className="grid grid-cols-3 gap-2">
-                 {techStackLoading ? (
+                 {loading ? (
                    <div className="col-span-3 text-center text-gray-500 text-xs">Loading...</div>
                  ) : (
                    techStack.map((tech, i) => (
@@ -113,7 +113,7 @@ export default function About() {
                 <span>/ SYSTEM_LOGS / EXPERIENCE</span>
              </div>
 
-             {timelineLoading ? (
+             {loading ? (
                <div className="text-center text-gray-500">Loading timeline...</div>
              ) : (
                <div className="relative border-l border-white/10 ml-3 space-y-12">

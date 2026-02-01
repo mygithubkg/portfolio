@@ -294,7 +294,7 @@ export default function Contact() {
 
              {/* 2. Social Links */}
              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-               {socialsLoading ? (
+               {loading ? (
                  <div className="text-center text-gray-500 text-xs">Loading...</div>
                ) : (
                  socials.map((social, i) => {
