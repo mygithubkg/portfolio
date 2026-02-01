@@ -1,0 +1,92 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ============================================
+    // SECURITY: All write operations disabled from client
+    // Implement backend API for admin operations
+    // ============================================
+    
+    // Helper function (if you implement Firebase Auth in future)
+    function isAdmin() {
+      return request.auth != null && 
+             request.auth.token.admin == true;
+    }
+    
+    // ============================================
+    // PUBLIC READ ACCESS (Portfolio content)
+    // NO WRITE ACCESS FROM CLIENT
+    // ============================================
+    
+    // About section
+    match /about/{document=**} {
+      allow read: if true;
+      allow write: if false; // Disable all writes
+    }
+    
+    // Contact section
+    match /contact/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // Services section
+    match /services/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // Projects section
+    match /projects/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // Blogs section
+    match /blogs/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // Timeline section
+    match /timeline/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // Tech Stack section
+    match /techStack/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // Default: Deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+// ============================================
+// IMPORTANT NOTES:
+// ============================================
+//
+// 1. These rules DISABLE all write operations from the client
+// 2. This breaks your current admin panel functionality
+// 3. You MUST implement a backend API to handle admin operations
+// 4. See SECURITY.md for backend implementation guide
+//
+// TEMPORARY ALTERNATIVE (Less Secure):
+// If you need admin panel to work immediately, you can use:
+//
+//   allow write: if request.auth != null;
+//
+// But this requires Firebase Authentication setup.
+// This is NOT recommended for production without proper auth.
+//
+// BEST PRACTICE:
+// - Implement backend API (Node.js/Express)
+// - Use Firebase Admin SDK on server
+// - Authenticate requests on server
+// - Never expose admin operations to client
+// ============================================

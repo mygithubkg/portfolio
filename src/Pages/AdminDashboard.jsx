@@ -14,16 +14,19 @@ import {
   Activity,
   ShieldCheck,
   ChevronRight,
-  User
+  User,
+  BookOpen
 } from 'lucide-react';
 import ProjectsManager from '../Components/Admin/ProjectsManager';
 import ContentManager from '../Components/Admin/ContentManager';
-import { exportAllData, importAllData } from '../utils/dataManager';
+import BlogManager from '../Components/Admin/BlogManager';
+import { exportAllData, importAllData, syncDefaultDataToFirebase } from '../utils/dataManager';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('projects');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Desktop default
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [syncStatus, setSyncStatus] = useState(null);
   const { logout } = useAdminAuth();
   const navigate = useNavigate();
 
@@ -44,37 +47,62 @@ const AdminDashboard = () => {
     navigate('/');
   };
 
-  const handleExport = () => {
-    const data = exportAllData();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `sys_backup_${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+  const handleExport = async () => {
+    try {
+      const data = await exportAllData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `sys_backup_${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      alert('Export failed: ' + error.message);
+    }
   };
 
-  const handleImport = (e) => {
+  const handleImport = async (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (event) => {
+      reader.onload = async (event) => {
         try {
           const data = JSON.parse(event.target.result);
-          importAllData(data);
+          await importAllData(data);
           alert('SYSTEM_PATCH_SUCCESSFUL');
           window.location.reload();
         } catch (error) {
-          alert('ERROR: CORRUPTED_FILE');
+          alert('ERROR: CORRUPTED_FILE - ' + error.message);
         }
       };
       reader.readAsText(file);
     }
   };
 
+  const handleSyncDefaults = async () => {
+    if (!confirm('This will sync all default data to Firebase. Continue?')) return;
+    
+    setSyncStatus('SYNCING...');
+    try {
+      const result = await syncDefaultDataToFirebase();
+      if (result.success) {
+        setSyncStatus('SYNC_COMPLETE');
+        setTimeout(() => setSyncStatus(null), 3000);
+      } else {
+        setSyncStatus('SYNC_FAILED');
+        setTimeout(() => setSyncStatus(null), 3000);
+      }
+    } catch (error) {
+      setSyncStatus('ERROR');
+      setTimeout(() => setSyncStatus(null), 3000);
+      console.error('Sync error:', error);
+    }
+  };
+
   const menuItems = [
     { id: 'projects', label: 'PROJECTS', icon: Database },
+    { id: 'blogs', label: 'BLOGS', icon: BookOpen },
     { id: 'content', label: 'CONTENT', icon: Cpu },
   ];
 
@@ -148,6 +176,14 @@ const AdminDashboard = () => {
               <div className="text-[10px] text-gray-600 mb-2 pl-2 font-bold tracking-widest">DATA_OPS</div>
               
               <button 
+                onClick={handleSyncDefaults}
+                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/10 rounded border border-cyan-500/20 transition-colors"
+              >
+                <Database size={14} /> 
+                {syncStatus || 'SYNC_TO_FIREBASE'}
+              </button>
+
+              <button 
                 onClick={handleExport}
                 className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-400 hover:text-white hover:bg-white/5 rounded border border-white/5 transition-colors"
               >
@@ -215,7 +251,9 @@ const AdminDashboard = () => {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                {activeTab === 'projects' ? <ProjectsManager /> : <ContentManager />}
+                {activeTab === 'projects' && <ProjectsManager />}
+                {activeTab === 'blogs' && <BlogManager />}
+                {activeTab === 'content' && <ContentManager />}
               </motion.div>
             </AnimatePresence>
           </div>

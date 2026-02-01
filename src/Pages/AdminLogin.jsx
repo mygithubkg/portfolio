@@ -21,12 +21,12 @@ const AdminLogin = () => {
     // Simulate a small delay for better UX
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    const success = login(username, password);
+    const result = login(username, password);
     
-    if (success) {
+    if (result.success) {
       navigate('/admin/dashboard');
     } else {
-      setError('Invalid credentials. Access denied.');
+      setError(result.message || 'Invalid credentials. Access denied.');
       setIsLoading(false);
     }
   };

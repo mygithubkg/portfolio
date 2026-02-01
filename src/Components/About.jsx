@@ -1,46 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Cpu, Terminal, History, User, Code, Share2 } from 'lucide-react';
+import { useTimelineData, useTechStackData } from '../hooks/useData';
 
-// --- AUTHENTIC DATA: FROM YOUR INPUT ---
-const timeline = [
-  {
-    year: '2025',
-    title: 'Campus Ambassador',
-    place: 'Innovation Mission, Punjab (IMP)',
-    desc: 'Selected to represent IM Punjab. Bridging the gap between the student body and the startup ecosystem through outreach and event management.',
-    icon: <Share2 size={16} />
-  },
-  {
-    year: '2023 – Present',
-    title: 'Executive Board',
-    place: 'Entrepreneurship Cell, PEC',
-    desc: 'Co-leading a prominent student organization. Orchestrated 2 E-Summits and 2 Startup Fairs, managing footfall of 2000+ attendees.',
-    icon: <User size={16} />
-  },
-  {
-    year: 'May 2025 – July 2025',
-    title: 'AI Intern',
-    place: 'Edunet Foundation (Microsoft Initiative)',
-    desc: 'Executed end-to-end AI workflows on Azure. specialized in data preprocessing and model training for enterprise use cases.',
-    icon: <Cpu size={16} />
-  },
-  {
-    year: '2023 – 2027',
-    title: 'B.Tech Electronics & Comm.',
-    place: 'PEC Chandigarh',
-    desc: 'Specializing in Hardware-Software intersection. Minor in Artificial Intelligence (GPA: 10.0).',
-    icon: <Terminal size={16} />
-  }
-];
-
-const techStack = [
-  'React', 'Node.js', 'Next.js', 'TypeScript', 
-  'Azure AI', 'Python', 'Gemini API', 'Scikit-learn',
-  'Firebase', 'PostgreSQL', 'Tailwind', 'Git'
-];
+// Code
 
 export default function About() {
+  const { timeline, loading: timelineLoading } = useTimelineData();
+  const { techStack, loading: techStackLoading } = useTechStackData();
+
   return (
     <section className="min-h-screen py-24 bg-[#050505] relative overflow-hidden">
       
@@ -124,11 +92,15 @@ export default function About() {
                  TECHNICAL ARSENAL
                </h3>
                <div className="grid grid-cols-3 gap-2">
-                 {techStack.map((tech, i) => (
-                   <div key={i} className="bg-white/5 border border-white/5 px-3 py-2 text-xs font-mono text-gray-300 text-center hover:bg-cyan-500/10 hover:border-cyan-500/30 transition-colors">
-                     {tech}
-                   </div>
-                 ))}
+                 {techStackLoading ? (
+                   <div className="col-span-3 text-center text-gray-500 text-xs">Loading...</div>
+                 ) : (
+                   techStack.map((tech, i) => (
+                     <div key={i} className="bg-white/5 border border-white/5 px-3 py-2 text-xs font-mono text-gray-300 text-center hover:bg-cyan-500/10 hover:border-cyan-500/30 transition-colors">
+                       {tech}
+                     </div>
+                   ))
+                 )}
                </div>
             </div>
           </div>
@@ -140,34 +112,38 @@ export default function About() {
                 <span>/ SYSTEM_LOGS / EXPERIENCE</span>
              </div>
 
-             <div className="relative border-l border-white/10 ml-3 space-y-12">
-                {timeline.map((item, index) => (
-                   <motion.div 
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.1 }}
-                      className="relative pl-12 group"
-                   >
-                      {/* Timeline Node */}
-                      <div className="absolute -left-[5px] top-0 w-2.5 h-2.5 bg-[#050505] border border-gray-600 group-hover:border-cyan-500 group-hover:bg-cyan-500 transition-colors rotate-45" />
-                      
-                      {/* Content Card */}
-                      <div className="flex flex-col gap-1 mb-2">
-                         <span className="font-mono text-cyan-500 text-xs tracking-wider">{item.year}</span>
-                         <h3 className="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors">
-                           {item.title}
-                         </h3>
-                         <span className="text-sm text-gray-400 font-medium">{item.place}</span>
-                      </div>
-                      
-                      <p className="text-gray-500 text-sm leading-relaxed max-w-lg border-l-2 border-white/5 pl-4 group-hover:border-cyan-500/30 transition-colors">
-                         {item.desc}
-                      </p>
-                   </motion.div>
-                ))}
-             </div>
+             {timelineLoading ? (
+               <div className="text-center text-gray-500">Loading timeline...</div>
+             ) : (
+               <div className="relative border-l border-white/10 ml-3 space-y-12">
+                  {timeline.map((item, index) => (
+                     <motion.div 
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: index * 0.1 }}
+                        className="relative pl-12 group"
+                     >
+                        {/* Timeline Node */}
+                        <div className="absolute -left-[5px] top-0 w-2.5 h-2.5 bg-[#050505] border border-gray-600 group-hover:border-cyan-500 group-hover:bg-cyan-500 transition-colors rotate-45" />
+                        
+                        {/* Content Card */}
+                        <div className="flex flex-col gap-1 mb-2">
+                           <span className="font-mono text-cyan-500 text-xs tracking-wider">{item.year}</span>
+                           <h3 className="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors">
+                             {item.title}
+                           </h3>
+                           <span className="text-sm text-gray-400 font-medium">{item.place}</span>
+                        </div>
+                        
+                        <p className="text-gray-500 text-sm leading-relaxed max-w-lg border-l-2 border-white/5 pl-4 group-hover:border-cyan-500/30 transition-colors">
+                           {item.desc}
+                        </p>
+                     </motion.div>
+                  ))}
+               </div>
+             )}
           </div>
 
         </div>

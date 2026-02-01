@@ -6,6 +6,8 @@ import AboutPage from './Pages/AboutPage';
 import ServicesPage from './Pages/ServicesPage';
 import ProjectsPage from './Pages/ProjectsPage';
 import ContactPage from './Pages/ContactPage';
+import BlogPage from './Pages/BlogPage';
+import BlogDetailPage from './Pages/BlogDetailPage';
 import LoadingPage from './Components/LoadingPage';
 import ErrorBoundary from './Components/ErrorBoundary';
 import ScrollToTop from './Components/ScrollToTop';
@@ -35,6 +37,8 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:id" element={<BlogDetailPage />} />
             <Route path="/contact" element={<ContactPage />} />
             
             {/* Admin Routes */}

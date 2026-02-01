@@ -3,12 +3,42 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaLinkedin, FaGithub, FaEnvelope, FaInstagram, FaPaperPlane, FaPhoneAlt, FaMapMarkerAlt } from 'react-icons/fa';
 import { Wifi, Clock, Copy, Check } from 'lucide-react';
 import emailjs from 'emailjs-com';
+import { useContactData, useSocialsData } from '../hooks/useData';
+
+// Icon mapping for string identifiers
+const iconMap = {
+  FaLinkedin: <FaLinkedin />,
+  FaGithub: <FaGithub />,
+  FaEnvelope: <FaEnvelope />,
+  FaInstagram: <FaInstagram />,
+  FaMapMarkerAlt: <FaMapMarkerAlt />
+};
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [status, setStatus] = useState('IDLE'); // IDLE, SENDING, SUCCESS, ERROR
   const [activeField, setActiveField] = useState(null);
   const [time, setTime] = useState(new Date());
+
+  // Fetch contact data from Firebase
+  const { contactData, loading: contactLoading } = useContactData();
+  const { socials, loading: socialsLoading } = useSocialsData();
+
+  // Build contactDetails from fetched data with fallback to default icons
+  const contactDetails = contactData ? [
+    { 
+      icon: iconMap.FaEnvelope || <FaEnvelope />, 
+      label: 'EMAIL', 
+      value: contactData.email || 'your@email.com', 
+      href: `mailto:${contactData.email || 'your@email.com'}` 
+    },
+    { 
+      icon: iconMap.FaMapMarkerAlt || <FaMapMarkerAlt />, 
+      label: 'LOCATION', 
+      value: contactData.location || 'Your Location', 
+      href: '#' 
+    }
+  ] : [];
 
   // Update clock every second
   useEffect(() => {
@@ -62,28 +92,7 @@ export default function Contact() {
       alert("Transmission Failed. Please try again or email directly.");
     }
   };
-
-  // Authentic Contact Data from Resume
-  const contactDetails = [
-    { 
-      icon: <FaEnvelope />, 
-      label: 'EMAIL', 
-      value: 'karrtikgupta9@gmail.com', 
-      href: 'mailto:karrtikgupta9@gmail.com' 
-    },
-    { 
-      icon: <FaMapMarkerAlt />, 
-      label: 'LOCATION', 
-      value: 'Chandigarh, India', 
-      href: '#' 
-    }
-  ];
-
-  const socials = [
-    { icon: <FaLinkedin />, url: 'https://www.linkedin.com/in/karrtik-gupta/', label: 'LinkedIn', username: 'karrtik-gupta' },
-    { icon: <FaGithub />, url: 'https://github.com/mygithubkg', label: 'GitHub', username: 'mygithubkg' },
-    { icon: <FaInstagram />, url: 'https://www.instagram.com/karrtik_gupta/', label: 'Instagram', username: '@karrtik_gupta' },
-  ];
+  
 
   return (
     <section className="min-h-screen py-24 bg-[#050505] relative overflow-hidden flex flex-col justify-center">
@@ -284,21 +293,30 @@ export default function Contact() {
 
              {/* 2. Social Links */}
              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-               {socials.map((social, i) => (
-                 <a 
-                   key={i} 
-                   href={social.url} 
-                   target="_blank" 
-                   rel="noreferrer"
-                   className="flex items-center gap-3 p-4 border border-white/5 bg-white/5 hover:bg-cyan-500/10 hover:border-cyan-500/50 transition-all group rounded-lg"
-                 >
-                   <span className="text-gray-400 group-hover:text-cyan-400 text-xl transition-colors">{social.icon}</span>
-                   <div>
-                     <div className="text-white text-sm font-bold">{social.label}</div>
-                     <div className="text-gray-600 text-[10px] font-mono group-hover:text-cyan-500/70">{social.username}</div>
-                   </div>
-                 </a>
-               ))}
+               {socialsLoading ? (
+                 <div className="text-center text-gray-500 text-xs">Loading...</div>
+               ) : (
+                 socials.map((social, i) => {
+                   const IconComponent = typeof social.icon === 'string' ? iconMap[social.icon] : social.icon;
+                   return (
+                     <a 
+                       key={i} 
+                       href={social.url} 
+                       target="_blank" 
+                       rel="noreferrer"
+                       className="flex items-center gap-3 p-4 border border-white/5 bg-white/5 hover:bg-cyan-500/10 hover:border-cyan-500/50 transition-all group rounded-lg"
+                     >
+                       <span className="text-gray-400 group-hover:text-cyan-400 text-xl transition-colors">
+                         {IconComponent || social.icon}
+                       </span>
+                       <div>
+                         <div className="text-white text-sm font-bold">{social.label}</div>
+                         <div className="text-gray-600 text-[10px] font-mono group-hover:text-cyan-500/70">{social.username}</div>
+                       </div>
+                     </a>
+                   );
+                 })
+               )}
              </div>
           </motion.div>
 

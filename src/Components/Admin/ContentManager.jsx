@@ -50,23 +50,50 @@ const ContentManager = () => {
     loadContent();
   }, []);
 
-  const loadContent = () => {
-    setAboutContent(getAboutContent());
-    setServicesContent(getServicesContent());
-    setContactContent(getContactContent());
+  const loadContent = async () => {
+    try {
+      const about = await getAboutContent();
+      const services = await getServicesContent();
+      const contact = await getContactContent();
+      
+      setAboutContent(about);
+      setServicesContent(services);
+      setContactContent(contact);
+    } catch (error) {
+      console.error('Error loading content:', error);
+    }
   };
 
-  const handleSave = (type) => {
+  const handleSave = async (type, saveFn, data) => {
     setStatusLog(`UPLOADING_${type.toUpperCase()}_DATA...`);
-    setTimeout(() => {
-      setStatusLog(`${type.toUpperCase()}_PATCH_SUCCESSFUL`);
+    try {
+      const result = await saveFn(data);
+      if (result.success) {
+        setStatusLog(`${type.toUpperCase()}_FIREBASE_SYNC_SUCCESSFUL`);
+      } else {
+        setStatusLog(`${type.toUpperCase()}_SAVED_LOCALLY_ONLY`);
+      }
       setTimeout(() => setStatusLog(null), 3000);
-    }, 800);
+    } catch (error) {
+      setStatusLog(`${type.toUpperCase()}_ERROR: ${error.message}`);
+      setTimeout(() => setStatusLog(null), 5000);
+    }
   };
 
-  const onSaveAbout = (e) => { e.preventDefault(); saveAboutContent(aboutContent); handleSave('about'); };
-  const onSaveServices = (e) => { e.preventDefault(); saveServicesContent(servicesContent); handleSave('services'); };
-  const onSaveContact = (e) => { e.preventDefault(); saveContactContent(contactContent); handleSave('contact'); };
+  const onSaveAbout = async (e) => { 
+    e.preventDefault(); 
+    await handleSave('about', saveAboutContent, aboutContent);
+  };
+  
+  const onSaveServices = async (e) => { 
+    e.preventDefault(); 
+    await handleSave('services', saveServicesContent, servicesContent);
+  };
+  
+  const onSaveContact = async (e) => { 
+    e.preventDefault(); 
+    await handleSave('contact', saveContactContent, contactContent);
+  };
 
   // Service Helpers
   const handleAddService = () => setServicesContent([...servicesContent, { id: Date.now(), title: '', description: '', icon: '' }]);

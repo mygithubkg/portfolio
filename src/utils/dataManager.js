@@ -1,116 +1,433 @@
-// Local Storage Keys
-const STORAGE_KEYS = {
-  PROJECTS: 'portfolio_projects',
-  ABOUT: 'portfolio_about',
-  SERVICES: 'portfolio_services',
-  CONTACT: 'portfolio_contact',
+import { db } from '../config/firebase';
+import { collection, doc, getDoc, setDoc, updateDoc, deleteDoc, getDocs } from 'firebase/firestore';
+import { timeline, techStack } from './aboutData';
+import { contactDetails, socials } from './contactData';
+import { projects as defaultProjects } from './projectData';
+import { getBlogs, addBlog } from './blogData';
+import { defaultBlogs } from './blogData';
+import { 
+  isAuthenticated, 
+  sanitizeObject, 
+  handleSecureError, 
+  auditLog,
+  checkRateLimit 
+} from './security';
+
+// Collection names in Firebase
+const COLLECTIONS = {
+  ABOUT: 'about',
+  CONTACT: 'contact',
+  SERVICES: 'services',
+  PROJECTS: 'projects',
+  TIMELINE: 'timeline',
+  TECH_STACK: 'techStack'
 };
 
-// Initialize default data if not exists
-export const initializeData = () => {
-  if (!localStorage.getItem(STORAGE_KEYS.PROJECTS)) {
-    localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify([]));
-  }
-  if (!localStorage.getItem(STORAGE_KEYS.ABOUT)) {
-    localStorage.setItem(STORAGE_KEYS.ABOUT, JSON.stringify({}));
-  }
-  if (!localStorage.getItem(STORAGE_KEYS.SERVICES)) {
-    localStorage.setItem(STORAGE_KEYS.SERVICES, JSON.stringify([]));
-  }
-  if (!localStorage.getItem(STORAGE_KEYS.CONTACT)) {
-    localStorage.setItem(STORAGE_KEYS.CONTACT, JSON.stringify({}));
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
+/**
+ * Fallback to localStorage if Firebase fails
+ */
+const getFromLocalStorage = (key, defaultValue) => {
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : defaultValue;
+  } catch (error) {
+    console.error(`Error reading from localStorage (${key}):`, error);
+    return defaultValue;
   }
 };
 
-// Projects CRUD
-export const getProjects = () => {
-  const data = localStorage.getItem(STORAGE_KEYS.PROJECTS);
-  return data ? JSON.parse(data) : [];
+const saveToLocalStorage = (key, value) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error(`Error saving to localStorage (${key}):`, error);
+  }
 };
 
-export const saveProjects = (projects) => {
-  localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
-  window.dispatchEvent(new Event('projectsUpdated'));
+/**
+ * Generic Firebase fetch with fallback
+ */
+const fetchFromFirebase = async (collectionName, docId, fallbackData) => {
+  if (!db) {
+    console.warn('Firebase not initialized, using fallback data');
+    return getFromLocalStorage(collectionName, fallbackData);
+  }
+
+  try {
+    const docRef = doc(db, collectionName, docId);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      saveToLocalStorage(collectionName, data);
+      return data;
+    } else {
+      console.log(`No ${collectionName} data in Firebase, using default`);
+      return fallbackData;
+    }
+  } catch (error) {
+    console.error(`Error fetching ${collectionName}:`, error);
+    return getFromLocalStorage(collectionName, fallbackData);
+  }
 };
 
-export const addProject = (project) => {
-  const projects = getProjects();
-  const newProject = {
-    ...project,
-    id: Date.now().toString(),
-    createdAt: new Date().toISOString(),
+/**
+ * Generic Firebase save
+ */
+const saveToFirebase = async (collectionName, docId, data) => {
+  if (!db) {
+    console.warn('Firebase not initialized, saving to localStorage only');
+    saveToLocalStorage(collectionName, data);
+    return { success: false, message: 'Saved locally only' };
+  }
+
+  try {
+    const docRef = doc(db, collectionName, docId);
+    await setDoc(docRef, data, { merge: true });
+    saveToLocalStorage(collectionName, data);
+    return { success: true, message: 'Saved to Firebase successfully' };
+  } catch (error) {
+    console.error(`Error saving ${collectionName}:`, error);
+    saveToLocalStorage(collectionName, data);
+    return { success: false, message: error.message };
+  }
+};
+
+// ============================================
+// ABOUT SECTION
+// ============================================
+
+export const getAboutContent = async () => {
+  const defaultAbout = {
+    title: 'About Me',
+    subtitle: 'Full Stack Developer & AI Enthusiast',
+    description: 'Passionate about building innovative solutions.',
+    skills: techStack.join(', ')
   };
-  projects.push(newProject);
-  saveProjects(projects);
-  return newProject;
+  
+  return await fetchFromFirebase(COLLECTIONS.ABOUT, 'content', defaultAbout);
 };
 
-export const updateProject = (id, updates) => {
-  const projects = getProjects();
-  const index = projects.findIndex(p => p.id === id);
-  if (index !== -1) {
-    projects[index] = { ...projects[index], ...updates, updatedAt: new Date().toISOString() };
-    saveProjects(projects);
-    return projects[index];
+export const saveAboutContent = async (content) => {
+  if (!isAuthenticated()) {
+    auditLog('UNAUTHORIZED_SAVE_ABOUT_ATTEMPT');
+    throw new Error('Unauthorized: Authentication required');
   }
-  return null;
+  const sanitizedContent = sanitizeObject(content);
+  auditLog('ABOUT_CONTENT_SAVED');
+  return await saveToFirebase(COLLECTIONS.ABOUT, 'content', sanitizedContent);
 };
 
-export const deleteProject = (id) => {
-  const projects = getProjects();
-  const filtered = projects.filter(p => p.id !== id);
-  saveProjects(filtered);
-  return filtered;
+export const getTimeline = async () => {
+  return await fetchFromFirebase(COLLECTIONS.TIMELINE, 'data', timeline);
 };
 
-// About Content
-export const getAboutContent = () => {
-  const data = localStorage.getItem(STORAGE_KEYS.ABOUT);
-  return data ? JSON.parse(data) : {};
+export const saveTimeline = async (timelineData) => {
+  return await saveToFirebase(COLLECTIONS.TIMELINE, 'data', timelineData);
 };
 
-export const saveAboutContent = (content) => {
-  localStorage.setItem(STORAGE_KEYS.ABOUT, JSON.stringify(content));
-  window.dispatchEvent(new Event('aboutUpdated'));
+export const getTechStack = async () => {
+  return await fetchFromFirebase(COLLECTIONS.TECH_STACK, 'data', techStack);
 };
 
-// Services Content
-export const getServicesContent = () => {
-  const data = localStorage.getItem(STORAGE_KEYS.SERVICES);
-  return data ? JSON.parse(data) : [];
+export const saveTechStack = async (techStackData) => {
+  return await saveToFirebase(COLLECTIONS.TECH_STACK, 'data', techStackData);
 };
 
-export const saveServicesContent = (services) => {
-  localStorage.setItem(STORAGE_KEYS.SERVICES, JSON.stringify(services));
-  window.dispatchEvent(new Event('servicesUpdated'));
-};
+// ============================================
+// CONTACT SECTION
+// ============================================
 
-// Contact Content
-export const getContactContent = () => {
-  const data = localStorage.getItem(STORAGE_KEYS.CONTACT);
-  return data ? JSON.parse(data) : {};
-};
-
-export const saveContactContent = (content) => {
-  localStorage.setItem(STORAGE_KEYS.CONTACT, JSON.stringify(content));
-  window.dispatchEvent(new Event('contactUpdated'));
-};
-
-// Export all data (for backup)
-export const exportAllData = () => {
-  return {
-    projects: getProjects(),
-    about: getAboutContent(),
-    services: getServicesContent(),
-    contact: getContactContent(),
-    exportedAt: new Date().toISOString(),
+export const getContactContent = async () => {
+  const defaultContact = {
+    email: contactDetails[0]?.value || 'your@email.com',
+    phone: '',
+    location: contactDetails[1]?.value || 'Your Location',
+    availability: 'Available for opportunities'
   };
+  
+  return await fetchFromFirebase(COLLECTIONS.CONTACT, 'content', defaultContact);
 };
 
-// Import all data (for restore)
-export const importAllData = (data) => {
-  if (data.projects) saveProjects(data.projects);
-  if (data.about) saveAboutContent(data.about);
-  if (data.services) saveServicesContent(data.services);
-  if (data.contact) saveContactContent(data.contact);
+export const saveContactContent = async (content) => {
+  if (!isAuthenticated()) {
+    auditLog('UNAUTHORIZED_SAVE_CONTACT_ATTEMPT');
+    throw new Error('Unauthorized: Authentication required');
+  }
+  const sanitizedContent = sanitizeObject(content);
+  auditLog('CONTACT_CONTENT_SAVED');
+  return await saveToFirebase(COLLECTIONS.CONTACT, 'content', sanitizedContent);
+};
+
+export const getSocials = async () => {
+  return await fetchFromFirebase(COLLECTIONS.CONTACT, 'socials', socials);
+};
+
+export const saveSocials = async (socialsData) => {
+  return await saveToFirebase(COLLECTIONS.CONTACT, 'socials', socialsData);
+};
+
+// ============================================
+// SERVICES SECTION
+// ============================================
+
+const defaultServices = [
+  { 
+    id: 1, 
+    title: 'Web Development', 
+    description: 'Building modern, responsive web applications', 
+    icon: 'Code' 
+  },
+  { 
+    id: 2, 
+    title: 'AI Solutions', 
+    description: 'Developing intelligent systems and ML models', 
+    icon: 'Brain' 
+  },
+  { 
+    id: 3, 
+    title: 'Cloud Integration', 
+    description: 'Deploying scalable cloud-based solutions', 
+    icon: 'Cloud' 
+  }
+];
+
+export const getServicesContent = async () => {
+  return await fetchFromFirebase(COLLECTIONS.SERVICES, 'list', defaultServices);
+};
+
+export const saveServicesContent = async (services) => {
+  if (!isAuthenticated()) {
+    auditLog('UNAUTHORIZED_SAVE_SERVICES_ATTEMPT');
+    throw new Error('Unauthorized: Authentication required');
+  }
+  const sanitizedServices = sanitizeObject(services);
+  auditLog('SERVICES_CONTENT_SAVED');
+  return await saveToFirebase(COLLECTIONS.SERVICES, 'list', sanitizedServices);
+};
+
+// ============================================
+// PROJECTS SECTION
+// ============================================
+
+export const getProjects = async () => {
+  if (!db) {
+    return getFromLocalStorage(COLLECTIONS.PROJECTS, defaultProjects);
+  }
+
+  try {
+    const projectsRef = collection(db, COLLECTIONS.PROJECTS);
+    const querySnapshot = await getDocs(projectsRef);
+    
+    if (querySnapshot.empty) {
+      console.log('No projects in Firebase, using defaults');
+      return defaultProjects;
+    }
+
+    const projects = [];
+    querySnapshot.forEach((doc) => {
+      projects.push({ id: doc.id, ...doc.data() });
+    });
+
+    saveToLocalStorage(COLLECTIONS.PROJECTS, projects);
+    return projects;
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+    return getFromLocalStorage(COLLECTIONS.PROJECTS, defaultProjects);
+  }
+};
+
+export const addProject = async (projectData) => {
+  // Security: Check authentication
+  if (!isAuthenticated()) {
+    auditLog('UNAUTHORIZED_ADD_PROJECT_ATTEMPT', { data: projectData });
+    throw new Error('Unauthorized: Authentication required');
+  }
+
+  // Security: Rate limiting
+  if (!checkRateLimit('addProject', 10, 60000)) {
+    auditLog('RATE_LIMIT_EXCEEDED', { action: 'addProject' });
+    throw new Error('Rate limit exceeded. Please try again later.');
+  }
+
+  // Security: Sanitize input
+  const sanitizedData = sanitizeObject(projectData);
+
+  if (!db) {
+    const projects = getFromLocalStorage(COLLECTIONS.PROJECTS, []);
+    const newProject = { ...sanitizedData, id: Date.now().toString() };
+    projects.push(newProject);
+    saveToLocalStorage(COLLECTIONS.PROJECTS, projects);
+    auditLog('PROJECT_ADDED_LOCALLY', { projectId: newProject.id });
+    return { success: false, message: 'Saved locally only' };
+  }
+
+  try {
+    const projectId = sanitizedData.id || `PROJ_${Date.now()}`;
+    const docRef = doc(db, COLLECTIONS.PROJECTS, projectId);
+    await setDoc(docRef, { ...sanitizedData, id: projectId });
+    
+    auditLog('PROJECT_ADDED', { projectId });
+    return { success: true, message: 'Project added successfully' };
+  } catch (error) {
+    const errorMessage = handleSecureError(error, 'addProject');
+    return { success: false, message: errorMessage };
+  }
+};
+
+export const updateProject = async (projectId, projectData) => {
+  // Security: Check authentication
+  if (!isAuthenticated()) {
+    auditLog('UNAUTHORIZED_UPDATE_PROJECT_ATTEMPT', { projectId });
+    throw new Error('Unauthorized: Authentication required');
+  }
+
+  // Security: Rate limiting
+  if (!checkRateLimit('updateProject', 20, 60000)) {
+    auditLog('RATE_LIMIT_EXCEEDED', { action: 'updateProject' });
+    throw new Error('Rate limit exceeded. Please try again later.');
+  }
+
+  // Security: Sanitize input
+  const sanitizedData = sanitizeObject(projectData);
+
+  if (!db) {
+    const projects = getFromLocalStorage(COLLECTIONS.PROJECTS, []);
+    const index = projects.findIndex(p => p.id === projectId);
+    if (index !== -1) {
+      projects[index] = { ...projects[index], ...sanitizedData };
+      saveToLocalStorage(COLLECTIONS.PROJECTS, projects);
+    }
+    auditLog('PROJECT_UPDATED_LOCALLY', { projectId });
+    return { success: false, message: 'Updated locally only' };
+  }
+
+  try {
+    const docRef = doc(db, COLLECTIONS.PROJECTS, projectId);
+    await updateDoc(docRef, sanitizedData);
+    auditLog('PROJECT_UPDATED', { projectId });
+    return { success: true, message: 'Project updated successfully' };
+  } catch (error) {
+    const errorMessage = handleSecureError(error, 'updateProject');
+    return { success: false, message: errorMessage };
+  }
+};
+
+export const deleteProject = async (projectId) => {
+  // Security: Check authentication
+  if (!isAuthenticated()) {
+    auditLog('UNAUTHORIZED_DELETE_PROJECT_ATTEMPT', { projectId });
+    throw new Error('Unauthorized: Authentication required');
+  }
+
+  // Security: Rate limiting
+  if (!checkRateLimit('deleteProject', 10, 60000)) {
+    auditLog('RATE_LIMIT_EXCEEDED', { action: 'deleteProject' });
+    throw new Error('Rate limit exceeded. Please try again later.');
+  }
+
+  if (!db) {
+    const projects = getFromLocalStorage(COLLECTIONS.PROJECTS, []);
+    const filtered = projects.filter(p => p.id !== projectId);
+    saveToLocalStorage(COLLECTIONS.PROJECTS, filtered);
+    auditLog('PROJECT_DELETED_LOCALLY', { projectId });
+    return { success: false, message: 'Deleted locally only' };
+  }
+
+  try {
+    const docRef = doc(db, COLLECTIONS.PROJECTS, projectId);
+    await deleteDoc(docRef);
+    auditLog('PROJECT_DELETED', { projectId });
+    return { success: true, message: 'Project deleted successfully' };
+  } catch (error) {
+    const errorMessage = handleSecureError(error, 'deleteProject');
+    return { success: false, message: errorMessage };
+  }
+};
+
+// ============================================
+// BULK OPERATIONS (for AdminDashboard)
+// ============================================
+
+export const exportAllData = async () => {
+  const data = {
+    about: await getAboutContent(),
+    contact: await getContactContent(),
+    services: await getServicesContent(),
+    projects: await getProjects(),
+    blogs: await getBlogs(),
+    timeline: await getTimeline(),
+    techStack: await getTechStack(),
+    socials: await getSocials()
+  };
+  return data;
+};
+
+export const importAllData = async (data) => {
+  try {
+    if (data.about) await saveAboutContent(data.about);
+    if (data.contact) await saveContactContent(data.contact);
+    if (data.services) await saveServicesContent(data.services);
+    if (data.timeline) await saveTimeline(data.timeline);
+    if (data.techStack) await saveTechStack(data.techStack);
+    if (data.socials) await saveSocials(data.socials);
+    
+    // Import blogs
+    if (data.blogs && Array.isArray(data.blogs)) {
+      for (const blog of data.blogs) {
+        await addBlog(blog);
+      }
+    }
+    
+    return { success: true, message: 'All data imported successfully' };
+  } catch (error) {
+    console.error('Error importing data:', error);
+    return { success: false, message: error.message };
+  }
+};
+
+// Sync default data to Firebase (run once to populate Firebase)
+export const syncDefaultDataToFirebase = async () => {
+  console.log('Starting sync of default data to Firebase...');
+  
+  try {
+    await saveAboutContent({
+      title: 'About Me',
+      subtitle: 'Full Stack Developer & AI Enthusiast',
+      description: 'Passionate about building innovative solutions.',
+      skills: techStack.join(', ')
+    });
+
+    await saveContactContent({
+      email: contactDetails[0]?.value || '',
+      phone: '',
+      location: contactDetails[1]?.value || '',
+      availability: 'Available for opportunities'
+    });
+
+    await saveServicesContent(defaultServices);
+    await saveTimeline(timeline);
+    await saveTechStack(techStack);
+    // Sync blogs
+    for (const blog of defaultBlogs) {
+      await addBlog(blog);
+    }
+
+    await saveSocials(socials);
+
+    // Sync projects
+    for (const project of defaultProjects) {
+      await addProject(project);
+    }
+
+    console.log('✅ Default data synced to Firebase successfully!');
+    return { success: true, message: 'All default data synced to Firebase' };
+  } catch (error) {
+    console.error('Error syncing default data:', error);
+    return { success: false, message: error.message };
+  }
 };

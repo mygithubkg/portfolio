@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Edit, Trash2, X, Save, FolderGit2, Globe, Star, Image, Calendar, Tag, Terminal } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Save, FolderGit2, Globe, Star, Image, Calendar, Tag, Terminal, AlertTriangle } from 'lucide-react';
 import { getProjects, addProject, updateProject, deleteProject } from '../../utils/dataManager';
+import { useAdminAuth } from '../../context/AdminAuthContext';
+import { projectSchema, validateData } from '../../utils/validation';
+import { sanitizeInput, handleSecureError, auditLog } from '../../utils/security';
+import { useNavigate } from 'react-router-dom';
 
 // Reusable "Tech" Input Style
 const TechInput = ({ label, name, value, onChange, placeholder, type = "text", required = false, rows }) => (
@@ -33,9 +37,15 @@ const TechInput = ({ label, name, value, onChange, placeholder, type = "text", r
 );
 
 const ProjectsManager = () => {
+  const { isAuthenticated, logout } = useAdminAuth();
+  const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [deleteConfirmation, setDeleteConfirmation] = useState({ open: false, projectId: null, projectTitle: '' });
+  const [confirmText, setConfirmText] = useState('');
   
   // Initial Form State
   const initialFormState = {
@@ -45,14 +55,26 @@ const ProjectsManager = () => {
   };
   const [formData, setFormData] = useState(initialFormState);
 
+  // Security: Check authentication
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/admin/login');
+    }
+  }, [isAuthenticated, navigate]);
+
   useEffect(() => {
     loadProjects();
   }, []);
 
-  const loadProjects = () => {
-    const data = getProjects();
-    setProjects(data);
-    window.dispatchEvent(new Event('projectsUpdated'));
+  const loadProjects = async () => {
+    try {
+      const data = await getProjects();
+      setProjects(data);
+      window.dispatchEvent(new Event('projectsUpdated'));
+    } catch (error) {
+      const errorMessage = handleSecureError(error, 'Loading projects');
+      console.error(errorMessage);
+    }
   };
 
   const handleOpenModal = (project = null) => {
@@ -69,25 +91,84 @@ const ProjectsManager = () => {
     setIsModalOpen(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Prevent double submission
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+    setErrors({});
+
+    // Prepare project data
     const projectData = {
       ...formData,
       tech: formData.tech.split(',').map(t => t.trim()).filter(t => t),
+      year: parseInt(formData.year)
     };
 
-    if (editingProject) updateProject(editingProject.id, projectData);
-    else addProject(projectData);
+    // Validate data
+    const validation = await validateData(projectData, projectSchema);
+    
+    if (!validation.isValid) {
+      setErrors(validation.errors);
+      setIsSubmitting(false);
+      auditLog('VALIDATION_FAILED', { errors: validation.errors });
+      return;
+    }
 
-    loadProjects();
-    setIsModalOpen(false);
+    try {
+      if (editingProject) {
+        await updateProject(editingProject.id, validation.data);
+        auditLog('PROJECT_UPDATED_SUCCESS', { projectId: editingProject.id });
+      } else {
+        await addProject(validation.data);
+        auditLog('PROJECT_ADDED_SUCCESS');
+      }
+      await loadProjects();
+      setIsModalOpen(false);
+      setFormData(initialFormState);
+      setErrors({});
+    } catch (error) {
+      const errorMessage = handleSecureError(error, 'Saving project');
+      setErrors({ submit: errorMessage });
+      auditLog('PROJECT_SAVE_ERROR', { error: errorMessage });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('CONFIRM DELETION: This action cannot be undone. Proceed?')) {
-      deleteProject(id);
-      loadProjects();
+  const handleDelete = async () => {
+    if (!deleteConfirmation.projectId) return;
+    
+    // Verify typed confirmation matches
+    if (confirmText !== 'DELETE') {
+      setErrors({ delete: 'You must type DELETE to confirm' });
+      return;
     }
+    
+    try {
+      await deleteProject(deleteConfirmation.projectId);
+      await loadProjects();
+      setDeleteConfirmation({ open: false, projectId: null, projectTitle: '' });
+      setConfirmText('');
+      setErrors({});
+      auditLog('PROJECT_DELETED_SUCCESS', { projectId: deleteConfirmation.projectId });
+    } catch (error) {
+      const errorMessage = handleSecureError(error, 'Deleting project');
+      setErrors({ delete: errorMessage });
+      auditLog('PROJECT_DELETE_ERROR', { error: errorMessage });
+    }
+  };
+
+  const openDeleteConfirmation = (project) => {
+    setDeleteConfirmation({
+      open: true,
+      projectId: project.id,
+      projectTitle: project.title
+    });
+    setConfirmText('');
+    setErrors({});
   };
 
   const handleChange = (e) => {
@@ -144,7 +225,7 @@ const ProjectsManager = () => {
                   <span className="text-[10px] text-gray-500">ID: {project.id.toString().padStart(4, '0')}</span>
                   <div className="flex gap-2">
                     <button onClick={() => handleOpenModal(project)} className="text-gray-500 hover:text-cyan-400 transition-colors"><Edit size={12} /></button>
-                    <button onClick={() => handleDelete(project.id)} className="text-gray-500 hover:text-red-500 transition-colors"><Trash2 size={12} /></button>
+                    <button onClick={() => openDeleteConfirmation(project)} className="text-gray-500 hover:text-red-500 transition-colors"><Trash2 size={12} /></button>
                   </div>
                 </div>
 
@@ -262,7 +343,7 @@ const ProjectsManager = () => {
                   </div>
                 </div>
 
-                {/* Actions */}
+                  {/* Actions */}
                 <div className="flex gap-4 mt-8 pt-6 border-t border-white/10">
                   <button 
                     type="button" 
@@ -273,13 +354,115 @@ const ProjectsManager = () => {
                   </button>
                   <button 
                     type="submit" 
-                    className="flex-1 py-3 bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-bold transition-colors flex items-center justify-center gap-2"
+                    disabled={isSubmitting}
+                    className="flex-1 py-3 bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Save size={14} />
-                    {editingProject ? 'UPDATE_RECORDS' : 'EXECUTE_WRITE'}
+                    {isSubmitting ? 'PROCESSING...' : (editingProject ? 'UPDATE_RECORDS' : 'EXECUTE_WRITE')}
                   </button>
                 </div>
+
+                {/* Error Display */}
+                {errors.submit && (
+                  <div className="mt-4 p-4 bg-red-500/10 border border-red-500/50 text-red-400 text-xs font-mono flex items-start gap-2">
+                    <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+                    <span>{errors.submit}</span>
+                  </div>
+                )}
               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* --- DELETE CONFIRMATION MODAL --- */}
+      <AnimatePresence>
+        {deleteConfirmation.open && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }}
+              onClick={() => setDeleteConfirmation({ open: false, projectId: null, projectTitle: '' })}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }} 
+              animate={{ scale: 1, opacity: 1 }} 
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-md bg-[#0a0a0a] border border-red-500/50 shadow-2xl overflow-hidden"
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-red-500/30 bg-red-500/10">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle size={20} className="text-red-500" />
+                  <h2 className="text-sm font-bold text-white tracking-widest">DELETION_WARNING</h2>
+                </div>
+                <button 
+                  onClick={() => setDeleteConfirmation({ open: false, projectId: null, projectTitle: '' })} 
+                  className="text-gray-500 hover:text-white"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6">
+                <p className="text-gray-300 text-sm mb-4">
+                  You are about to permanently delete:
+                </p>
+                <div className="bg-white/5 border border-white/10 p-4 mb-6">
+                  <p className="text-cyan-400 font-mono text-sm font-bold">{deleteConfirmation.projectTitle}</p>
+                  <p className="text-gray-500 text-xs mt-1">ID: {deleteConfirmation.projectId}</p>
+                </div>
+                
+                <p className="text-red-400 text-xs mb-4 font-mono">
+                  ⚠️ THIS ACTION CANNOT BE UNDONE
+                </p>
+
+                <div className="mb-6">
+                  <label className="block text-xs font-mono text-gray-400 mb-2">
+                    Type <span className="text-red-500 font-bold">DELETE</span> to confirm:
+                  </label>
+                  <input
+                    type="text"
+                    value={confirmText}
+                    onChange={(e) => setConfirmText(e.target.value)}
+                    placeholder="DELETE"
+                    className="w-full bg-black/40 border border-white/10 p-3 text-white font-mono text-xs focus:border-red-500 focus:outline-none transition-colors"
+                  />
+                </div>
+
+                {errors.delete && (
+                  <div className="mb-4 p-3 bg-red-500/10 border border-red-500/50 text-red-400 text-xs font-mono">
+                    {errors.delete}
+                  </div>
+                )}
+
+                <div className="flex gap-4">
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      setDeleteConfirmation({ open: false, projectId: null, projectTitle: '' });
+                      setConfirmText('');
+                      setErrors({});
+                    }}
+                    className="flex-1 py-3 border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 text-xs font-bold transition-colors"
+                  >
+                    CANCEL
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={handleDelete}
+                    disabled={confirmText !== 'DELETE'}
+                    className="flex-1 py-3 bg-red-500 hover:bg-red-400 text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    <Trash2 size={14} />
+                    CONFIRM_DELETE
+                  </button>
+                </div>
+              </div>
             </motion.div>
           </div>
         )}
