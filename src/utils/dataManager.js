@@ -13,6 +13,18 @@ import {
   checkRateLimit 
 } from './security';
 
+// ============================================
+// ARRAY UNWRAP HELPER
+// Firestore cannot store top-level arrays — they are wrapped in { items: [...] }.
+// This helper normalises both the new wrapped format and any legacy data.
+// ============================================
+const unwrapItems = (data, fallback = []) => {
+  if (!data) return fallback;
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data.items)) return data.items;
+  return fallback;
+};
+
 // Collection names in Firebase
 const COLLECTIONS = {
   ABOUT: 'about',
@@ -123,19 +135,29 @@ export const saveAboutContent = async (content) => {
 };
 
 export const getTimeline = async () => {
-  return await fetchFromFirebase(COLLECTIONS.TIMELINE, 'data', timeline);
+  const raw = await fetchFromFirebase(COLLECTIONS.TIMELINE, 'data', null);
+  return unwrapItems(raw, timeline);
 };
 
 export const saveTimeline = async (timelineData) => {
-  return await saveToFirebase(COLLECTIONS.TIMELINE, 'data', timelineData);
+  // Wrap the array in an object for Firestore compatibility
+  const dataToSave = Array.isArray(timelineData)
+    ? { items: timelineData }
+    : timelineData;
+  return await saveToFirebase(COLLECTIONS.TIMELINE, 'data', dataToSave);
 };
 
 export const getTechStack = async () => {
-  return await fetchFromFirebase(COLLECTIONS.TECH_STACK, 'data', techStack);
+  const raw = await fetchFromFirebase(COLLECTIONS.TECH_STACK, 'data', null);
+  return unwrapItems(raw, techStack);
 };
 
 export const saveTechStack = async (techStackData) => {
-  return await saveToFirebase(COLLECTIONS.TECH_STACK, 'data', techStackData);
+  // Wrap the array in an object for Firestore compatibility
+  const dataToSave = Array.isArray(techStackData)
+    ? { items: techStackData }
+    : techStackData;
+  return await saveToFirebase(COLLECTIONS.TECH_STACK, 'data', dataToSave);
 };
 
 // ============================================
@@ -164,11 +186,16 @@ export const saveContactContent = async (content) => {
 };
 
 export const getSocials = async () => {
-  return await fetchFromFirebase(COLLECTIONS.CONTACT, 'socials', socials);
+  const raw = await fetchFromFirebase(COLLECTIONS.CONTACT, 'socials', null);
+  return unwrapItems(raw, socials);
 };
 
 export const saveSocials = async (socialsData) => {
-  return await saveToFirebase(COLLECTIONS.CONTACT, 'socials', socialsData);
+  // Wrap the array in an object for Firestore compatibility
+  const dataToSave = Array.isArray(socialsData)
+    ? { items: sanitizeObject(socialsData) }
+    : sanitizeObject(socialsData);
+  return await saveToFirebase(COLLECTIONS.CONTACT, 'socials', dataToSave);
 };
 
 // ============================================
@@ -197,7 +224,8 @@ const defaultServices = [
 ];
 
 export const getServicesContent = async () => {
-  return await fetchFromFirebase(COLLECTIONS.SERVICES, 'list', defaultServices);
+  const raw = await fetchFromFirebase(COLLECTIONS.SERVICES, 'list', null);
+  return unwrapItems(raw, defaultServices);
 };
 
 export const saveServicesContent = async (services) => {
@@ -205,9 +233,12 @@ export const saveServicesContent = async (services) => {
     auditLog('UNAUTHORIZED_SAVE_SERVICES_ATTEMPT');
     throw new Error('Unauthorized: Authentication required');
   }
-  const sanitizedServices = sanitizeObject(services);
+  // Wrap the array in an object for Firestore compatibility
+  const dataToSave = Array.isArray(services)
+    ? { items: sanitizeObject(services) }
+    : sanitizeObject(services);
   auditLog('SERVICES_CONTENT_SAVED');
-  return await saveToFirebase(COLLECTIONS.SERVICES, 'list', sanitizedServices);
+  return await saveToFirebase(COLLECTIONS.SERVICES, 'list', dataToSave);
 };
 
 // ============================================
@@ -353,8 +384,13 @@ export const deleteProject = async (projectId) => {
 // BULK OPERATIONS (for AdminDashboard)
 // ============================================
 
-export const exportAllData = async () => {
-  const data = {
+/**
+ * Export all live website data.
+ * Pass { includeDefaults: true } to also export the defaults/ tree.
+ * The resulting JSON can be used with importAllData() to restore data.
+ */
+export const exportAllData = async (options = {}) => {
+  const liveData = {
     about: await getAboutContent(),
     contact: await getContactContent(),
     services: await getServicesContent(),
@@ -364,7 +400,27 @@ export const exportAllData = async () => {
     techStack: await getTechStack(),
     socials: await getSocials()
   };
-  return data;
+
+  if (options.includeDefaults) {
+    try {
+      // Lazy import to keep defaultsManager out of the main bundle for public pages
+      const dm = await import('./defaultsManager');
+      liveData.defaults = {
+        about:     await dm.getDefaultAboutContent(),
+        contact:   await dm.getDefaultContactContent(),
+        services:  await dm.getDefaultServices(),
+        projects:  await dm.getDefaultProjects(),
+        blogs:     await dm.getDefaultBlogs(),
+        timeline:  await dm.getDefaultTimeline(),
+        techStack: await dm.getDefaultTechStack(),
+        socials:   await dm.getDefaultSocials()
+      };
+    } catch (err) {
+      console.error('Error exporting defaults:', err);
+    }
+  }
+
+  return liveData;
 };
 
 export const importAllData = async (data) => {
@@ -382,6 +438,28 @@ export const importAllData = async (data) => {
         await addBlog(blog);
       }
     }
+
+    // Import defaults/ tree if present in backup
+    if (data.defaults) {
+      try {
+        const dm = await import('./defaultsManager');
+        const d = data.defaults;
+        if (d.about)     await dm.saveDefaultAboutContent(d.about);
+        if (d.contact)   await dm.saveDefaultContactContent(d.contact);
+        if (d.services)  await dm.saveDefaultServices(d.services);
+        if (d.timeline)  await dm.saveDefaultTimeline(d.timeline);
+        if (d.techStack) await dm.saveDefaultTechStack(d.techStack);
+        if (d.socials)   await dm.saveDefaultSocials(d.socials);
+        if (d.projects && Array.isArray(d.projects)) {
+          for (const p of d.projects) await dm.addDefaultProject(p);
+        }
+        if (d.blogs && Array.isArray(d.blogs)) {
+          for (const b of d.blogs) await dm.addDefaultBlog(b);
+        }
+      } catch (err) {
+        console.error('Error importing defaults:', err);
+      }
+    }
     
     return { success: true, message: 'All data imported successfully' };
   } catch (error) {
@@ -390,46 +468,17 @@ export const importAllData = async (data) => {
   }
 };
 
-// Sync default data to Firebase (run once to populate Firebase)
+/**
+ * Sync hardcoded JS default data → LIVE Firestore collections.
+ * @deprecated Use syncHardcodedToDefaults() from defaultsManager.js to seed
+ * the defaults/ tree instead. This function is kept for backward compatibility
+ * with initFirebase.js, but the admin dashboard now calls syncHardcodedToDefaults().
+ */
 export const syncDefaultDataToFirebase = async () => {
-  console.log('Starting sync of default data to Firebase...');
-  
-  try {
-    await saveAboutContent({
-      title: 'About Me',
-      subtitle: 'Full Stack Developer & AI Enthusiast',
-      description: 'Passionate about building innovative solutions.',
-      skills: techStack.join(', ')
-    });
-
-    await saveContactContent({
-      email: contactDetails[0]?.value || '',
-      phone: '',
-      location: contactDetails[1]?.value || '',
-      availability: 'Available for opportunities'
-    });
-
-    await saveServicesContent(defaultServices);
-    await saveTimeline(timeline);
-    await saveTechStack(techStack);
-    // Sync blogs
-    for (const blog of defaultBlogs) {
-      await addBlog(blog);
-    }
-
-    await saveSocials(socials);
-
-    // Sync projects
-    for (const project of defaultProjects) {
-      await addProject(project);
-    }
-
-    console.log('✅ Default data synced to Firebase successfully!');
-    return { success: true, message: 'All default data synced to Firebase' };
-  } catch (error) {
-    console.error('Error syncing default data:', error);
-    return { success: false, message: error.message };
-  }
+  console.warn('[dataManager] syncDefaultDataToFirebase() is deprecated. Use syncHardcodedToDefaults() from defaultsManager.js instead.');
+  // Delegate to the new defaults seeding function
+  const { syncHardcodedToDefaults } = await import('./defaultsManager');
+  return await syncHardcodedToDefaults();
 };
 
 // ============================================

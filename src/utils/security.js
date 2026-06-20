@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify';
+import { auth } from '../config/firebase';
 
 // ============================================
 // INPUT SANITIZATION - XSS Protection
@@ -198,16 +199,20 @@ export const checkRateLimit = (key, maxAttempts = 5, windowMs = 60000) => {
 
 /**
  * Check if user is authenticated
+ * Primary: checks Firebase Auth current user (set by onAuthStateChanged).
+ * Fallback: checks legacy sessionStorage token for backward compatibility.
  * @returns {boolean} - Whether user is authenticated
  */
 export const isAuthenticated = () => {
+  // Primary: Firebase Auth current user
+  if (auth && auth.currentUser) {
+    return true;
+  }
+  // Fallback: legacy sessionStorage token
   const token = sessionStorage.getItem('adminToken');
   const expiry = sessionStorage.getItem('adminTokenExpiry');
-  
   if (!token || !expiry) return false;
-  
-  const now = Date.now();
-  return now < parseInt(expiry);
+  return Date.now() < parseInt(expiry);
 };
 
 /**
@@ -220,12 +225,16 @@ export const getAuthToken = () => {
 };
 
 /**
- * Clear authentication
+ * Clear authentication artifacts from sessionStorage.
+ * Firebase Auth manages its own session (IndexedDB) — call signOut(auth)
+ * separately to log out of Firebase. This function clears the CSRF token
+ * and any legacy pseudo-auth tokens.
  */
 export const clearAuth = () => {
+  sessionStorage.removeItem('csrfToken');
+  // Legacy cleanup (safe to keep for compatibility)
   sessionStorage.removeItem('adminToken');
   sessionStorage.removeItem('adminTokenExpiry');
-  sessionStorage.removeItem('csrfToken');
 };
 
 // ============================================

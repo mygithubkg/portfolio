@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Button } from './ui'; 
+import { Button } from './ui';
 import { FaReact, FaNodeJs, FaPython, FaGithub, FaLinkedin, FaArrowRight, FaBrain, FaCloud, FaLayerGroup } from 'react-icons/fa';
 import { SiOpenai, SiTypescript, SiNextdotjs, SiTailwindcss, SiPostgresql, SiFirebase, SiExpress } from 'react-icons/si';
 
@@ -75,31 +75,31 @@ export default function Home() {
 
   return (
     <div className="relative bg-[#050505] text-white overflow-hidden">
-      
+
       {/* ==================== SECTOR 1: THE HERO ==================== */}
       <section className="relative min-h-screen flex flex-col justify-center pt-20">
-        
+
         {/* Background Grid */}
         <div className="absolute inset-0 pointer-events-none opacity-20"
-             style={{
-               backgroundImage: `linear-gradient(to right, #333 1px, transparent 1px), linear-gradient(to bottom, #333 1px, transparent 1px)`,
-               backgroundSize: '50px 50px',
-               transform: 'perspective(500px) rotateX(60deg) translateY(-150px) scale(1.5)',
-               maskImage: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 80%)'
-             }}
+          style={{
+            backgroundImage: `linear-gradient(to right, #333 1px, transparent 1px), linear-gradient(to bottom, #333 1px, transparent 1px)`,
+            backgroundSize: '50px 50px',
+            transform: 'perspective(500px) rotateX(60deg) translateY(-150px) scale(1.5)',
+            maskImage: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 80%)'
+          }}
         />
 
         {/* Ambient Glows */}
-        <motion.div 
+        <motion.div
           className="absolute top-0 right-0 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"
           animate={{ x: mousePosition.x * -0.05, y: mousePosition.y * -0.05 }}
         />
 
         <div className="container mx-auto px-6 relative z-10 grid lg:grid-cols-2 gap-12 items-center">
-          
+
           {/* Text Content */}
           <div className="space-y-8">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               className="inline-flex items-center gap-2 px-3 py-1 rounded border border-cyan-500/30 bg-cyan-500/5"
@@ -110,7 +110,7 @@ export default function Home() {
               </span>
             </motion.div>
 
-            <motion.h1 
+            <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
@@ -122,17 +122,17 @@ export default function Home() {
               </span>
             </motion.h1>
 
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
               className="text-lg text-gray-400 max-w-lg leading-relaxed border-l-2 border-white/10 pl-6"
             >
-              Building scalable web ecosystems and intelligent agents. 
-              Bridging the gap between <span className="text-white">Generative AI</span> and <span className="text-white">Enterprise Engineering</span>.
+              Building scalable web ecosystems and intelligent agents.
+              Bridging the gap between <span className="text-white">unstructured data</span> and <span className="text-white">structured intelligence</span> using advanced NLP and Generative AI.
             </motion.p>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -152,7 +152,7 @@ export default function Home() {
           </div>
 
           {/* Holographic Visual (Code Logic Only - No hard stats) */}
-          <motion.div 
+          <motion.div
             style={{ y: y1 }}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -160,7 +160,7 @@ export default function Home() {
             className="relative hidden lg:block"
           >
             <div className="relative w-[500px] h-[550px] bg-gradient-to-b from-white/5 to-transparent rounded-2xl border border-white/10 backdrop-blur-sm p-8 transform rotate-3 hover:rotate-0 transition-transform duration-500 flex flex-col justify-between">
-              
+
               {/* Code Snippet Visual */}
               <div>
                 <div className="flex gap-2 mb-6">
@@ -170,11 +170,11 @@ export default function Home() {
                 </div>
                 <div className="font-mono text-sm text-gray-400 space-y-3">
                   <p><span className="text-purple-400">const</span> <span className="text-yellow-200">Engineer</span> = <span className="text-blue-300">init</span>({'{'}</p>
-                  <p className="pl-4">name: <span className="text-green-300">'Karrtik'</span>,</p>
-                  <p className="pl-4">focus: [<span className="text-green-300">'GenAI'</span>, <span className="text-green-300">'Cloud'</span>],</p>
-                  <p className="pl-4">stack: <span className="text-blue-300">require</span>(<span className="text-green-300">'./FullStack'</span>)</p>
+                  <p className="pl-4">name: <span className="text-green-300">'Karrtik Gupta'</span>,</p>
+                  <p className="pl-4">focus: [<span className="text-green-300">'NLP'</span>, <span className="text-green-300">'GenAI'</span>,<span className="text-green-300">'Cloud'</span>],</p>
+                  <p className="pl-4">stack: <span className="text-blue-300">require</span>(<span className="text-green-300">'./Python'</span>,<span className="text-green-300">'./LangChain'</span>,<span className="text-green-300">'./RAG'</span>)</p>
                   <p>{'}'});</p>
-                  
+
                   <p className="mt-4 text-gray-600">// Initializing AI Agents...</p>
                   <p className="text-cyan-400 animate-pulse"> CONNECTION_ESTABLISHED</p>
                 </div>
@@ -182,22 +182,22 @@ export default function Home() {
 
               {/* Minimal Footer in Card */}
               <div className="border-t border-white/5 pt-6">
-                 <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 bg-cyan-500/10 rounded-full flex items-center justify-center text-cyan-400">
-                       <FaCloud />
-                    </div>
-                    <div>
-                       <div className="text-white font-bold text-sm">Azure Cloud Ready</div>
-                       <div className="text-gray-500 text-xs">Deployment Protocols Active</div>
-                    </div>
-                 </div>
+                <div className="flex items-center gap-4">
+                  <div className="h-10 w-10 bg-cyan-500/10 rounded-full flex items-center justify-center text-cyan-400">
+                    <FaCloud />
+                  </div>
+                  <div>
+                    <div className="text-white font-bold text-sm">Cloud Ready</div>
+                    <div className="text-gray-500 text-xs">Deployment Protocols Active</div>
+                  </div>
+                </div>
               </div>
 
               {/* Image Overlay */}
-              <img 
-                 src="/karrtik.png" 
-                 alt="Karrtik"
-                 className="absolute bottom-0 right-0 w-64 h-64 object-cover opacity-40 grayscale mask-image-gradient-to-t" 
+              <img
+                src="/karrtik.png"
+                alt="Karrtik"
+                className="absolute bottom-0 right-0 w-64 h-64 object-cover opacity-40 grayscale mask-image-gradient-to-t"
               />
             </div>
           </motion.div>
@@ -207,119 +207,119 @@ export default function Home() {
       {/* ==================== SECTOR 2: AUTHENTIC CAPABILITIES ==================== */}
       {/* Data source: [cite: 21, 30, 87, 88, 28] */}
       <section className="py-24 relative z-10 bg-[#080808]">
-         <div className="container mx-auto px-6">
-            <div className="mb-16 md:flex justify-between items-end">
-               <div>
-                  <h2 className="text-4xl font-bold mb-4">CORE <span className="text-cyan-400">COMPETENCIES</span></h2>
-                  <p className="text-gray-400 max-w-md">Developing intelligent applications with a focus on problem-solving and scalability.</p>
-               </div>
-               <div className="hidden md:block w-32 h-1 bg-gradient-to-r from-cyan-500 to-transparent" />
+        <div className="container mx-auto px-6">
+          <div className="mb-16 md:flex justify-between items-end">
+            <div>
+              <h2 className="text-4xl font-bold mb-4">CORE <span className="text-cyan-400">COMPETENCIES</span></h2>
+              <p className="text-gray-400 max-w-md">Developing intelligent applications with a focus on problem-solving and scalability.</p>
             </div>
+            <div className="hidden md:block w-32 h-1 bg-gradient-to-r from-cyan-500 to-transparent" />
+          </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-               <ServiceCard 
-                  icon={FaBrain}
-                  title="GenAI Solutions"
-                  desc="Developing agentic workflows using the Gemini, OPENAI and more API. Automating complex tasks through prompt engineering and structured AI outputs."
-                  delay={0}
-               />
-               <ServiceCard 
-                  icon={FaLayerGroup}
-                  title="Full Stack Systems"
-                  desc="Building responsive platforms with React, Node.js, and Express. Handling real-time data and dynamic content with Firebase."
-                  delay={0.1}
-               />
-               <ServiceCard 
-                  icon={FaCloud}
-                  title="Cloud & Deployment"
-                  desc="Experience with Microsoft Azure for AI model workflows and data preprocessing. Deploying scalable web applications."
-                  delay={0.2}
-               />
-            </div>
-         </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <ServiceCard
+              icon={FaBrain}
+              title="GenAI & LLM Engineering"
+              desc="Developing intelligent automation tools and agentic workflows using the LLMs API, LangChain, and RAG architectures. Automating complex tasks to transform unstructured data."
+              delay={0}
+            />
+            <ServiceCard
+              icon={FaLayerGroup}
+              title="Full-Stack Ecosystems"
+              desc="Architecting scalable platforms using NextJS, React 18, Node.js, and Express.js. Implementing real-time synchronization, role-based workflows, and secure databases using Firebase and PostgreSQL."
+              delay={0.1}
+            />
+            <ServiceCard
+              icon={FaCloud}
+              title="Applied NLP & Research"
+              desc="Building end-to-end NLP pipelines to extract and classify unstructured text. Leveraging Hugging Face transformers, cross-encoders, and semantic analysis to construct structured data models."
+              delay={0.2}
+            />
+          </div>
+        </div>
       </section>
 
       {/* ==================== SECTOR 3: TECH TICKER ==================== */}
       <section className="py-0">
-         <TechTicker />
+        <TechTicker />
       </section>
 
       {/* ==================== SECTOR 4: CORE PHILOSOPHY (Replaces Timeline) ==================== */}
       <section className="py-24 relative">
-         <div className="container mx-auto px-6">
-            <h2 className="text-3xl font-bold mb-12 text-center md:text-left">ENGINEERING <span className="text-cyan-400">PHILOSOPHY</span></h2>
-            
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-               <div className="space-y-8">
-                  <motion.div 
-                     initial={{ opacity: 0, x: -20 }}
-                     whileInView={{ opacity: 1, x: 0 }}
-                     viewport={{ once: true }}
-                     className="border-l-2 border-cyan-500/50 pl-6"
-                  >
-                     <h3 className="text-xl font-bold text-white mb-2">Scalability First</h3>
-                     <p className="text-gray-400 leading-relaxed">
-                        Architecture matters. Whether it's a summit platform serving thousands or a personal AI tool, I build systems designed to handle growth and maintain performance.
-                     </p>
-                  </motion.div>
+        <div className="container mx-auto px-6">
+          <h2 className="text-3xl font-bold mb-12 text-center md:text-left">ENGINEERING <span className="text-cyan-400">PHILOSOPHY</span></h2>
 
-                  <motion.div 
-                     initial={{ opacity: 0, x: -20 }}
-                     whileInView={{ opacity: 1, x: 0 }}
-                     viewport={{ once: true }}
-                     transition={{ delay: 0.1 }}
-                     className="border-l-2 border-white/10 pl-6"
-                  >
-                     <h3 className="text-xl font-bold text-white mb-2">Human-AI Synergy</h3>
-                     <p className="text-gray-400 leading-relaxed">
-                        AI shouldn't just exist; it should assist. I focus on creating intuitive interfaces (like Voice-First interactions) that make advanced technology accessible to users.
-                     </p>
-                  </motion.div>
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="border-l-2 border-cyan-500/50 pl-6"
+              >
+                <h3 className="text-xl font-bold text-white mb-2">Scalability First</h3>
+                <p className="text-gray-400 leading-relaxed">
+                  Architecture matters. Whether developing a real-time command center syncing multiple hackathon teams or engineering NLP pipelines to process complex scientific corpora, I build robust systems designed to handle data at scale.
+                </p>
+              </motion.div>
 
-                  <motion.div 
-                     initial={{ opacity: 0, x: -20 }}
-                     whileInView={{ opacity: 1, x: 0 }}
-                     viewport={{ once: true }}
-                     transition={{ delay: 0.2 }}
-                     className="border-l-2 border-white/10 pl-6"
-                  >
-                     <h3 className="text-xl font-bold text-white mb-2">Operational Efficiency</h3>
-                     <p className="text-gray-400 leading-relaxed">
-                        From optimizing event logistics to refining codebases, I believe in streamlining processes to achieve maximum output with minimal friction.
-                     </p>
-                  </motion.div>
-               </div>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="border-l-2 border-white/10 pl-6"
+              >
+                <h3 className="text-xl font-bold text-white mb-2">Human-AI Synergy</h3>
+                <p className="text-gray-400 leading-relaxed">
+                  AI shouldn't just exist; it should solve complex problems. I focus on bridging the gap between ambiguity and clarity, using advanced prompt engineering and GenAI tools to transform unstructured inputs into structured, well-defined technical solutions.
+                </p>
+              </motion.div>
 
-               {/* Abstract Visual Filler */}
-               <div className="relative h-full min-h-[300px] flex items-center justify-center">
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 blur-3xl" />
-                  <div className="grid grid-cols-2 gap-4 opacity-50">
-                     <div className="w-32 h-32 border border-white/10 rounded-full flex items-center justify-center animate-pulse">
-                        <span className="font-mono text-xs text-cyan-400">DEPLOY</span>
-                     </div>
-                     <div className="w-32 h-32 border border-white/10 rounded-full flex items-center justify-center mt-12">
-                        <span className="font-mono text-xs text-white">OPTIMIZE</span>
-                     </div>
-                  </div>
-               </div>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="border-l-2 border-white/10 pl-6"
+              >
+                <h3 className="text-xl font-bold text-white mb-2">Operational Efficiency</h3>
+                <p className="text-gray-400 leading-relaxed">
+                  From optimizing event logistics to improve onboarding efficiency by 30%, to fine-tuning machine learning models for peak accuracy, I believe in streamlining both organizational and technical workflows to achieve maximum output.
+                </p>
+              </motion.div>
             </div>
-         </div>
+
+            {/* Abstract Visual Filler */}
+            <div className="relative h-full min-h-[300px] flex items-center justify-center">
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 blur-3xl" />
+              <div className="grid grid-cols-2 gap-4 opacity-50">
+                <div className="w-32 h-32 border border-white/10 rounded-full flex items-center justify-center animate-pulse">
+                  <span className="font-mono text-xs text-cyan-400">DEPLOY</span>
+                </div>
+                <div className="w-32 h-32 border border-white/10 rounded-full flex items-center justify-center mt-12">
+                  <span className="font-mono text-xs text-white">OPTIMIZE</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ==================== SECTOR 5: CURRENT FOCUS (Replaces Stats Grid) ==================== */}
       <section className="py-12 border-t border-white/5 bg-[#080808]">
-         <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="text-gray-500 font-mono text-sm uppercase tracking-widest">
+        <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-gray-500 font-mono text-sm uppercase tracking-widest">
                // Current Focus
-            </div>
-            <div className="flex gap-8 text-white font-bold text-lg md:text-xl">
-               <span className="hover:text-cyan-400 transition-colors cursor-default">Agentic Workflows</span>
-               <span className="text-gray-700">/</span>
-               <span className="hover:text-cyan-400 transition-colors cursor-default">Cloud Architecture</span>
-               <span className="text-gray-700">/</span>
-               <span className="hover:text-cyan-400 transition-colors cursor-default">Full Stack Development</span>
-            </div>
-         </div>
+          </div>
+          <div className="flex gap-8 text-white font-bold text-lg md:text-xl">
+            <span className="hover:text-cyan-400 transition-colors cursor-default">Agentic Workflows</span>
+            <span className="text-gray-700">/</span>
+            <span className="hover:text-cyan-400 transition-colors cursor-default">Cloud Architecture</span>
+            <span className="text-gray-700">/</span>
+            <span className="hover:text-cyan-400 transition-colors cursor-default">NLP & RAG</span>
+          </div>
+        </div>
       </section>
 
     </div>

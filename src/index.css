@@ -8,7 +8,8 @@ html {
   background: #0d1117;
   color: #e5e7eb;
   font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  font-size: 10px; /* Base size for mobile */
+  font-size: 10px;
+  /* Base size for mobile */
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -21,7 +22,12 @@ body {
 }
 
 /* Enhanced typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
   font-weight: 700;
   color: #e5e7eb;
@@ -32,28 +38,33 @@ h1, h2, h3, h4, h5, h6 {
 h1 {
   font-weight: 800;
   letter-spacing: -0.03em;
-  font-size: 2.5rem; /* Mobile first */
+  font-size: 2.5rem;
+  /* Mobile first */
 }
 
 h2 {
   font-weight: 700;
   letter-spacing: -0.02em;
-  font-size: 2rem; /* Mobile first */
+  font-size: 2rem;
+  /* Mobile first */
 }
 
 h3 {
-  font-size: 1.5rem; /* Mobile first */
+  font-size: 1.5rem;
+  /* Mobile first */
 }
 
 h4 {
-  font-size: 1.25rem; /* Mobile first */
+  font-size: 1.25rem;
+  /* Mobile first */
 }
 
 p {
   font-weight: 400;
   line-height: 1.7;
   color: #94a3b8;
-  font-size: 1rem; /* Mobile first */
+  font-size: 1rem;
+  /* Mobile first */
 }
 
 /* Enhanced glass card effect */
@@ -74,7 +85,7 @@ p {
 
 /* Enhanced button styles */
 button {
-  background: #3b82f6;
+  /* background: #3b82f6; */
   color: #fff;
   border-radius: 0.75rem;
   font-weight: 600;
@@ -87,8 +98,9 @@ button {
   letter-spacing: 0.01em;
 }
 
-button:hover, button:focus {
-  background: #2563eb;
+button:hover,
+button:focus {
+  /* background: #2563eb; */
   color: #fff;
   box-shadow: 0 0 0 2px #3b82f6, 0 4px 12px 0 rgba(31, 38, 135, 0.12);
   transform: translateY(-1px);
@@ -152,6 +164,7 @@ a:hover {
   0% {
     background-position: -200px 0;
   }
+
   100% {
     background-position: calc(200px + 100%) 0;
   }
@@ -195,21 +208,22 @@ a:hover {
 /* Responsive text sizing */
 @media (min-width: 640px) {
   html {
-    font-size: 18px; /* Larger for tablets */
+    font-size: 18px;
+    /* Larger for tablets */
   }
-  
+
   h1 {
     font-size: 3.5rem;
   }
-  
+
   h2 {
     font-size: 2.5rem;
   }
-  
+
   h3 {
     font-size: 2rem;
   }
-  
+
   p {
     font-size: 1.125rem;
   }
@@ -217,21 +231,22 @@ a:hover {
 
 @media (min-width: 1024px) {
   html {
-    font-size: 18px; /* Desktop size */
+    font-size: 18px;
+    /* Desktop size */
   }
-  
+
   h1 {
     font-size: 4rem;
   }
-  
+
   h2 {
     font-size: 3rem;
   }
-  
+
   h3 {
     font-size: 2.25rem;
   }
-  
+
   p {
     font-size: 1.125rem;
   }
@@ -239,21 +254,22 @@ a:hover {
 
 @media (min-width: 1536px) {
   html {
-    font-size: 14px; /* Large screens */
+    font-size: 14px;
+    /* Large screens */
   }
-  
+
   h1 {
     font-size: 4.5rem;
   }
-  
+
   h2 {
     font-size: 3.5rem;
   }
-  
+
   h3 {
     font-size: 2.5rem;
   }
-  
+
   p {
     font-size: 1.25rem;
   }
@@ -264,12 +280,12 @@ a:hover {
   .glass-card {
     border-radius: 1rem;
   }
-  
+
   button {
     padding: 0.625em 1.25em;
     font-size: 0.875rem;
   }
-  
+
   /* Reduce motion for mobile */
   @media (prefers-reduced-motion: reduce) {
     * {
@@ -282,11 +298,12 @@ a:hover {
 
 /* Touch-friendly interactions */
 @media (hover: none) and (pointer: coarse) {
+
   button:hover,
   a:hover {
     transform: none;
   }
-  
+
   .glass-card:hover {
     transform: none;
   }

@@ -5,7 +5,7 @@ import { useAdminAuth } from '../context/AdminAuthContext';
 import { Lock, User, Eye, EyeOff, Shield, Sparkles } from 'lucide-react';
 
 const AdminLogin = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -21,7 +21,7 @@ const AdminLogin = () => {
     // Simulate a small delay for better UX
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    const result = login(username, password);
+    const result = await login(email, password);
     
     if (result.success) {
       navigate('/admin/dashboard');
@@ -192,7 +192,7 @@ const AdminLogin = () => {
               whileHover={{ scale: 1.01 }}
             >
               <label className="block text-textSecondary text-sm font-medium mb-2">
-                Username
+                Email
               </label>
               <motion.div 
                 className="relative group"
@@ -206,11 +206,11 @@ const AdminLogin = () => {
                   <User className="w-5 h-5 text-textSecondary group-focus-within:text-accent transition-colors" />
                 </motion.div>
                 <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-background/50 border border-border rounded-lg pl-10 pr-4 py-3 text-white placeholder-textSecondary focus:outline-none focus:border-accent focus:bg-background/70 focus:shadow-lg focus:shadow-accent/20 transition-all duration-300"
-                  placeholder="Enter username"
+                  placeholder="Enter admin email"
                   required
                   disabled={isLoading}
                 />

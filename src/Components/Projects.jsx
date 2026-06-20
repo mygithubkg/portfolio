@@ -232,13 +232,13 @@ export default function Projects() {
                           </div>
 
                           <div className="flex gap-4 mt-8 pt-6 border-t border-white/10">
-                             {project.links.live && (
-                               <a href={project.links.live} target="_blank" rel="noreferrer" className="flex-1 py-3 bg-white text-black text-center text-sm font-bold hover:bg-cyan-400 transition-colors rounded">
+                             {project.link && (
+                               <a href={project.link} target="_blank" rel="noreferrer" className="flex-1 py-3 bg-white text-black text-center text-sm font-bold hover:bg-cyan-400 transition-colors rounded">
                                   LAUNCH LIVE
                                </a>
                              )}
-                             {project.links.code && (
-                               <a href={project.links.code} target="_blank" rel="noreferrer" className="flex-1 py-3 border border-white/20 text-white text-center text-sm font-bold hover:bg-white/10 transition-colors rounded flex items-center justify-center gap-2">
+                             {project.github && (
+                               <a href={project.github} target="_blank" rel="noreferrer" className="flex-1 py-3 border border-white/20 text-white text-center text-sm font-bold hover:bg-white/10 transition-colors rounded flex items-center justify-center gap-2">
                                   <FaGithub /> CODE
                                </a>
                              )}

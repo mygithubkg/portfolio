@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../config/firebase';
 import { generateCSRFToken, setCSRFToken, clearAuth, auditLog } from '../utils/security';
 
 const AdminAuthContext = createContext();
@@ -16,130 +18,122 @@ export const AdminAuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [loginAttempts, setLoginAttempts] = useState(0);
   const [lockoutUntil, setLockoutUntil] = useState(null);
+  const [firebaseUser, setFirebaseUser] = useState(null);
 
+  // Listen to Firebase Auth state changes
   useEffect(() => {
-    // Check if admin is already logged in
-    const adminToken = sessionStorage.getItem('adminToken');
-    const tokenExpiry = sessionStorage.getItem('adminTokenExpiry');
-    
-    if (adminToken && tokenExpiry) {
-      const now = new Date().getTime();
-      if (now < parseInt(tokenExpiry)) {
+    if (!auth) {
+      console.warn('Firebase Auth not initialized — admin login unavailable');
+      setIsLoading(false);
+      return;
+    }
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setFirebaseUser(user);
         setIsAuthenticated(true);
-        // Generate CSRF token on auth check
+        // Generate CSRF token on auth restore / login
         const csrfToken = generateCSRFToken();
         setCSRFToken(csrfToken);
-        auditLog('AUTH_VERIFIED', { timestamp: new Date().toISOString() });
+        auditLog('AUTH_STATE_RESTORED', { uid: user.uid, timestamp: new Date().toISOString() });
       } else {
-        // Token expired - clear everything
+        setFirebaseUser(null);
+        setIsAuthenticated(false);
         clearAuth();
-        auditLog('AUTH_EXPIRED', { timestamp: new Date().toISOString() });
       }
-    }
-    setIsLoading(false);
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const login = (username, password) => {
-    // Check if account is locked
+  /**
+   * Authenticate with Firebase Auth (email + password).
+   * Keeps client-side lockout as defense-in-depth before hitting Firebase.
+   */
+  const login = async (email, password) => {
+    // Check lockout
     if (lockoutUntil && new Date().getTime() < lockoutUntil) {
       const remainingTime = Math.ceil((lockoutUntil - new Date().getTime()) / 1000);
       auditLog('LOGIN_ATTEMPT_LOCKED', { remainingTime });
-      return { 
-        success: false, 
-        message: `Too many failed attempts. Try again in ${remainingTime} seconds.` 
+      return {
+        success: false,
+        message: `Too many failed attempts. Try again in ${remainingTime} seconds.`
       };
     }
 
-    const adminUsername = import.meta.env.VITE_ADMIN_USERNAME;
-    const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
-
-    // Validate credentials
-    if (!username || !password) {
+    if (!email || !password) {
       auditLog('LOGIN_FAILED', { reason: 'EMPTY_CREDENTIALS' });
-      return { success: false, message: 'Username and password are required.' };
+      return { success: false, message: 'Email and password are required.' };
     }
 
-    if (username === adminUsername && password === adminPassword) {
-      // Generate secure token with random component
-      const randomComponent = Array.from(crypto.getRandomValues(new Uint8Array(16)))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
-      const token = btoa(`${username}:${Date.now()}:${randomComponent}`);
-      const expiry = new Date().getTime() + (8 * 60 * 60 * 1000); // 8 hours (reduced from 24)
-      
-      sessionStorage.setItem('adminToken', token);
-      sessionStorage.setItem('adminTokenExpiry', expiry.toString());
-      
-      // Generate CSRF token
-      const csrfToken = generateCSRFToken();
-      setCSRFToken(csrfToken);
-      
-      setIsAuthenticated(true);
+    if (!auth) {
+      return { success: false, message: 'Authentication service unavailable. Check Firebase config.' };
+    }
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // onAuthStateChanged will handle setIsAuthenticated(true) + CSRF generation
       setLoginAttempts(0);
       setLockoutUntil(null);
-      
-      auditLog('LOGIN_SUCCESS', { username, timestamp: new Date().toISOString() });
+      auditLog('LOGIN_SUCCESS', { uid: user.uid, timestamp: new Date().toISOString() });
       return { success: true, message: 'Login successful.' };
-    }
-    
-    // Failed login attempt
-    const newAttempts = loginAttempts + 1;
-    setLoginAttempts(newAttempts);
-    
-    // Lock account after 5 failed attempts for 15 minutes
-    if (newAttempts >= 5) {
-      const lockTime = new Date().getTime() + (15 * 60 * 1000);
-      setLockoutUntil(lockTime);
-      auditLog('ACCOUNT_LOCKED', { attempts: newAttempts, lockUntil: new Date(lockTime).toISOString() });
-      return { 
-        success: false, 
-        message: 'Too many failed attempts. Account locked for 15 minutes.' 
+    } catch (error) {
+      const newAttempts = loginAttempts + 1;
+      setLoginAttempts(newAttempts);
+
+      // Lock after 5 failed attempts for 15 minutes
+      if (newAttempts >= 5) {
+        const lockTime = new Date().getTime() + (15 * 60 * 1000);
+        setLockoutUntil(lockTime);
+        auditLog('ACCOUNT_LOCKED', {
+          attempts: newAttempts,
+          lockUntil: new Date(lockTime).toISOString()
+        });
+        return {
+          success: false,
+          message: 'Too many failed attempts. Account locked for 15 minutes.'
+        };
+      }
+
+      auditLog('LOGIN_FAILED', {
+        reason: error.code || 'UNKNOWN',
+        attempts: newAttempts,
+        remainingAttempts: 5 - newAttempts
+      });
+      return {
+        success: false,
+        message: `Invalid credentials. ${5 - newAttempts} attempts remaining.`
       };
     }
-    
-    auditLog('LOGIN_FAILED', { 
-      reason: 'INVALID_CREDENTIALS', 
-      attempts: newAttempts,
-      remainingAttempts: 5 - newAttempts 
-    });
-    
-    return { 
-      success: false, 
-      message: `Invalid credentials. ${5 - newAttempts} attempts remaining.` 
-    };
   };
 
-  const logout = () => {
+  /**
+   * Sign out from Firebase Auth and clear local auth artifacts.
+   */
+  const logout = async () => {
     auditLog('LOGOUT', { timestamp: new Date().toISOString() });
     clearAuth();
-    setIsAuthenticated(false);
+    if (auth) {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+    }
+    // onAuthStateChanged will handle setting isAuthenticated to false
   };
 
-  // Auto-logout on token expiry
-  useEffect(() => {
-    if (!isAuthenticated) return;
-
-    const checkInterval = setInterval(() => {
-      const tokenExpiry = sessionStorage.getItem('adminTokenExpiry');
-      if (tokenExpiry) {
-        const now = new Date().getTime();
-        if (now >= parseInt(tokenExpiry)) {
-          auditLog('AUTO_LOGOUT', { reason: 'TOKEN_EXPIRED' });
-          logout();
-        }
-      }
-    }, 60000); // Check every minute
-
-    return () => clearInterval(checkInterval);
-  }, [isAuthenticated]);
-
   return (
-    <AdminAuthContext.Provider value={{ 
-      isAuthenticated, 
-      isLoading, 
-      login, 
+    <AdminAuthContext.Provider value={{
+      isAuthenticated,
+      isLoading,
+      login,
       logout,
       loginAttempts,
+      firebaseUser,
       isLocked: lockoutUntil && new Date().getTime() < lockoutUntil
     }}>
       {children}

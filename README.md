@@ -1,306 +1,520 @@
-# 🚀 Karrtik Gupta - Portfolio Website
+# 🚀 Karrtik Gupta — Personal Portfolio
 
-<div align="center">
+A modern, full-stack personal portfolio built with **React + Vite**, **Firebase Firestore**, **Framer Motion**, and **Tailwind CSS**. Features a live admin dashboard to manage all site content without touching code.
 
-![React](https://img.shields.io/badge/React-19.1.0-61DAFB?style=for-the-badge&logo=react)
-![Vite](https://img.shields.io/badge/Vite-6.3.5-646CFF?style=for-the-badge&logo=vite)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1.7-38B2AC?style=for-the-badge&logo=tailwind-css)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0.0-3178C6?style=for-the-badge&logo=typescript)
-![Framer Motion](https://img.shields.io/badge/Framer_Motion-12.12.1-0055FF?style=for-the-badge&logo=framer)
-
-[![Live Demo](https://img.shields.io/badge/Live_Demo-View_Website-00C853?style=for-the-badge&logo=vercel)]((https://portfolio-tau-kohl-30.vercel.app/))
-
-
-*A modern, responsive portfolio website showcasing full-stack development skills and AI expertise*
-
-</div>
+**Live site:** [karrtikgupta.vercel.app](https://karrtikgupta.vercel.app)
 
 ---
 
-## ✨ Overview
+## 📁 Complete Folder Structure
 
-This portfolio represents a sophisticated web application built with cutting-edge technologies, designed to showcase professional capabilities in full-stack development, AI integration, and modern web design. The project demonstrates expertise in React ecosystem, responsive design, and user experience optimization.
-
-### 🎯 Key Highlights
-
-- **Modern React Architecture** with latest React 19 features
-- **Responsive Design** optimized for all devices
-- **Interactive Animations** powered by Framer Motion
-- **Professional Contact System** with EmailJS integration
-- **SEO Optimized** for better visibility
-- **Performance Focused** with Vite build system
-
----
-
-## 🌟 Features
-
-### 🎨 Design Excellence
-| Feature | Description |
-|---------|-------------|
-| **Responsive Layout** | Mobile-first design with breakpoint optimization |
-| **Dark Theme** | Elegant dark theme with custom accent colors |
-| **Smooth Animations** | 60fps animations with Framer Motion |
-| **Interactive Elements** | Hover effects, parallax scrolling, dynamic backgrounds |
-| **Loading States** | Professional loading transitions |
-
-### 📱 Multi-Page Architecture
-| Page | Purpose | Features |
-|------|---------|----------|
-| **Home** | Landing page | Hero section, tech stack showcase, call-to-action |
-| **About** | Personal introduction | Background, skills, experience timeline |
-| **Services** | Professional offerings | Service cards, pricing, expertise areas |
-| **Projects** | Portfolio showcase | Project gallery, detailed descriptions, live demos |
-| **Contact** | Communication hub | Contact form, social links, EmailJS integration |
-
-### 🛠️ Technical Excellence
-- **React Router DOM** - Client-side routing for seamless navigation
-- **EmailJS Integration** - Functional contact form with email automation
-- **Particle Effects** - Interactive background animations
-- **Error Boundaries** - Graceful error handling and recovery
-- **Code Splitting** - Optimized loading performance
-- **TypeScript Ready** - Type-safe development environment
-
----
-
-## 🚀 Technology Stack
-
-### Frontend Framework
-<div align="center">
-
-![React](https://img.shields.io/badge/React-19.1.0-61DAFB?style=flat-square&logo=react)
-![React Router](https://img.shields.io/badge/React_Router-7.6.0-CA4245?style=flat-square&logo=react-router)
-![Framer Motion](https://img.shields.io/badge/Framer_Motion-12.12.1-0055FF?style=flat-square&logo=framer)
-
-</div>
-
-### Build Tools & Development
-<div align="center">
-
-![Vite](https://img.shields.io/badge/Vite-6.3.5-646CFF?style=flat-square&logo=vite)
-![ESLint](https://img.shields.io/badge/ESLint-9.25.0-4B32C3?style=flat-square&logo=eslint)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0.0-3178C6?style=flat-square&logo=typescript)
-
-</div>
-
-### Styling & UI
-<div align="center">
-
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1.7-38B2AC?style=flat-square&logo=tailwind-css)
-![PostCSS](https://img.shields.io/badge/PostCSS-8.5.3-DD3A0A?style=flat-square&logo=postcss)
-![React Icons](https://img.shields.io/badge/React_Icons-5.5.0-61DAFB?style=flat-square&logo=react)
-
-</div>
-
-### External Services
-<div align="center">
-
-![EmailJS](https://img.shields.io/badge/EmailJS-3.2.0-FF6B6B?style=flat-square)
-![Vercel](https://img.shields.io/badge/Vercel-Deployment-000000?style=flat-square&logo=vercel)
-
-</div>
-
----
-
-## 📦 Quick Start
-
-### Prerequisites
-- **Node.js** (v18.0.0 or higher)
-- **npm** or **yarn** package manager
-- **Git** for version control
-
-### Installation
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/yourusername/my-portfolio.git
-cd my-portfolio
-
-# 2. Install dependencies
-npm install
-
-# 4. Start development server
-npm run dev
+```
+my-portfolio/
+│
+├── .env                        # Secret environment variables (never commit)
+├── .env.example                # Template for .env variables
+├── .gitignore                  # Git ignore rules
+├── firestore.rules             # Firebase Firestore security rules
+├── index.html                  # Vite HTML entry point
+├── initFirebase.js             # One-time script to seed Firebase with default data
+├── package.json                # Dependencies and npm scripts
+├── postcss.config.js           # PostCSS configuration
+├── tailwind.config.js          # Tailwind CSS theme configuration
+├── vercel.json                 # Vercel deployment configuration
+├── vite.config.js              # Vite bundler configuration
+│
+├── public/                     # Static assets served as-is
+│   ├── backgroundimage.jpg     # Background image for site
+│   ├── eic.png                 # Project thumbnail: E-Summit platform
+│   ├── heart.png               # Project thumbnail: Heart Disease Predictor
+│   ├── karrtik.png             # Profile photo
+│   ├── portfolio.png           # Project thumbnail: Portfolio itself
+│   ├── simon.png               # Project thumbnail: Simon Game
+│   ├── solver.png              # Project thumbnail: AI Summary Pro
+│   ├── trade.png               # Project thumbnail: TradeMyTicket
+│   ├── vehicle.png             # Project thumbnail: Vehicle Tracker
+│   └── voice.png               # Project thumbnail: Voice Commerce
+│
+└── src/                        # All React source code
+    ├── App.jsx                 # Root app: routing, providers setup
+    ├── App.css                 # App-level CSS resets
+    ├── main.jsx                # Vite entry point, mounts App to DOM
+    ├── index.css               # Global CSS styles and Tailwind base
+    ├── particles-config.js     # tsParticles configuration object
+    │
+    ├── config/
+    │   └── firebase.js         # Firebase app initialization
+    │
+    ├── context/
+    │   ├── AdminAuthContext.jsx # Admin login/logout session state
+    │   └── DataContext.jsx      # Global data fetcher (Firebase → React state)
+    │
+    ├── hooks/
+    │   └── useData.js           # Per-section custom hooks for fetching data
+    │
+    ├── utils/
+    │   ├── aboutData.js         # Default timeline & tech stack data (hardcoded fallback)
+    │   ├── blogData.js          # Firebase CRUD for blogs
+    │   ├── contactData.js       # Default contact info & social links
+    │   ├── dataManager.js       # Central Firebase read/write for all sections
+    │   ├── projectData.js       # Default projects array (hardcoded fallback)
+    │   ├── security.js          # Auth checks, rate limiting, XSS sanitization, CSRF
+    │   └── validation.js        # Yup schemas for validating form data
+    │
+    ├── Components/
+    │   ├── About.jsx            # About section (timeline, tech stack)
+    │   ├── Blog.jsx             # Blog listing component
+    │   ├── Contact.jsx          # Contact form + social links
+    │   ├── ErrorBoundary.jsx    # React error boundary wrapper
+    │   ├── Footer.jsx           # Site footer
+    │   ├── Home.jsx             # Hero/home section
+    │   ├── Layout.jsx           # Shared page layout wrapper
+    │   ├── LoadingPage.jsx      # Animated loading screen on first visit
+    │   ├── Projects.jsx         # Projects grid/list component
+    │   ├── ProtectedRoute.jsx   # Redirects unauthenticated admin users
+    │   ├── ScrollToTop.jsx      # Scrolls to top on route change
+    │   ├── Services.jsx         # Services/skills cards
+    │   ├── header.jsx           # Navigation header with links
+    │   │
+    │   ├── Admin/
+    │   │   ├── BlogManager.jsx      # Admin: create/edit/delete blog posts
+    │   │   ├── ContentManager.jsx   # Admin: edit About, Services, Contact
+    │   │   └── ProjectsManager.jsx  # Admin: create/edit/delete projects
+    │   │
+    │   └── ui/
+    │       ├── Button.jsx       # Reusable Button component
+    │       ├── Card.jsx         # Reusable Card component
+    │       ├── Section.jsx      # Reusable Section wrapper
+    │       └── index.js         # Barrel export for ui components
+    │
+    └── Pages/
+        ├── AboutPage.jsx        # Page wrapper for /about
+        ├── AdminDashboard.jsx   # Admin dashboard shell (sidebar + tabs)
+        ├── AdminLogin.jsx       # Admin login form page
+        ├── BlogDetailPage.jsx   # Full blog post page at /blog/:id
+        ├── BlogPage.jsx         # Page wrapper for /blog
+        ├── ContactPage.jsx      # Page wrapper for /contact
+        ├── HomePage.jsx         # Page wrapper for /
+        ├── LandingPage.jsx      # Alternative landing page layout
+        ├── ProjectsPage.jsx     # Page wrapper for /projects
+        └── ServicesPage.jsx     # Page wrapper for /services
 ```
 
-### Environment Configuration
+---
 
-Create a `.env` file in the root directory:
+## 🔑 Key Files & Their Main Functions
+
+### `src/App.jsx`
+- **`App()`** — Root component. Manages the initial loading state, wraps routes in `AdminAuthProvider` and `DataProvider`, and sets up React Router with all page routes including protected admin routes.
+
+### `src/config/firebase.js`
+- Reads Firebase credentials from `.env` variables and calls `initializeApp()` + `getFirestore()`.
+- Exports `db` (Firestore instance) used by every data utility.
+
+---
+
+### `src/context/DataContext.jsx`
+- **`DataProvider`** — Wraps the entire app. On mount, calls `fetchAllData()` (all 6 data types in parallel via `Promise.all`). Stores result in a shared `data` state object.
+- **`useData()`** — Hook consumed by page components to read `{ data, loading, error }` without prop-drilling.
+
+### `src/context/AdminAuthContext.jsx`
+- **`AdminAuthProvider`** — Wraps admin routes. Checks `sessionStorage` on mount to restore login state.
+- **`login(username, password)`** — Validates credentials against `.env` values. On success, generates a random token, sets 8-hour expiry in `sessionStorage`, and creates a CSRF token.
+- **`logout()`** — Clears all auth data from `sessionStorage`.
+- Auto-logout: A `setInterval` checks token expiry every 60 seconds. Locks account after 5 failed attempts for 15 minutes.
+- **`useAdminAuth()`** — Hook that exposes `{ isAuthenticated, login, logout, isLocked }`.
+
+---
+
+### `src/hooks/useData.js`
+Each hook fetches one data type from Firebase with loading/error state:
+
+| Hook | Data fetched |
+|---|---|
+| `useAboutData()` | About section content |
+| `useTimelineData()` | Career/education timeline |
+| `useTechStackData()` | Tech stack list |
+| `useContactData()` | Email, phone, location |
+| `useSocialsData()` | Social media links |
+| `useServicesData()` | Services / skill cards |
+| `useProjectsData()` | Projects list (+ `refreshProjects()` + listens for `projectsUpdated` event) |
+
+---
+
+### `src/utils/dataManager.js`
+The central Firebase CRUD layer. All reads fall back to `localStorage`, then to hardcoded defaults if Firebase is unavailable.
+
+**Helper functions (internal):**
+- `getFromLocalStorage(key, default)` — Safely reads from `localStorage`.
+- `saveToLocalStorage(key, value)` — Safely writes to `localStorage`.
+- `fetchFromFirebase(collection, docId, fallback)` — Fetches a single document; falls back to localStorage/default.
+- `saveToFirebase(collection, docId, data)` — Writes to Firestore using `setDoc` with merge.
+
+**About section:**
+- `getAboutContent()` — Reads `/about/content` from Firestore.
+- `saveAboutContent(content)` — Requires auth. Sanitizes and writes to `/about/content`.
+- `getTimeline()` — Reads `/timeline/data`.
+- `saveTimeline(data)` — Writes to `/timeline/data`.
+- `getTechStack()` — Reads `/techStack/data`.
+- `saveTechStack(data)` — Writes to `/techStack/data`.
+
+**Contact section:**
+- `getContactContent()` — Reads `/contact/content`.
+- `saveContactContent(content)` — Requires auth. Writes to `/contact/content`.
+- `getSocials()` — Reads `/contact/socials`.
+- `saveSocials(data)` — Writes to `/contact/socials`.
+
+**Services section:**
+- `getServicesContent()` — Reads `/services/list`.
+- `saveServicesContent(services)` — Requires auth. Writes to `/services/list`.
+
+**Projects section:**
+- `getProjects()` — Reads all documents in the `/projects` collection.
+- `addProject(data)` — Requires auth + rate limiting. Creates a new document in `/projects`.
+- `updateProject(id, data)` — Requires auth + rate limiting. Updates an existing project document.
+- `deleteProject(id)` — Requires auth + rate limiting. Deletes a project document.
+
+**Bulk operations:**
+- `exportAllData()` — Fetches all data from all sections and returns as one object.
+- `importAllData(data)` — Saves all sections from an imported JSON object.
+- `syncDefaultDataToFirebase()` — Seeds Firebase with all hardcoded defaults (run once from admin dashboard).
+- `fetchAllData()` — Parallel fetch of all 6 data types (used by `DataContext`).
+
+---
+
+### `src/utils/blogData.js`
+Firebase CRUD specifically for the `/blogs` collection:
+- `getBlogs()` — Fetches all blogs ordered by `publishDate` descending.
+- `getBlogById(id)` — Fetches a single blog by document ID.
+- `addBlog(data)` — Creates a new blog at `BLOG_${timestamp}` with `createdAt`, `updatedAt`, and `views: 0`.
+- `updateBlog(id, data)` — Updates an existing blog, sets `updatedAt`.
+- `deleteBlog(id)` — Deletes a blog document.
+- `incrementBlogViews(id)` — Increments the `views` counter by 1 when a post is opened.
+
+---
+
+### `src/utils/security.js`
+- `sanitizeInput(str)` — Strips all HTML tags via DOMPurify (XSS protection).
+- `sanitizeUrl(url)` — Validates protocol (http/https only) and sanitizes URLs.
+- `sanitizeObject(obj)` — Recursively sanitizes all string fields in an object.
+- `handleSecureError(error, context)` — Returns generic user-safe error messages; logs full details only in dev mode.
+- `generateCSRFToken()` — Creates a 32-byte cryptographically random hex token.
+- `getCSRFToken()` / `setCSRFToken(token)` / `validateCSRFToken(token)` — Manages CSRF token in `sessionStorage`.
+- `checkRateLimit(key, max, windowMs)` — In-memory rate limiter per action key.
+- `isAuthenticated()` — Checks `sessionStorage` for a valid, unexpired admin token.
+- `getAuthToken()` — Returns token if authenticated, else `null`.
+- `clearAuth()` — Removes all auth-related keys from `sessionStorage`.
+- `isNotEmpty(v)` / `isValidUrl(url)` / `isValidYear(year)` — Validation helpers.
+- `sanitizeMarkdown(content)` — Allows a safe set of HTML tags for rendered markdown.
+- `auditLog(action, metadata)` — Logs admin actions to console in dev; ready for a monitoring service in production.
+
+---
+
+### `src/utils/validation.js`
+Yup schema definitions for server-side–style validation on the frontend:
+- `projectSchema` — Validates title, description, details, link, github, image, category, tech array, featured, year.
+- `blogSchema` — Validates title, excerpt, content, image, category, tags, readTime, date.
+- `contactSchema` — Validates name, email, message (for contact form submissions).
+- `aboutSchema` — Validates title, subtitle, bio, skills array.
+- `validateData(data, schema)` — Runs full schema validation; returns `{ isValid, errors, data }`.
+- `validateField(fieldName, value, schema)` — Validates a single field; returns `{ isValid, error }`.
+- `getFieldSchema(schema, fieldName)` — Extracts the sub-schema for a single field.
+
+---
+
+### `src/Pages/AdminDashboard.jsx`
+- **`handleLogout()`** — Calls context logout and navigates to `/`.
+- **`handleExport()`** — Fetches all data and downloads as a `.json` backup file.
+- **`handleImport(e)`** — Reads an uploaded JSON file and calls `importAllData()` to patch Firebase.
+- **`handleSyncDefaults()`** — Calls `syncDefaultDataToFirebase()` to seed Firebase from hardcoded defaults.
+
+### `src/Components/Admin/ContentManager.jsx`
+- **`loadContent()`** — Fetches about, services, and contact data from Firebase on mount.
+- **`handleSave(type, saveFn, data)`** — Generic save wrapper with status log feedback.
+- **`onSaveAbout()`** / **`onSaveServices()`** / **`onSaveContact()`** — Form submit handlers.
+- **`handleAddService()`** / **`handleRemoveService(id)`** / **`handleUpdateService(id, field, value)`** — Service list CRUD in local state before saving.
+
+### `src/Components/Admin/ProjectsManager.jsx`
+Manages the projects collection with a form to add/edit/delete projects, including image URL, tech tags, live/GitHub links, status, category, and year.
+
+### `src/Components/Admin/BlogManager.jsx`
+Manages the blog posts collection with a Markdown editor, tag support, category, read time, and publish date fields.
+
+---
+
+## ⚙️ How the Site Works (Data Flow)
+
+```
+Browser Visit
+     │
+     ▼
+App.jsx mounts
+     │
+     ▼
+DataProvider (DataContext.jsx)
+     │── Promise.all → fetches all 6 data types from Firebase simultaneously
+     │
+     ▼
+Firebase Firestore
+  ┌──────────┬──────────┬──────────┬──────────┬──────────┬──────────┐
+  │ /about   │ /contact │ /services│ /projects│ /blogs   │ /timeline│
+  └──────────┴──────────┴──────────┴──────────┴──────────┴──────────┘
+     │
+     │  If Firebase fails or is uninitialized:
+     │  → falls back to localStorage cache
+     │  → falls back to hardcoded default data in utils/
+     │
+     ▼
+React state { data, loading, error }
+     │
+     ▼
+Page Components consume via useData() hook
+(Home, About, Projects, Services, Contact, Blog)
+```
+
+### Admin Write Flow
+
+```
+Admin logs in at /admin/login
+     │
+     ▼
+AdminAuthContext validates credentials vs .env
+     │ Sets sessionStorage token (8hr expiry) + CSRF token
+     │
+     ▼
+/admin/dashboard becomes accessible (ProtectedRoute passes)
+     │
+     ▼
+Admin edits content in ProjectsManager / BlogManager / ContentManager
+     │
+     ▼
+isAuthenticated() + checkRateLimit() + sanitizeObject() run as guards
+     │
+     ▼
+Firestore updated via setDoc / updateDoc / deleteDoc
+     │
+     ▼
+localStorage cache also updated (for offline fallback)
+     │
+     ▼
+Visitor's browser reads updated data on next page load
+```
+
+---
+
+## 🗄️ Firebase Database Structure
+
+The Firestore database uses these **collections** and **documents**:
+
+```
+Firestore Root
+├── about/
+│   └── content          { title, subtitle, description, skills }
+│
+├── contact/
+│   ├── content          { email, phone, location, availability }
+│   └── socials          [ { icon, url, label, username }, ... ]
+│
+├── services/
+│   └── list             [ { id, title, description, icon }, ... ]
+│
+├── projects/            (each project is its own document)
+│   ├── PROJ_01          { title, category, year, status, image, description, tech[], links, details }
+│   ├── PROJ_02          { ... }
+│   └── ...
+│
+├── blogs/               (each blog is its own document)
+│   ├── BLOG_xxxxx       { title, author, publishDate, category, hashtags[], excerpt, content, readTime, views, createdAt, updatedAt }
+│   └── ...
+│
+├── timeline/
+│   └── data             [ { year, title, place, desc, icon }, ... ]
+│
+└── techStack/
+    └── data             [ "React", "Node.js", "Next.js", ... ]
+```
+
+### Firestore Security Rules (`firestore.rules`)
+
+All collections are **publicly readable** but **write-disabled from the client**. This means:
+- ✅ Any visitor can read portfolio data.
+- ❌ No one can write directly from the browser (even the admin panel currently writes in dev mode only).
+- ⚠️ For production admin writes, a backend API with Firebase Admin SDK is recommended.
+
+---
+
+## 📦 Default Content (What Is Pre-Loaded)
+
+All default content lives in `src/utils/` and is seeded into Firebase via the **SYNC_TO_FIREBASE** button in the admin dashboard.
+
+### `src/utils/aboutData.js` — Timeline & Tech Stack
+
+**Timeline (4 entries):**
+| Year | Role | Place |
+|---|---|---|
+| 2025 | Campus Ambassador | Innovation Mission, Punjab (IMP) |
+| 2023–Present | Executive Board | Entrepreneurship Cell, PEC |
+| May–July 2025 | AI Intern | Edunet Foundation (Microsoft) |
+| 2023–2027 | B.Tech Electronics & Comm. | PEC Chandigarh |
+
+**Tech Stack:**
+`React`, `Node.js`, `Next.js`, `TypeScript`, `Azure AI`, `Python`, `Gemini API`, `Scikit-learn`, `Firebase`, `PostgreSQL`, `Tailwind`, `Git`
+
+---
+
+### `src/utils/contactData.js` — Contact & Socials
+
+**Contact details:**
+- Email: `karrtikgupta9@gmail.com`
+- Location: `Chandigarh, India`
+
+**Social links:**
+- LinkedIn: [karrtik-gupta](https://www.linkedin.com/in/karrtik-gupta/)
+- GitHub: [mygithubkg](https://github.com/mygithubkg)
+- Instagram: [@karrtik_gupta](https://www.instagram.com/karrtik_gupta/)
+
+---
+
+### `src/utils/projectData.js` — 8 Default Projects
+
+| ID | Title | Category | Year | Status |
+|---|---|---|---|---|
+| PROJ_01 | E-Summit '25 Official Platform | Web Development | 2025 | DEPLOYED |
+| PROJ_02 | AI Summary Pro | GenAI | 2025 | ONLINE |
+| PROJ_03 | Personal Portfolio | Web Development | 2025 | LIVE |
+| PROJ_04 | TradeMyTicket | Web Development | 2024 | PROTOTYPE |
+| PROJ_05 | Vehicle & Pedestrian Tracker | Computer Vision | 2025 | RESEARCH |
+| PROJ_06 | Voice-Enabled Commerce | Web Development | 2024 | PROTOTYPE |
+| PROJ_07 | Heart Disease Predictor | Machine Learning | 2025 | ANALYSIS |
+| PROJ_08 | Simon Game | Game Development | 2023 | LEGACY |
+
+---
+
+### `src/utils/dataManager.js` — Default Services (3 cards)
+
+| Title | Description | Icon |
+|---|---|---|
+| Web Development | Building modern, responsive web applications | `Code` |
+| AI Solutions | Developing intelligent systems and ML models | `Brain` |
+| Cloud Integration | Deploying scalable cloud-based solutions | `Cloud` |
+
+---
+
+### Blogs
+Default blogs are **empty** (`defaultBlogs = []`). All blog posts must be created through the admin dashboard. Previous placeholder blog data (React+Firebase, Framer Motion, Node.js API articles) is commented out in `blogData.js`.
+
+---
+
+## ✏️ How to Edit Everything
+
+### Method 1: Admin Dashboard (Recommended — No Code Required)
+
+1. Navigate to `/admin/login`
+2. Enter the username and password from your `.env` file (`VITE_ADMIN_USERNAME` / `VITE_ADMIN_PASSWORD`)
+3. You'll reach `/admin/dashboard` with three tabs:
+
+| Tab | What you can edit |
+|---|---|
+| **PROJECTS** | Add, edit, delete projects (title, description, tech, links, image, status, year) |
+| **BLOGS** | Write, edit, delete blog posts in Markdown (with title, category, tags, excerpt) |
+| **CONTENT** | Edit About bio, Services cards, Contact info |
+
+**Sidebar actions:**
+- **SYNC_TO_FIREBASE** — Seeds all hardcoded defaults from `utils/` to Firestore (run once on first setup)
+- **EXPORT_JSON** — Downloads a full JSON backup of all your data
+- **IMPORT_PATCH** — Upload a previously exported JSON to restore all data
+
+---
+
+### Method 2: Edit Hardcoded Default Data Files (Code)
+
+Edit these files to change the fallback/seed data. After editing, use **SYNC_TO_FIREBASE** in the admin dashboard to push changes to Firestore.
+
+| What to change | File to edit |
+|---|---|
+| Career timeline entries | `src/utils/aboutData.js` → `timeline` array |
+| Tech stack list | `src/utils/aboutData.js` → `techStack` array |
+| Contact email / location | `src/utils/contactData.js` → `contactDetails` array |
+| Social media links | `src/utils/contactData.js` → `socials` array |
+| Projects list | `src/utils/projectData.js` → `projects` array |
+| Default services | `src/utils/dataManager.js` → `defaultServices` array |
+| Default about text | `src/utils/dataManager.js` → `getAboutContent()` default object |
+
+---
+
+### Method 3: Direct Firebase Console
+
+1. Go to [console.firebase.google.com](https://console.firebase.google.com)
+2. Select your project → **Firestore Database**
+3. Browse and edit any document directly in the collection/document tree shown above.
+
+> ⚠️ **Note:** The current `firestore.rules` disables all client-side writes. To enable admin dashboard writes in production, you must either set up Firebase Authentication or implement a backend API.
+
+---
+
+## 🛠️ Environment Variables (`.env`)
+
+Copy `.env.example` to `.env` and fill in your values:
 
 ```env
-# EmailJS Configuration
+# Admin credentials (used for admin dashboard login)
+VITE_ADMIN_USERNAME=admin
+VITE_ADMIN_PASSWORD=YourSecurePasswordHere
+
+# Firebase project credentials
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+
+# EmailJS credentials (for the contact form)
 VITE_EMAILJS_SERVICE_ID=your_service_id
 VITE_EMAILJS_TEMPLATE_ID=your_template_id
 VITE_EMAILJS_PUBLIC_KEY=your_public_key
 ```
 
----
-
-## 🏗️ Development Commands
-
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build |
-| `npm run lint` | Run ESLint for code quality |
-| `npm run tw:init` | Initialize Tailwind CSS |
+> ⚠️ Never commit `.env` to Git. It is already listed in `.gitignore`.
 
 ---
 
-## 📁 Project Structure
+## 🚀 Getting Started
 
-```
-my-portfolio/
-├── 📁 public/                    # Static assets
-│   ├── 🖼️ karrtik.png           # Profile image
-│   ├── 🖼️ backgroundimage.jpg   # Background images
-│   └── 📄 Other assets
-├── 📁 src/
-│   ├── 📁 Components/            # Reusable UI components
-│   │   ├── 📁 ui/               # Base UI components
-│   │   │   ├── 🎨 Button.jsx
-│   │   │   ├── 🎨 Card.jsx
-│   │   │   └── 🎨 Section.jsx
-│   │   ├── 📄 About.jsx         # About section
-│   │   ├── 📄 Contact.jsx       # Contact form
-│   │   ├── 📄 Footer.jsx        # Footer component
-│   │   ├── 📄 header.jsx        # Navigation header
-│   │   ├── 📄 Home.jsx          # Hero section
-│   │   ├── 📄 Layout.jsx        # Page layout wrapper
-│   │   ├── 📄 LoadingPage.jsx   # Loading screen
-│   │   ├── 📄 Projects.jsx      # Projects section
-│   │   └── 📄 Services.jsx      # Services section
-│   ├── 📁 Pages/                # Page components
-│   │   ├── 📄 AboutPage.jsx
-│   │   ├── 📄 ContactPage.jsx
-│   │   ├── 📄 HomePage.jsx
-│   │   ├── 📄 ProjectsPage.jsx
-│   │   └── 📄 ServicesPage.jsx
-│   ├── 📄 App.jsx               # Main app component
-│   ├── 📄 main.jsx              # App entry point
-│   ├── 📄 index.css             # Global styles
-│   └── 📄 particles-config.js   # Particle effects config
-├── 📄 package.json              # Dependencies and scripts
-├── 📄 tailwind.config.js        # Tailwind configuration
-├── 📄 vite.config.js            # Vite configuration
-└── 📄 README.md                 # This file
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Set up environment variables
+cp .env.example .env
+# → Fill in your Firebase + EmailJS credentials
+
+# 3. Start dev server
+npm run dev
+
+# 4. (First time only) Seed Firebase with default data
+# → Go to /admin/login, log in, then click SYNC_TO_FIREBASE
+
+# 5. Build for production
+npm run build
 ```
 
 ---
 
-## 🎨 Customization Guide
+## 🧰 Tech Stack
 
-### Theme Customization
-The color scheme is defined in `tailwind.config.js`:
-
-
-
-## 🔧 Advanced Configuration
-
-### EmailJS Setup
-1. **Create Account**: Sign up at [EmailJS](https://www.emailjs.com/)
-2. **Add Service**: Configure Gmail, Outlook, or custom SMTP
-3. **Create Template**: Design email template with variables
-4. **Get Credentials**: Copy Service ID, Template ID, and Public Key
-5. **Environment Variables**: Add to `.env` file
-
-### Deployment Configuration
-
-#### Vercel Deployment
-1. **Connect Repository**: Link GitHub repo to Vercel
-2. **Auto Detection**: Vercel detects React/Vite setup
-3. **Environment Variables**: Add in Vercel dashboard
-4. **Automatic Deploy**: Deploys on every git push
-
-#### Custom Domain
-1. **Domain Setup**: Configure in Vercel dashboard
-2. **SSL Certificate**: Automatic HTTPS setup
-3. **DNS Configuration**: Update nameservers
-
----
-
-## 📱 Responsive Design
-
-| Device | Breakpoint | Features |
-|--------|------------|----------|
-| **Mobile** | < 640px | Touch-optimized, simplified navigation |
-| **Tablet** | 640px - 1024px | Adaptive layouts, enhanced interactions |
-| **Desktop** | > 1024px | Full feature set, advanced animations |
-
----
-
-## ⚡ Performance Optimization
-
-### Build Optimizations
-- **Code Splitting**: Automatic route-based splitting
-- **Tree Shaking**: Unused code elimination
-- **Asset Optimization**: Compressed images and fonts
-- **Caching Strategy**: Efficient browser caching
-
-### Runtime Performance
-- **Lazy Loading**: Components load on demand
-- **Virtual Scrolling**: For large lists
-- **Debounced Events**: Optimized user interactions
-- **Memory Management**: Proper cleanup and garbage collection
-
----
-
-## 🔒 Security Features
-
-| Feature | Implementation |
-|---------|---------------|
-| **Environment Variables** | Sensitive data in `.env` files |
-| **Input Validation** | Form validation with error handling |
-| **XSS Protection** | React's built-in XSS protection |
-| **HTTPS Enforcement** | SSL certificates on deployment |
-| **Content Security Policy** | CSP headers for security |
-
----
-
-## 📊 Analytics & Monitoring
-
-### Performance Metrics
-- **Core Web Vitals**: LCP, FID, CLS optimization
-- **Bundle Analysis**: Webpack bundle analyzer
-- **Lighthouse Scores**: Performance auditing
-- **Error Tracking**: Error boundary implementation
-
----
-
-## 📄 License & Usage
-
-<div align="center">
-
-**This project is private and proprietary.**
-
-[![License](https://img.shields.io/badge/License-Private-red?style=for-the-badge)](LICENSE)
-
-**No contributions, forks, or modifications are permitted without explicit written consent.**
-
-</div>
-
----
-
-## 🤝 Contact & Support
-
-<div align="center">
-
-**Karrtik Gupta** - Full-stack Developer & AI Enthusiast
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/karrtik-gupta/)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=for-the-badge&logo=github)](https://github.com/mygithubkg)
-[![Email](https://img.shields.io/badge/Email-Contact-red?style=for-the-badge&logo=gmail)](mailto:karrtikgupta9@gmail.com)
-
-*Crafting modern web experiences with cutting-edge technology*
-
-</div>
-
----
-
-<div align="center">
-
-**⭐ Star this repository if you find it helpful!**
-
-*Built with ❤️ and modern web technologies*
-
-</div>
+| Tool | Purpose |
+|---|---|
+| React 19 | UI framework |
+| Vite 6 | Build tool & dev server |
+| Tailwind CSS 4 | Utility-first styling |
+| Firebase Firestore | NoSQL cloud database |
+| Framer Motion | Animations & transitions |
+| React Router 7 | Client-side routing |
+| DOMPurify | XSS sanitization |
+| Yup | Schema validation |
+| EmailJS | Contact form email delivery |
+| tsParticles | Particle background effects |
+| Lucide React | Icon library |
+| React Icons | Additional icon sets |
+| react-markdown | Markdown rendering for blog posts |

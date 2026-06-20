@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Edit, Trash2, X, Save, FolderGit2, Globe, Star, Image, Calendar, Tag, Terminal, AlertTriangle } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Save, FolderGit2, Globe, Star, Image, Calendar, Tag, Terminal, AlertTriangle, RotateCcw } from 'lucide-react';
 import { getProjects, addProject, updateProject, deleteProject } from '../../utils/dataManager';
+import { getDefaultProjects, addDefaultProject, updateDefaultProject, deleteDefaultProject, resetSectionToDefault } from '../../utils/defaultsManager';
 import { useAdminAuth } from '../../context/AdminAuthContext';
 import { projectSchema, validateData } from '../../utils/validation';
 import { sanitizeInput, handleSecureError, auditLog } from '../../utils/security';
 import { useNavigate } from 'react-router-dom';
+import ResetToDefaultModal from './ResetToDefaultModal';
 
 // Reusable "Tech" Input Style
-const TechInput = ({ label, name, value, onChange, placeholder, type = "text", required = false, rows }) => (
+const TechInput = ({ label, name, value, onChange, placeholder, type = "text", required = false, rows, options }) => (
   <div className="group relative">
     <label className="block text-[10px] font-mono text-cyan-600 mb-1 uppercase tracking-widest group-focus-within:text-cyan-400">
       {label} {required && '*'}
@@ -22,6 +24,19 @@ const TechInput = ({ label, name, value, onChange, placeholder, type = "text", r
         placeholder={placeholder}
         className="w-full bg-black/40 border border-white/10 p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors resize-none placeholder-gray-700"
       />
+    ) : type === 'select' ? (
+      <select
+        name={name}
+        value={value}
+        onChange={onChange}
+        required={required}
+        className="w-full bg-black/40 border border-white/10 p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors"
+      >
+        <option value="" disabled>{placeholder || 'Select an option'}</option>
+        {options && options.map(opt => (
+          <option key={opt} value={opt}>{opt}</option>
+        ))}
+      </select>
     ) : (
       <input
         type={type}
@@ -36,9 +51,14 @@ const TechInput = ({ label, name, value, onChange, placeholder, type = "text", r
   </div>
 );
 
+const LIVE_TAB     = 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30';
+const DEFAULT_TAB  = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
+const INACTIVE_TAB = 'text-gray-500 hover:text-white border-transparent';
+
 const ProjectsManager = () => {
   const { isAuthenticated, logout } = useAdminAuth();
   const navigate = useNavigate();
+  const [mode, setMode] = useState('live'); // 'live' | 'defaults'
   const [projects, setProjects] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
@@ -46,6 +66,9 @@ const ProjectsManager = () => {
   const [errors, setErrors] = useState({});
   const [deleteConfirmation, setDeleteConfirmation] = useState({ open: false, projectId: null, projectTitle: '' });
   const [confirmText, setConfirmText] = useState('');
+  const [showReset, setShowReset] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+  const [resetStatus, setResetStatus] = useState(null);
   
   // Initial Form State
   const initialFormState = {
@@ -64,13 +87,13 @@ const ProjectsManager = () => {
 
   useEffect(() => {
     loadProjects();
-  }, []);
+  }, [mode]); // reload whenever mode changes
 
   const loadProjects = async () => {
     try {
-      const data = await getProjects();
+      const data = mode === 'live' ? await getProjects() : await getDefaultProjects();
       setProjects(data);
-      window.dispatchEvent(new Event('projectsUpdated'));
+      if (mode === 'live') window.dispatchEvent(new Event('projectsUpdated'));
     } catch (error) {
       const errorMessage = handleSecureError(error, 'Loading projects');
       console.error(errorMessage);
@@ -119,11 +142,19 @@ const ProjectsManager = () => {
 
     try {
       if (editingProject) {
-        await updateProject(editingProject.id, validation.data);
-        auditLog('PROJECT_UPDATED_SUCCESS', { projectId: editingProject.id });
+        if (mode === 'live') {
+          await updateProject(editingProject.id, validation.data);
+        } else {
+          await updateDefaultProject(editingProject.id, validation.data);
+        }
+        auditLog(`PROJECT_UPDATED_${mode.toUpperCase()}`, { projectId: editingProject.id });
       } else {
-        await addProject(validation.data);
-        auditLog('PROJECT_ADDED_SUCCESS');
+        if (mode === 'live') {
+          await addProject(validation.data);
+        } else {
+          await addDefaultProject(validation.data);
+        }
+        auditLog(`PROJECT_ADDED_${mode.toUpperCase()}`);
       }
       await loadProjects();
       setIsModalOpen(false);
@@ -140,24 +171,40 @@ const ProjectsManager = () => {
 
   const handleDelete = async () => {
     if (!deleteConfirmation.projectId) return;
-    
-    // Verify typed confirmation matches
     if (confirmText !== 'DELETE') {
       setErrors({ delete: 'You must type DELETE to confirm' });
       return;
     }
-    
     try {
-      await deleteProject(deleteConfirmation.projectId);
+      if (mode === 'live') {
+        await deleteProject(deleteConfirmation.projectId);
+      } else {
+        await deleteDefaultProject(deleteConfirmation.projectId);
+      }
       await loadProjects();
       setDeleteConfirmation({ open: false, projectId: null, projectTitle: '' });
       setConfirmText('');
       setErrors({});
-      auditLog('PROJECT_DELETED_SUCCESS', { projectId: deleteConfirmation.projectId });
+      auditLog(`PROJECT_DELETED_${mode.toUpperCase()}`, { projectId: deleteConfirmation.projectId });
     } catch (error) {
       const errorMessage = handleSecureError(error, 'Deleting project');
       setErrors({ delete: errorMessage });
       auditLog('PROJECT_DELETE_ERROR', { error: errorMessage });
+    }
+  };
+
+  const handleReset = async () => {
+    setIsResetting(true);
+    try {
+      const result = await resetSectionToDefault('projects');
+      setResetStatus(result.success ? 'LIVE_PROJECTS_RESET_TO_DEFAULTS' : result.message);
+      setShowReset(false);
+      if (mode === 'live') await loadProjects();
+    } catch (err) {
+      setResetStatus(`ERROR: ${err.message}`);
+    } finally {
+      setIsResetting(false);
+      setTimeout(() => setResetStatus(null), 4000);
     }
   };
 
@@ -198,14 +245,39 @@ const ProjectsManager = () => {
             </h1>
           </div>
           
-          <button
-            onClick={() => handleOpenModal()}
-            className="flex items-center gap-2 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/50 text-cyan-400 px-6 py-3 text-xs font-bold tracking-widest transition-all hover:shadow-[0_0_20px_rgba(6,182,212,0.3)]"
-          >
-            <Plus size={16} />
-            INITIALIZE_NEW_ENTRY
-          </button>
+          <div className="flex items-center gap-3 flex-wrap">
+            {/* Mode toggle */}
+            <div className="flex gap-1 bg-white/5 border border-white/10 p-1">
+              {[['live', '⬤ LIVE_DATA', LIVE_TAB], ['defaults', '◎ DEFAULTS', DEFAULT_TAB]].map(([val, label, active]) => (
+                <button key={val} onClick={() => setMode(val)}
+                  className={`px-4 py-2 text-xs font-mono transition-all border ${mode === val ? active : INACTIVE_TAB}`}>
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => handleOpenModal()}
+              className="flex items-center gap-2 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/50 text-cyan-400 px-6 py-3 text-xs font-bold tracking-widest transition-all hover:shadow-[0_0_20px_rgba(6,182,212,0.3)]"
+            >
+              <Plus size={16} />
+              INITIALIZE_NEW_ENTRY
+            </button>
+          </div>
         </div>
+
+        {/* Status bar */}
+        {resetStatus && (
+          <div className={`mb-6 px-4 py-2 text-xs font-mono border ${resetStatus.startsWith('ERROR') ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-green-500/10 border-green-500/30 text-green-400'}`}>
+            {resetStatus}
+          </div>
+        )}
+
+        {mode === 'defaults' && (
+          <div className="mb-6 px-4 py-2 bg-amber-500/5 border border-amber-500/20 text-amber-400 text-xs font-mono">
+            ◎ EDITING DEFAULTS — Changes here do not affect live visitors.
+          </div>
+        )}
 
         {/* --- GRID LAYOUT --- */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -306,7 +378,15 @@ const ProjectsManager = () => {
                     <TechInput label="PROJECT_TITLE" name="title" value={formData.title} onChange={handleChange} required placeholder="e.g. Neural Network V1" />
                   </div>
 
-                  <TechInput label="CATEGORY" name="category" value={formData.category} onChange={handleChange} required placeholder="Web / AI / Mobile" />
+                  <TechInput 
+                    label="CATEGORY" 
+                    name="category" 
+                    value={formData.category} 
+                    onChange={handleChange} 
+                    required 
+                    type="select"
+                    options={['Web Development', 'Mobile App', 'AI/ML', 'Desktop App', 'Game Development', 'Other']}
+                  />
                   <TechInput label="RELEASE_YEAR" name="year" value={formData.year} onChange={handleChange} required placeholder="2025" />
 
                   {/* Descriptions */}
@@ -467,6 +547,22 @@ const ProjectsManager = () => {
           </div>
         )}
       </AnimatePresence>
+      {/* Reset modal */}
+      <ResetToDefaultModal
+        isOpen={showReset}
+        onClose={() => setShowReset(false)}
+        onConfirm={handleReset}
+        sectionName="Projects"
+        isLoading={isResetting}
+      />
+
+      {/* Reset to default button (floating, bottom-right) */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <button onClick={() => setShowReset(true)}
+          className="flex items-center gap-2 px-4 py-3 bg-[#0a0a0a] border border-amber-500/40 text-amber-400 hover:bg-amber-500/10 text-xs font-mono transition-colors shadow-xl">
+          <RotateCcw size={14} /> RESET_PROJECTS_TO_DEFAULT
+        </button>
+      </div>
     </div>
   );
 };
