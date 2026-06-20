@@ -85,7 +85,7 @@ p {
 
 /* Enhanced button styles */
 button {
-  background: #3b82f6;
+  /* background: #3b82f6; */
   color: #fff;
   border-radius: 0.75rem;
   font-weight: 600;
@@ -100,7 +100,7 @@ button {
 
 button:hover,
 button:focus {
-  background: #2563eb;
+  /* background: #2563eb; */
   color: #fff;
   box-shadow: 0 0 0 2px #3b82f6, 0 4px 12px 0 rgba(31, 38, 135, 0.12);
   transform: translateY(-1px);
@@ -117,7 +117,7 @@ button:active {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3b82f6;
+  /* background: #3b82f6; */
   border-radius: 8px;
   transition: background 0.2s;
 }
