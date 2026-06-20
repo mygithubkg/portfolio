@@ -1,5 +1,6 @@
 // import './App.css' 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { clarity } from 'react-microsoft-clarity';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { DataProvider } from './context/DataContext';
 import HomePage from './Pages/HomePage';
@@ -19,6 +20,14 @@ import { AdminAuthProvider } from './context/AdminAuthContext';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Replace 'YOUR_PROJECT_ID' with your actual Project ID from Microsoft Clarity
+    const clarityProjectId = 'xa0yfqw4yh';
+
+    // Initialize Clarity
+    clarity.init(clarityProjectId);
+  }, []);
 
   const handleLoadingComplete = () => {
     setIsLoading(false);
@@ -42,7 +51,7 @@ function App() {
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/blog/:id" element={<BlogDetailPage />} />
               <Route path="/contact" element={<ContactPage />} />
-              
+
               {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route
