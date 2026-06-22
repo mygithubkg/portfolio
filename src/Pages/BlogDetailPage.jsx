@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useSpring } from 'framer-motion';
 import Layout from '../Components/Layout';
-import { 
-  BookOpen, 
-  Calendar, 
-  Clock, 
-  User, 
-  ArrowLeft, 
-  Share2, 
+import {
+  BookOpen,
+  Calendar,
+  Clock,
+  User,
+  ArrowLeft,
+  Share2,
   Eye,
   Hash,
   Tag
@@ -23,6 +23,14 @@ function BlogDetailPage() {
   const navigate = useNavigate();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // --- PROGRESS BAR HOOKS ---
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
 
   useEffect(() => {
     loadBlog();
@@ -100,12 +108,18 @@ function BlogDetailPage() {
 
   return (
     <Layout>
+      {/* --- READING PROGRESS BAR --- */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-cyan-500 origin-left z-50 shadow-[0_0_10px_rgba(34,211,238,0.5)]"
+        style={{ scaleX }}
+      />
+
       <article className="min-h-screen py-24 relative overflow-hidden bg-[#050505]">
         {/* Background Decor */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="max-w-4xl mx-auto px-6 relative z-10">
+        <div className="w-[60%] mx-auto px-6 relative z-10">
           {/* Back Button */}
           <motion.button
             initial={{ opacity: 0, x: -20 }}

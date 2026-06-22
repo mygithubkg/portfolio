@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { 
-  BookOpen, 
-  Calendar, 
-  Clock, 
-  Tag, 
-  User, 
-  Search, 
-  Filter, 
+import {
+  Terminal,
+  Search,
   X,
-  ChevronRight,
+  ArrowRight,
+  Clock,
   Eye,
-  TrendingUp
+  Filter
 } from 'lucide-react';
 import { getBlogs } from '../utils/blogData';
 
@@ -50,7 +46,6 @@ const Blog = () => {
   const filterAndSortBlogs = () => {
     let filtered = [...blogs];
 
-    // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(blog =>
         blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -59,19 +54,16 @@ const Blog = () => {
       );
     }
 
-    // Filter by category
     if (selectedCategory !== 'All') {
       filtered = filtered.filter(blog => blog.category === selectedCategory);
     }
 
-    // Filter by hashtag
     if (selectedHashtag) {
       filtered = filtered.filter(blog =>
         blog.hashtags?.some(tag => tag.toLowerCase() === selectedHashtag.toLowerCase())
       );
     }
 
-    // Sort blogs
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'date-desc':
@@ -90,10 +82,7 @@ const Blog = () => {
     setFilteredBlogs(filtered);
   };
 
-  // Get unique categories
   const categories = ['All', ...new Set(blogs.map(blog => blog.category))];
-
-  // Get all unique hashtags
   const allHashtags = [...new Set(blogs.flatMap(blog => blog.hashtags || []))];
 
   const handleBlogClick = (blogId) => {
@@ -102,131 +91,108 @@ const Blog = () => {
 
   if (loading) {
     return (
-      <section className="min-h-screen py-24 relative overflow-hidden bg-[#050505] flex items-center justify-center">
-        <div className="text-cyan-500 font-mono text-sm flex items-center gap-2">
-          <div className="animate-spin">⟳</div>
-          LOADING_BLOG_ENTRIES...
+      <section className="min-h-screen py-24 bg-[#030303] flex items-center justify-center">
+        <div className="text-cyan-500 font-mono text-sm flex items-center gap-3 tracking-widest">
+          <div className="w-2 h-2 bg-cyan-500 animate-ping rounded-full" />
+          INITIALIZING_JOURNAL...
         </div>
       </section>
     );
   }
 
   return (
-    <section className="min-h-screen py-24 relative overflow-hidden bg-[#050505]">
-      {/* Background Decor */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none" />
+    <section className="min-h-screen py-24 relative bg-[#030303] text-gray-300 selection:bg-cyan-500/30 selection:text-cyan-200">
+      {/* Subtle Ambient Background */}
+      <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-cyan-900/5 rounded-full blur-[150px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        {/* Header */}
-        <div className="mb-12 border-b border-white/10 pb-8">
+      {/* Container set exactly to 80% width */}
+      <div className="w-[80%] mx-auto relative z-10">
+
+        {/* --- HEADER --- */}
+        <div className="mb-16 md:mb-24 flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border-b border-white/10 pb-12">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 text-cyan-500 font-mono text-xs mb-4"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            <BookOpen size={16} />
-            <span>/ROOT/BLOG_DIRECTORY</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-white/5 border border-white/10 text-cyan-400 font-mono text-xs mb-6 tracking-widest uppercase">
+              <Terminal size={14} />
+              <span>/ROOT/PUBLICATIONS</span>
+            </div>
+            <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter uppercase leading-none">
+              Dev <br className="hidden md:block" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-gray-700">Journal.</span>
+            </h1>
           </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-black text-white tracking-tight mb-4"
-          >
-            TECH <span className="text-gray-600">JOURNAL</span>
-          </motion.h1>
+
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-gray-400 text-sm max-w-2xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-gray-400 text-sm md:text-base font-light max-w-sm"
           >
-            Insights, tutorials, and thoughts on web development, software engineering, and technology.
+            A curated collection of technical insights, architectural teardowns, and engineering philosophies.
           </motion.p>
         </div>
 
-        {/* Search and Filter Bar */}
+        {/* --- COMMAND BAR (SEARCH & FILTER) --- */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="mb-8 space-y-4"
+          transition={{ delay: 0.2 }}
+          className="mb-16"
         >
-          {/* Search and Filter Toggle */}
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Search Bar */}
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600" size={16} />
+          <div className="bg-[#0a0a0c] border border-white/10 rounded-2xl p-2 flex flex-col md:flex-row gap-2">
+            <div className="flex-1 relative flex items-center">
+              <Search className="absolute left-4 text-cyan-500/50" size={18} />
               <input
                 type="text"
-                placeholder="Search blogs by title, content, or author..."
+                placeholder="Search publications..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-[#0a0a0a] border border-white/10 pl-10 pr-4 py-3 text-white text-sm focus:border-cyan-500 focus:outline-none transition-colors font-mono"
+                className="w-full bg-transparent pl-12 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none font-mono text-sm"
               />
               {searchTerm && (
-                <button
-                  onClick={() => setSearchTerm('')}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-white"
-                >
+                <button onClick={() => setSearchTerm('')} className="absolute right-4 text-gray-500 hover:text-white transition-colors">
                   <X size={16} />
                 </button>
               )}
             </div>
-
-            {/* Filter Toggle Button */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-[#0a0a0a] border border-white/10 hover:border-cyan-500/50 text-white font-mono text-xs transition-all"
+              className={`px-6 py-3 rounded-xl font-mono text-xs tracking-wider transition-all flex items-center gap-2 justify-center ${showFilters ? 'bg-cyan-500/10 text-cyan-400' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                }`}
             >
-              <Filter size={16} />
-              {showFilters ? 'HIDE_FILTERS' : 'SHOW_FILTERS'}
+              <Filter size={14} />
+              PARAMETERS
             </button>
           </div>
 
-          {/* Filter Panel */}
+          {/* Expandable Filter Panel */}
           <AnimatePresence>
             {showFilters && (
               <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
+                initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                animate={{ height: 'auto', opacity: 1, marginTop: 16 }}
+                exit={{ height: 0, opacity: 0, marginTop: 0 }}
                 className="overflow-hidden"
               >
-                <div className="bg-[#0a0a0a] border border-white/10 p-6 space-y-4">
-                  {/* Sort By */}
-                  <div>
-                    <label className="block text-[10px] font-mono text-cyan-600 mb-2 uppercase tracking-widest">
-                      SORT_BY
-                    </label>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="w-full bg-black/40 border border-white/10 p-2 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none"
-                    >
-                      <option value="date-desc">Latest First</option>
-                      <option value="date-asc">Oldest First</option>
-                      <option value="title">Title (A-Z)</option>
-                      <option value="views">Most Viewed</option>
-                    </select>
-                  </div>
+                <div className="bg-[#0a0a0c] border border-white/10 rounded-2xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
 
-                  {/* Category Filter */}
-                  <div>
-                    <label className="block text-[10px] font-mono text-cyan-600 mb-2 uppercase tracking-widest">
-                      CATEGORY
+                  {/* Category Selection */}
+                  <div className="md:col-span-2">
+                    <label className="block text-[10px] font-mono text-cyan-600 mb-3 uppercase tracking-widest">
+                      Filter by Category
                     </label>
                     <div className="flex flex-wrap gap-2">
                       {categories.map((category) => (
                         <button
                           key={category}
                           onClick={() => setSelectedCategory(category)}
-                          className={`px-3 py-1.5 text-xs font-mono transition-all ${
-                            selectedCategory === category
-                              ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400'
-                              : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/20'
-                          } border`}
+                          className={`px-4 py-2 rounded-lg text-xs font-mono transition-all ${selectedCategory === category
+                              ? 'bg-white text-black font-bold'
+                              : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                            }`}
                         >
                           {category}
                         </button>
@@ -234,179 +200,127 @@ const Blog = () => {
                     </div>
                   </div>
 
-                  {/* Hashtag Filter */}
+                  {/* Sort Selection */}
                   <div>
-                    <label className="block text-[10px] font-mono text-cyan-600 mb-2 uppercase tracking-widest">
-                      HASHTAGS
+                    <label className="block text-[10px] font-mono text-cyan-600 mb-3 uppercase tracking-widest">
+                      Sort Chronology
                     </label>
-                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-                      {selectedHashtag && (
-                        <button
-                          onClick={() => setSelectedHashtag('')}
-                          className="px-3 py-1.5 text-xs font-mono bg-cyan-500/20 border border-cyan-500/50 text-cyan-400 flex items-center gap-1"
-                        >
-                          #{selectedHashtag}
-                          <X size={12} />
-                        </button>
-                      )}
-                      {allHashtags.map((tag) => (
-                        <button
-                          key={tag}
-                          onClick={() => setSelectedHashtag(tag)}
-                          className={`px-3 py-1.5 text-xs font-mono transition-all ${
-                            selectedHashtag === tag
-                              ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400'
-                              : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/20'
-                          } border`}
-                        >
-                          #{tag}
-                        </button>
-                      ))}
-                    </div>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="w-full bg-white/5 border-none rounded-lg p-3 text-gray-300 font-mono text-xs focus:ring-1 focus:ring-cyan-500 focus:outline-none appearance-none"
+                    >
+                      <option value="date-desc">Latest Discoveries</option>
+                      <option value="date-asc">Archival First</option>
+                      <option value="title">Alphabetical (A-Z)</option>
+                      <option value="views">Highest Engagement</option>
+                    </select>
                   </div>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
-
-          {/* Active Filters Summary */}
-          <div className="flex items-center gap-2 text-xs font-mono text-gray-500">
-            <span>SHOWING: {filteredBlogs.length} / {blogs.length} POSTS</span>
-            {(searchTerm || selectedCategory !== 'All' || selectedHashtag) && (
-              <button
-                onClick={() => {
-                  setSearchTerm('');
-                  setSelectedCategory('All');
-                  setSelectedHashtag('');
-                }}
-                className="text-cyan-500 hover:text-cyan-400 underline"
-              >
-                CLEAR_ALL_FILTERS
-              </button>
-            )}
-          </div>
         </motion.div>
 
-        {/* Blog Grid */}
-        {filteredBlogs.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-20"
-          >
-            <BookOpen className="mx-auto text-gray-700 mb-4" size={48} />
-            <p className="text-gray-500 font-mono text-sm">NO_MATCHING_POSTS_FOUND</p>
-            <button
-              onClick={() => {
-                setSearchTerm('');
-                setSelectedCategory('All');
-                setSelectedHashtag('');
-              }}
-              className="mt-4 px-4 py-2 bg-cyan-500/20 border border-cyan-500/50 text-cyan-400 font-mono text-xs"
-            >
-              RESET_FILTERS
-            </button>
-          </motion.div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredBlogs.map((blog, index) => (
-              <motion.article
-                key={blog.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                onClick={() => handleBlogClick(blog.id)}
-                className="group cursor-pointer bg-[#0a0a0a] border border-white/10 hover:border-cyan-500/50 transition-all duration-300 overflow-hidden flex flex-col"
+        {/* --- EDITORIAL LIST VIEW --- */}
+        <div className="border-t border-white/10">
+          <AnimatePresence mode="wait">
+            {filteredBlogs.length === 0 ? (
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="py-24 text-center"
               >
-                {/* Blog Image */}
-                <div className="relative h-48 overflow-hidden border-b border-white/5">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-                  {blog.imageUrl ? (
-                    <img
-                      src={blog.imageUrl}
-                      alt={blog.title}
-                      className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700 transform group-hover:scale-110"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                    />
-                  ) : null}
-                  {/* Fallback */}
-                  <div className={`${blog.imageUrl ? 'hidden' : 'flex'} absolute inset-0 bg-gradient-to-br from-cyan-900/20 to-purple-900/20 items-center justify-center`}>
-                    <BookOpen className="text-gray-700" size={48} />
-                  </div>
+                <Terminal className="mx-auto text-gray-700 mb-4" size={48} />
+                <p className="text-gray-500 font-mono text-sm tracking-widest uppercase">Null_Results_Found</p>
+                <button
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedCategory('All');
+                  }}
+                  className="mt-6 px-6 py-2 rounded-full border border-white/10 text-xs text-white hover:bg-white hover:text-black transition-colors"
+                >
+                  Reset Parameters
+                </button>
+              </motion.div>
+            ) : (
+              <div className="flex flex-col">
+                {filteredBlogs.map((blog, index) => (
+                  <motion.article
+                    key={blog.id}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    onClick={() => handleBlogClick(blog.id)}
+                    className="group border-b border-white/10 py-8 md:py-12 cursor-pointer relative"
+                  >
+                    {/* Hover Background Shift */}
+                    <div className="absolute inset-0 bg-white/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-300 -mx-6 px-6 rounded-2xl" />
 
-                  {/* Category Badge */}
-                  <div className="absolute top-3 right-3 z-20">
-                    <span className="px-2 py-1 bg-black/80 border border-white/20 text-[10px] font-mono text-cyan-400">
-                      {blog.category}
-                    </span>
-                  </div>
-                </div>
+                    <div className="relative z-10 flex flex-col md:flex-row md:items-baseline gap-6 md:gap-12">
 
-                {/* Blog Content */}
-                <div className="p-6 flex-1 flex flex-col">
-                  {/* Meta Info */}
-                  <div className="flex items-center gap-3 text-[10px] font-mono text-gray-500 mb-3">
-                    <div className="flex items-center gap-1">
-                      <Calendar size={10} />
-                      <span>{new Date(blog.publishDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                    </div>
-                    <span>•</span>
-                    <div className="flex items-center gap-1">
-                      <Clock size={10} />
-                      <span>{blog.readTime}</span>
-                    </div>
-                    {blog.views > 0 && (
-                      <>
-                        <span>•</span>
-                        <div className="flex items-center gap-1">
-                          <Eye size={10} />
-                          <span>{blog.views}</span>
+                      {/* Left: Meta Column */}
+                      <div className="md:w-48 flex-shrink-0 flex flex-col gap-2">
+                        <span className="text-xs font-mono text-cyan-500">
+                          {new Date(blog.publishDate).toLocaleDateString('en-US', {
+                            month: '2-digit',
+                            day: '2-digit',
+                            year: 'numeric'
+                          }).replace(/\//g, '.')}
+                        </span>
+                        <span className="text-[10px] font-mono text-gray-500 tracking-widest uppercase border border-white/10 px-2 py-1 rounded w-fit group-hover:border-cyan-500/30 group-hover:text-cyan-400 transition-colors">
+                          {blog.category}
+                        </span>
+                      </div>
+
+                      {/* Middle: Content Block */}
+                      <div className="flex-1 space-y-4">
+                        <h2 className="text-2xl md:text-4xl font-bold text-white group-hover:text-cyan-400 transition-colors tracking-tight leading-tight">
+                          {blog.title}
+                        </h2>
+                        <p className="text-gray-400 text-sm md:text-base font-light leading-relaxed max-w-2xl">
+                          {blog.excerpt}
+                        </p>
+
+                        {/* Tags */}
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          {blog.hashtags?.slice(0, 3).map((tag, i) => (
+                            <span key={i} className="text-[10px] text-gray-600 group-hover:text-gray-400 transition-colors">
+                              #{tag}
+                            </span>
+                          ))}
                         </div>
-                      </>
-                    )}
-                  </div>
+                      </div>
 
-                  {/* Title */}
-                  <h2 className="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors mb-3 line-clamp-2">
-                    {blog.title}
-                  </h2>
+                      {/* Right: Metrics & Arrow */}
+                      <div className="md:w-32 flex-shrink-0 flex md:flex-col items-center md:items-end justify-between md:justify-start gap-4">
+                        <div className="flex flex-row md:flex-col items-center md:items-end gap-3 text-[10px] font-mono text-gray-500">
+                          <div className="flex items-center gap-1.5">
+                            <Clock size={12} />
+                            {blog.readTime}
+                          </div>
+                          {blog.views > 0 && (
+                            <div className="flex items-center gap-1.5">
+                              <Eye size={12} />
+                              {blog.views}
+                            </div>
+                          )}
+                        </div>
+                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-cyan-500 group-hover:border-cyan-500 transition-all duration-300">
+                          <ArrowRight size={16} className="text-gray-400 group-hover:text-black group-hover:-rotate-45 transition-all duration-300" />
+                        </div>
+                      </div>
 
-                  {/* Author */}
-                  <div className="flex items-center gap-2 text-xs text-gray-400 mb-3">
-                    <User size={12} />
-                    <span>{blog.author}</span>
-                  </div>
-
-                  {/* Excerpt */}
-                  <p className="text-gray-400 text-sm leading-relaxed mb-4 flex-1 line-clamp-3">
-                    {blog.excerpt}
-                  </p>
-
-                  {/* Hashtags */}
-                  <div className="flex flex-wrap gap-1.5 mb-4">
-                    {blog.hashtags?.slice(0, 4).map((tag, i) => (
-                      <span
-                        key={i}
-                        className="text-[9px] font-mono text-cyan-500 bg-cyan-500/10 px-2 py-0.5"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Read More */}
-                  <div className="flex items-center gap-2 text-xs font-mono text-cyan-500 group-hover:text-cyan-400 transition-colors pt-3 border-t border-white/5">
-                    <span>READ_MORE</span>
-                    <ChevronRight size={12} className="group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </motion.article>
-            ))}
-          </div>
-        )}
+                    </div>
+                  </motion.article>
+                ))}
+              </div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );

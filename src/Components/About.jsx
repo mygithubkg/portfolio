@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, History, User, Code, ChevronDown } from 'lucide-react';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Cpu, Terminal, Crosshair, Sparkles, ArrowDown } from 'lucide-react';
 import { useData } from '../context/DataContext';
 
 export default function About() {
@@ -8,220 +8,187 @@ export default function About() {
   const timeline = data?.timeline || [];
   const techStack = data?.techStack || [];
 
-  const [expandedLog, setExpandedLog] = useState(null);
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100 } }
-  };
-
-  const toggleLog = (index) => {
-    setExpandedLog(expandedLog === index ? null : index);
-  };
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
   return (
-    <section className="min-h-screen py-24 bg-[#030303] text-gray-300 relative overflow-hidden">
-      {/* Ambient Glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-900/20 rounded-full blur-[120px] pointer-events-none" />
+    <section
+      ref={containerRef}
+      className="min-h-screen bg-[#020202] text-gray-300 relative selection:bg-cyan-500/30 selection:text-cyan-200"
+    >
+      {/* Ambient Noise / Texture overlay (optional, subtle effect) */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
 
-      <div className="max-w-6xl mx-auto px-6 relative z-10">
+      {/* Background Glows */}
+      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-cyan-900/20 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-0 w-[600px] h-[600px] bg-violet-900/10 rounded-full blur-[150px] pointer-events-none" />
 
-        {/* --- HEADER --- */}
+      <div className="w-[80%] mx-auto px-6 py-24 md:py-32 relative z-10">
+
+        {/* --- MASSIVE HERO TYPOGRAPHY --- */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-12 flex flex-col items-center md:items-start"
+          style={{ opacity }}
+          className="mb-24 md:mb-32 flex flex-col items-center md:items-start"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-mono text-xs mb-4">
-            <User size={12} />
-            <span>IDENTITY_VERIFIED // DEV_001</span>
+          <div className="flex items-center gap-3 text-cyan-500 font-mono text-sm tracking-[0.2em] uppercase mb-6">
+            <Terminal size={16} />
+            <span>Identity Verified</span>
+            <span className="w-12 h-[1px] bg-cyan-500/50" />
           </div>
-          <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
-            THE ARCHITECT.
+          <h2 className="text-5xl md:text-8xl lg:text-[9rem] font-black text-white tracking-tighter leading-[0.85] uppercase">
+            System <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-400 to-gray-800">
+              Architect.
+            </span>
           </h2>
         </motion.div>
 
-        {/* --- BENTO BOX GRID --- */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
-        >
+        {/* --- THE SPLIT LAYOUT --- */}
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 relative">
 
-          {/* BENTO ITEM 1: The Bio */}
-          <motion.div variants={itemVariants} className="md:col-span-2 bg-[#0a0a0b] border border-white/5 rounded-3xl p-8 hover:border-cyan-500/30 transition-colors relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-              <Cpu size={120} />
-            </div>
-            <h3 className="text-2xl md:text-3xl font-bold text-white mb-6 leading-tight max-w-xl relative z-10">
-              I don't just write code; <br />
-              <span className="text-cyan-400">I engineer systems.</span>
-            </h3>
-            <div className="space-y-4 text-gray-400 max-w-xl relative z-10 text-sm md:text-base leading-relaxed">
-              <p>
-                My journey began at <strong className="text-white">PEC Chandigarh</strong>, bridging Electronics and Communication with a rigorous specialization in Artificial Intelligence.
-              </p>
-              <p>
-                From directing technical strategy for 2,000-person tech summits to architecting end-to-end NLP pipelines for complex scientific research at IIIT Delhi, I thrive in environments requiring precision and scalability. I believe technology is only as good as the complex problems it solves.
-              </p>
-            </div>
-          </motion.div>
+          {/* LEFT: STICKY IDENTITY CARD */}
+          <div className="lg:w-1/3 relative">
+            <div className="sticky top-32 space-y-8">
+              {/* Profile Image Node */}
+              <div className="group relative w-48 h-48 md:w-64 md:h-64 rounded-3xl overflow-hidden bg-gray-900 border border-white/10 shadow-2xl">
+                <img
+                  src="/karrtik.png"
+                  alt="Karrtik Gupta"
+                  className="w-full h-full object-cover filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-in-out"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-          {/* BENTO ITEM 2: Profile Image */}
-          <motion.div variants={itemVariants} className="bg-[#0a0a0b] border border-white/5 rounded-3xl p-4 flex flex-col justify-between hover:border-cyan-500/30 transition-colors group">
-            <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-gray-900 mb-4">
-              <img
-                src="/karrtik.png"
-                alt="Karrtik Gupta"
-                className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-in-out"
-              />
-              <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl pointer-events-none" />
-            </div>
-            <div className="flex justify-between items-center font-mono text-xs px-2">
-              <div>
-                <p className="text-white font-bold">KARRTIK GUPTA</p>
-                <p className="text-gray-500">STATUS: ONLINE</p>
+                {/* Live Status Indicator */}
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between backdrop-blur-md bg-black/40 border border-white/10 rounded-full px-4 py-2">
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                    </div>
+                    <span className="text-xs font-mono text-gray-300">SYSTEM_ONLINE</span>
+                  </div>
+                </div>
               </div>
-              <div className="h-2 w-2 rounded-full bg-cyan-500 animate-pulse" />
-            </div>
-          </motion.div>
 
-          {/* BENTO ITEM 3: Tech Arsenal */}
-          <motion.div variants={itemVariants} className="md:col-span-3 bg-gradient-to-r from-[#0a0a0b] to-[#0d0d12] border border-white/5 rounded-3xl p-8 flex flex-col md:flex-row gap-8 items-center">
-            <div className="flex-shrink-0 flex items-center gap-3 w-full md:w-auto border-b md:border-b-0 md:border-r border-white/10 pb-4 md:pb-0 md:pr-8">
-              <div className="p-3 rounded-xl bg-cyan-500/10 text-cyan-400">
-                <Code size={24} />
+              {/* Bio Block */}
+              <div className="space-y-6">
+                <h3 className="text-2xl font-bold text-white tracking-tight">
+                  Karrtik Gupta
+                </h3>
+                <div className="text-gray-400 text-base leading-relaxed space-y-4 font-light">
+                  <p>
+                    I bridge the gap between complex algorithms and scalable human experiences.
+                  </p>
+                  <p>
+                    From engineering end-to-end NLP pipelines at <span className="text-white font-medium">IIIT Delhi</span> to architecting strategies for large-scale tech summits, I build systems that solve real problems.
+                  </p>
+                </div>
               </div>
-              <div>
-                <h4 className="text-white font-bold tracking-wide">TECHNICAL</h4>
-                <p className="text-xs font-mono text-gray-500">ARSENAL</p>
+
+              {/* Scroll prompt for desktop */}
+              <div className="hidden lg:flex items-center gap-3 text-gray-600 font-mono text-sm pt-8 border-t border-white/5">
+                <ArrowDown size={16} className="animate-bounce" />
+                <span>Scroll to trace execution path</span>
               </div>
             </div>
+          </div>
 
-            <div className="flex-grow flex flex-wrap gap-3">
-              {loading ? (
-                <div className="text-gray-500 text-sm animate-pulse">Loading core modules...</div>
-              ) : (
-                techStack.map((tech, i) => (
-                  <span
-                    key={i}
-                    className="px-4 py-2 rounded-full bg-white/5 border border-white/5 text-sm font-medium hover:bg-cyan-500/20 hover:text-cyan-300 hover:border-cyan-500/50 transition-all cursor-default"
-                  >
-                    {tech}
-                  </span>
-                ))
-              )}
-            </div>
-          </motion.div>
-
-          {/* --- REDESIGNED TIMELINE ACCORDION --- */}
-          <motion.div variants={itemVariants} className="md:col-span-3 mt-8">
-            <div className="flex items-center gap-3 mb-8">
-              <History className="text-cyan-500" size={20} />
-              <h3 className="text-2xl font-bold text-white">System Logs</h3>
-            </div>
-
+          {/* RIGHT: SCROLLING TIMELINE THREAD */}
+          <div className="lg:w-2/3 relative">
             {loading ? (
-              <div className="text-center text-gray-500 py-10">Fetching timeline data...</div>
+              <div className="h-64 flex items-center justify-center text-cyan-500 font-mono animate-pulse">
+                Fetching execution logs...
+              </div>
             ) : (
-              <div className="relative border-l border-white/10 ml-4 space-y-4 max-w-4xl">
-                {timeline.map((item, index) => {
-                  const isActive = expandedLog === index;
+              <div className="relative">
+                {/* The continuous vertical thread line */}
+                <div className="absolute top-0 bottom-0 left-[27px] w-[2px] bg-gradient-to-b from-transparent via-white/10 to-transparent" />
 
-                  return (
+                <div className="space-y-12 lg:space-y-24">
+                  {timeline.map((item, index) => (
                     <motion.div
                       key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true, margin: "-50px" }}
-                      transition={{ delay: index * 0.1, duration: 0.4 }}
-                      className="relative pl-8"
+                      initial={{ opacity: 0, y: 50 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-100px" }}
+                      transition={{ duration: 0.6, ease: "easeOut" }}
+                      className="relative pl-16 lg:pl-24"
                     >
-                      {/* Animated Timeline Node */}
-                      <motion.div
-                        animate={{
-                          backgroundColor: isActive ? '#490cb9ff' : '#030303',
-                          borderColor: isActive ? '#06d425ff' : '#374151',
-                          scale: isActive ? 1.3 : 1,
-                          boxShadow: isActive ? '0 0 12px rgba(66, 167, 20, 0.6)' : '0 0 0px rgba(0,0,0,0)'
-                        }}
-                        transition={{ duration: 0.3 }}
-                        className="absolute -left-[5px] top-6 w-2.5 h-2.5 rounded-full border-2"
-                      />
+                      {/* Timeline Node */}
+                      <div className="absolute left-[24px] top-6 w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_15px_rgba(34,211,238,0.8)]" />
+                      <div className="absolute left-[15px] top-[15px] w-6 h-6 rounded-full border border-cyan-500/30 bg-black" />
 
-                      {/* Accordion Card Container */}
-                      <motion.div
-                        layout
-                        className={`rounded-xl overflow-hidden transition-all duration-300 ${isActive
-                          ? 'bg-[#121212] border border-white/20 shadow-[0_8px_30px_rgba(255,255,255,0.04)]'
-                          : 'bg-[#0a0a0b] border border-white/5 hover:border-white/10 hover:bg-[#0f0f0f]'
-                          }`}
-                      >
-                        {/* Interactive Header */}
-                        <motion.button
-                          layout
-                          onClick={() => toggleLog(index)}
-                          className="w-full text-left p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 group cursor-pointer"
-                        >
-                          <div>
-                            <span className="font-mono text-cyan-500 text-xs tracking-wider mb-2 block">
-                              {item.year}
-                            </span>
-                            <h4 className={`text-lg font-bold transition-colors ${isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'
-                              }`}>
+                      {/* Content Card */}
+                      <div className="group bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-white/10 rounded-3xl p-8 transition-all duration-500 relative overflow-hidden">
+
+                        {/* Hover Gradient Effect */}
+                        <div className="absolute -inset-px bg-gradient-to-r from-cyan-500/0 via-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                        <div className="relative z-10">
+                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                            <h4 className="text-2xl font-bold text-white group-hover:text-cyan-400 transition-colors">
                               {item.title}
                             </h4>
-                            <span className="text-sm text-gray-500 font-medium">
-                              {item.place}
-                            </span>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-gray-400 whitespace-nowrap">
+                              <Crosshair size={12} />
+                              {item.year}
+                            </div>
                           </div>
 
-                          <motion.div
-                            animate={{ rotate: isActive ? 180 : 0 }}
-                            transition={{ duration: 0.3, type: "spring" }}
-                            className={`p-2 rounded-full transition-colors ${isActive ? 'bg-white/10 text-white' : 'bg-white/5 text-gray-400'
-                              }`}
-                          >
-                            <ChevronDown size={18} />
-                          </motion.div>
-                        </motion.button>
+                          <p className="text-cyan-500/80 text-sm font-mono mb-6 uppercase tracking-wider">
+                            {item.place}
+                          </p>
 
-                        {/* Animated Expanded Content */}
-                        <AnimatePresence>
-                          {isActive && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.3, ease: "easeInOut" }}
-                            >
-                              <div className="px-5 pb-5 pt-0">
-                                <div className="p-4 bg-black/40 border border-white/5 rounded-lg text-sm md:text-base text-gray-400 leading-relaxed shadow-inner">
-                                  {item.desc}
-                                </div>
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </motion.div>
+                          <div className="text-gray-400 leading-relaxed text-base">
+                            {item.desc}
+                          </div>
+                        </div>
+                      </div>
                     </motion.div>
-                  );
-                })}
+                  ))}
+                </div>
               </div>
             )}
-          </motion.div>
+          </div>
+        </div>
+      </div>
 
+      {/* --- INFINITE TECH STACK MARQUEE --- */}
+      <div className="relative mt-24 py-12 border-y border-white/5 bg-white/[0.01] overflow-hidden flex items-center">
+        <div className="absolute left-0 w-32 h-full bg-gradient-to-r from-[#020202] to-transparent z-10" />
+        <div className="absolute right-0 w-32 h-full bg-gradient-to-l from-[#020202] to-transparent z-10" />
+
+        <div className="flex items-center gap-4 px-6 absolute z-20 left-6 text-white/40">
+          <Sparkles size={20} />
+          <span className="font-mono text-sm tracking-widest uppercase hidden md:inline-block">Core Modules</span>
+        </div>
+
+        <motion.div
+          className="flex gap-6 whitespace-nowrap pl-48"
+          animate={{ x: [0, -1500] }}
+          transition={{
+            x: {
+              repeat: Infinity,
+              repeatType: "loop",
+              duration: 35,
+              ease: "linear",
+            },
+          }}
+        >
+          {/* Double the array to create a seamless loop effect */}
+          {[...(techStack || []), ...(techStack || [])].map((tech, i) => (
+            <div
+              key={i}
+              className="inline-flex items-center px-6 py-3 rounded-full bg-white/5 border border-white/10 text-gray-300 font-medium hover:bg-cyan-500/10 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors cursor-default"
+            >
+              {tech}
+            </div>
+          ))}
         </motion.div>
       </div>
     </section>
