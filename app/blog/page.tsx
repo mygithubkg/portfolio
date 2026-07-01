@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import {
@@ -9,20 +9,65 @@ import {
   ArrowRight,
   Clock,
   Eye,
-  Filter
+  ChevronDown,
+  Check,
 } from 'lucide-react';
 import { getBlogs } from '@/lib/utils/blogData';
+
+/* ═══════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — shared with the post detail page for continuity.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const TOKENS_STYLE = `
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #0A0B0D;
+    --bg-raised: #121417;
+    --bg-raised-2: #17191D;
+    --rule: rgba(255,255,255,0.08);
+    --rule-strong: rgba(255,255,255,0.16);
+    --ink: #ECEAE2;
+    --ink-dim: #9A9D9F;
+    --ink-faint: #55585C;
+    --accent: #5FE0D0;
+    --accent-dim: rgba(95,224,208,0.10);
+    --accent-rule: rgba(95,224,208,0.28);
+  }
+
+  .font-editorial { font-family: 'Source Serif 4', Georgia, 'Iowan Old Style', ui-serif, serif; }
+  .font-chrome { font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace; }
+
+  ::selection { background: var(--accent-dim); color: var(--ink); }
+
+  @keyframes blink-cursor { 0%, 45% { opacity: 1; } 50%, 95% { opacity: 0; } 100% { opacity: 1; } }
+  .blink { animation: blink-cursor 1.1s steps(1) infinite; }
+
+  @keyframes skeleton-pulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.6; } }
+  .skeleton { animation: skeleton-pulse 1.6s ease-in-out infinite; background: var(--bg-raised); border-radius: 4px; }
+`;
+
+const CATEGORY_ALL = 'All';
 
 const Blog = () => {
   const [blogs, setBlogs] = useState<any[]>([]);
   const [filteredBlogs, setFilteredBlogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState(CATEGORY_ALL);
   const [selectedHashtag, setSelectedHashtag] = useState('');
   const [sortBy, setSortBy] = useState('date-desc');
-  const [showFilters, setShowFilters] = useState(false);
+  const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const router = useRouter();
+  const searchRef = useRef<HTMLInputElement>(null);
+  const sortMenuRef = useRef<HTMLDivElement>(null);
+
+  const SORT_OPTIONS = [
+    { value: 'date-desc', label: 'Latest first' },
+    { value: 'date-asc', label: 'Oldest first' },
+    { value: 'title', label: 'Title, A–Z' },
+    { value: 'views', label: 'Most read' },
+  ];
 
   useEffect(() => {
     loadBlogs();
@@ -30,7 +75,34 @@ const Blog = () => {
 
   useEffect(() => {
     filterAndSortBlogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blogs, searchTerm, selectedCategory, selectedHashtag, sortBy]);
+
+  /* ⌘K / Ctrl+K focuses search — the command-palette framing made real */
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+      if (e.key === 'Escape') {
+        setSortMenuOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  /* Close sort menu on outside click */
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (sortMenuRef.current && !sortMenuRef.current.contains(e.target as Node)) {
+        setSortMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
+  }, []);
 
   const loadBlogs = async () => {
     try {
@@ -55,7 +127,7 @@ const Blog = () => {
       );
     }
 
-    if (selectedCategory !== 'All') {
+    if (selectedCategory !== CATEGORY_ALL) {
       filtered = filtered.filter(blog => blog.category === selectedCategory);
     }
 
@@ -83,148 +155,186 @@ const Blog = () => {
     setFilteredBlogs(filtered);
   };
 
-  const categories = ['All', ...Array.from(new Set(blogs.map(blog => blog.category)))];
-  const allHashtags = [...Array.from(new Set(blogs.flatMap(blog => blog.hashtags || [])))];
+  const categories = [CATEGORY_ALL, ...Array.from(new Set(blogs.map(blog => blog.category)))];
 
-  const handleBlogClick = (blogId: string) => {
-    router.push(`/blog/${blogId}`);
+  const handleBlogClick = (blogId: string) => router.push(`/blog/${blogId}`);
+
+  const handleTagClick = (e: React.MouseEvent, tag: string) => {
+    e.stopPropagation();
+    setSelectedHashtag(prev => (prev.toLowerCase() === tag.toLowerCase() ? '' : tag));
   };
 
+  const resetAll = () => {
+    setSearchTerm('');
+    setSelectedCategory(CATEGORY_ALL);
+    setSelectedHashtag('');
+  };
+
+  const activeSortLabel = SORT_OPTIONS.find(o => o.value === sortBy)?.label ?? 'Sort';
+  const hasActiveFilters = searchTerm || selectedCategory !== CATEGORY_ALL || selectedHashtag;
+
+  /* ════════════════════ LOADING ════════════════════ */
   if (loading) {
     return (
-      <section className="min-h-screen py-24 bg-[#030303] flex items-center justify-center">
-        <div className="text-cyan-500 font-mono text-sm flex items-center gap-3 tracking-widest">
-          <div className="w-2 h-2 bg-cyan-500 animate-ping rounded-full" />
-          INITIALIZING_JOURNAL...
+      <section className="min-h-screen py-24 bg-[var(--bg)] flex items-center justify-center">
+        <style>{TOKENS_STYLE}</style>
+        <div className="w-[80%] max-w-4xl mx-auto">
+          <div className="font-chrome text-[var(--accent)] text-sm flex items-center gap-1 tracking-wide mb-12 justify-center">
+            reading_journal<span className="blink">_</span>
+          </div>
+          <div className="flex flex-col gap-6">
+            {[0, 1, 2].map(i => (
+              <div key={i} className="grid grid-cols-1 md:grid-cols-[140px_1fr_110px] gap-4 md:gap-8 items-start pb-6 border-b border-[var(--rule)]">
+                <div className="flex flex-col gap-2">
+                  <div className="skeleton h-3 w-20" />
+                  <div className="skeleton h-5 w-24" />
+                </div>
+                <div className="flex flex-col gap-3">
+                  <div className="skeleton h-7 w-3/4" />
+                  <div className="skeleton h-4 w-full" />
+                  <div className="skeleton h-4 w-2/3" />
+                </div>
+                <div className="skeleton h-8 w-16 justify-self-end" />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     );
   }
 
+  /* ════════════════════ MAIN RENDER ════════════════════ */
   return (
-    <section className="min-h-screen py-24 relative bg-[#030303] text-gray-300 selection:bg-cyan-500/30 selection:text-cyan-200">
-      {/* Subtle Ambient Background */}
-      <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-cyan-900/5 rounded-full blur-[150px] pointer-events-none" />
+    <section className="min-h-screen py-24 relative bg-[var(--bg)] text-[var(--ink-dim)] selection:bg-[var(--accent-dim)] selection:text-[var(--accent)]">
+      <style>{TOKENS_STYLE}</style>
 
-      {/* Container set exactly to 80% width */}
-      <div className="w-[80%] mx-auto relative z-10">
+      <div className="w-[90%] md:w-[80%] mx-auto relative z-10 max-w-5xl">
 
-        {/* --- HEADER --- */}
-        <div className="mb-16 md:mb-24 flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border-b border-white/10 pb-12">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-white/5 border border-white/10 text-cyan-400 font-mono text-xs mb-6 tracking-widest uppercase">
-              <Terminal size={14} />
-              <span>/ROOT/PUBLICATIONS</span>
+        {/* ═══════════ HEADER ═══════════ */}
+        <div className="mb-16 pb-12 border-b border-[var(--rule)]">
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[8px] bg-[var(--bg-raised)] border border-[var(--rule)] text-[var(--accent)] font-chrome text-xs mb-6 tracking-widest uppercase">
+              <Terminal size={13} />
+              <span>/root/publications</span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter uppercase leading-none">
-              Dev <br className="hidden md:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-gray-700">Journal.</span>
+            <h1 className="font-editorial text-5xl md:text-7xl font-semibold text-[var(--ink)] tracking-tight leading-[1.02] mb-4">
+              Dev Journal.
             </h1>
+            <p className="text-[var(--ink-dim)] text-base font-editorial italic max-w-md">
+              Technical insights, architectural teardowns, and engineering philosophies.
+            </p>
           </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="text-gray-400 text-sm md:text-base font-light max-w-sm"
-          >
-            A curated collection of technical insights, architectural teardowns, and engineering philosophies.
-          </motion.p>
         </div>
 
-        {/* --- COMMAND BAR (SEARCH & FILTER) --- */}
+        {/* ═══════════ COMMAND BAR ═══════════ */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-16"
+          transition={{ delay: 0.1, duration: 0.4 }}
+          className="mb-8"
         >
-          <div className="bg-[#0a0a0c] border border-white/10 rounded-2xl p-2 flex flex-col md:flex-row gap-2">
-            <div className="flex-1 relative flex items-center">
-              <Search className="absolute left-4 text-cyan-500/50" size={18} />
+          <div className="flex flex-col md:flex-row gap-2 mb-4">
+            {/* Search */}
+            <div className="flex-1 relative flex items-center bg-[var(--bg-raised)] border border-[var(--rule)] rounded-[12px]">
+              <Search className="absolute left-4 text-[var(--ink-faint)]" size={16} />
               <input
+                ref={searchRef}
                 type="text"
                 placeholder="Search publications..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-transparent pl-12 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none font-mono text-sm"
+                className="w-full bg-transparent pl-11 pr-4 py-3 text-[var(--ink)] placeholder-[var(--ink-faint)] focus:outline-none font-chrome text-sm rounded-[12px]"
               />
-              {searchTerm && (
-                <button onClick={() => setSearchTerm('')} className="absolute right-4 text-gray-500 hover:text-white transition-colors">
-                  <X size={16} />
+              {searchTerm ? (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 w-7 h-7 rounded-[8px] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--ink)] hover:bg-[var(--bg-raised-2)] transition-colors"
+                  aria-label="Clear search"
+                >
+                  <X size={14} />
+                </button>
+              ) : (
+                <span className="absolute right-3 hidden sm:flex items-center gap-0.5 px-1.5 py-1 rounded-[6px] border border-[var(--rule)] font-chrome text-[10px] text-[var(--ink-faint)]">
+                  ⌘K
+                </span>
+              )}
+            </div>
+
+            {/* Custom sort listbox — replaces the unstyled native <select> */}
+            <div ref={sortMenuRef} className="relative flex-shrink-0">
+              <button
+                onClick={() => setSortMenuOpen(o => !o)}
+                aria-haspopup="listbox"
+                aria-expanded={sortMenuOpen}
+                className={`w-full md:w-auto h-full px-4 py-3 rounded-[8px] font-chrome text-xs tracking-wide transition-all flex items-center gap-2 justify-between md:justify-center border ${sortMenuOpen
+                    ? 'bg-[var(--accent-dim)] text-[var(--accent)] border-[var(--accent-rule)]'
+                    : 'bg-[var(--bg-raised)] text-[var(--ink-dim)] border-[var(--rule)] hover:text-[var(--ink)]'
+                  }`}
+              >
+                {activeSortLabel}
+                <ChevronDown size={14} className={`transition-transform ${sortMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+              <AnimatePresence>
+                {sortMenuOpen && (
+                  <motion.ul
+                    role="listbox"
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.12 }}
+                    className="absolute right-0 mt-2 w-48 py-1 rounded-[12px] bg-[var(--bg-raised-2)] border border-[var(--rule)] shadow-xl z-30"
+                  >
+                    {SORT_OPTIONS.map(opt => (
+                      <li key={opt.value} role="option" aria-selected={sortBy === opt.value}>
+                        <button
+                          onClick={() => { setSortBy(opt.value); setSortMenuOpen(false); }}
+                          className={`w-full flex items-center justify-between px-3 py-2 text-left font-chrome text-xs transition-colors ${sortBy === opt.value ? 'text-[var(--accent)]' : 'text-[var(--ink-dim)] hover:text-[var(--ink)] hover:bg-[var(--bg-raised)]'
+                            }`}
+                        >
+                          {opt.label}
+                          {sortBy === opt.value && <Check size={13} />}
+                        </button>
+                      </li>
+                    ))}
+                  </motion.ul>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* Persistent category chips — the most-used filter stays one click, always */}
+          <div className="flex items-center gap-3">
+            <div className="flex flex-wrap gap-2 flex-1">
+              {categories.map((category: any) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-3.5 py-1.5 rounded-[8px] text-xs font-chrome transition-all border ${selectedCategory === category
+                      ? 'bg-[var(--ink)] text-[var(--bg)] border-[var(--ink)] font-medium'
+                      : 'bg-transparent text-[var(--ink-faint)] border-[var(--rule)] hover:text-[var(--ink)] hover:border-[var(--rule-strong)]'
+                    }`}
+                >
+                  {category}
+                </button>
+              ))}
+              {selectedHashtag && (
+                <button
+                  onClick={() => setSelectedHashtag('')}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-[8px] text-xs font-chrome bg-[var(--accent-dim)] text-[var(--accent)] border border-[var(--accent-rule)]"
+                >
+                  #{selectedHashtag}
+                  <X size={12} />
                 </button>
               )}
             </div>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`px-6 py-3 rounded-xl font-mono text-xs tracking-wider transition-all flex items-center gap-2 justify-center ${showFilters ? 'bg-cyan-500/10 text-cyan-400' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
-                }`}
-            >
-              <Filter size={14} />
-              PARAMETERS
-            </button>
+            <span className="hidden sm:block font-chrome text-[11px] text-[var(--ink-faint)] whitespace-nowrap">
+              {filteredBlogs.length} {filteredBlogs.length === 1 ? 'entry' : 'entries'}
+            </span>
           </div>
-
-          {/* Expandable Filter Panel */}
-          <AnimatePresence>
-            {showFilters && (
-              <motion.div
-                initial={{ height: 0, opacity: 0, marginTop: 0 }}
-                animate={{ height: 'auto', opacity: 1, marginTop: 16 }}
-                exit={{ height: 0, opacity: 0, marginTop: 0 }}
-                className="overflow-hidden"
-              >
-                <div className="bg-[#0a0a0c] border border-white/10 rounded-2xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-
-                  {/* Category Selection */}
-                  <div className="md:col-span-2">
-                    <label className="block text-[10px] font-mono text-cyan-600 mb-3 uppercase tracking-widest">
-                      Filter by Category
-                    </label>
-                    <div className="flex flex-wrap gap-2">
-                      {categories.map((category: any) => (
-                        <button
-                          key={category}
-                          onClick={() => setSelectedCategory(category)}
-                          className={`px-4 py-2 rounded-lg text-xs font-mono transition-all ${selectedCategory === category
-                              ? 'bg-white text-black font-bold'
-                              : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
-                            }`}
-                        >
-                          {category}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Sort Selection */}
-                  <div>
-                    <label className="block text-[10px] font-mono text-cyan-600 mb-3 uppercase tracking-widest">
-                      Sort Chronology
-                    </label>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="w-full bg-white/5 border-none rounded-lg p-3 text-gray-300 font-mono text-xs focus:ring-1 focus:ring-cyan-500 focus:outline-none appearance-none"
-                    >
-                      <option value="date-desc">Latest Discoveries</option>
-                      <option value="date-asc">Archival First</option>
-                      <option value="title">Alphabetical (A-Z)</option>
-                      <option value="views">Highest Engagement</option>
-                    </select>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </motion.div>
 
-        {/* --- EDITORIAL LIST VIEW --- */}
-        <div className="border-t border-white/10">
+        {/* ═══════════ EDITORIAL LIST VIEW ═══════════ */}
+        <div className="border-t border-[var(--rule)]">
           <AnimatePresence mode="wait">
             {filteredBlogs.length === 0 ? (
               <motion.div
@@ -234,16 +344,18 @@ const Blog = () => {
                 exit={{ opacity: 0 }}
                 className="py-24 text-center"
               >
-                <Terminal className="mx-auto text-gray-700 mb-4" size={48} />
-                <p className="text-gray-500 font-mono text-sm tracking-widest uppercase">Null_Results_Found</p>
+                <Terminal className="mx-auto text-[var(--ink-faint)] mb-4" size={36} />
+                <p className="font-chrome text-sm text-[var(--ink)] mb-1">
+                  {searchTerm ? `No entries match "${searchTerm}"` : 'No entries match these filters'}
+                </p>
+                <p className="font-chrome text-xs text-[var(--ink-faint)] mb-6">
+                  Try a different term, or clear what's applied.
+                </p>
                 <button
-                  onClick={() => {
-                    setSearchTerm('');
-                    setSelectedCategory('All');
-                  }}
-                  className="mt-6 px-6 py-2 rounded-full border border-white/10 text-xs text-white hover:bg-white hover:text-black transition-colors"
+                  onClick={resetAll}
+                  className="px-5 py-2 rounded-[8px] border border-[var(--rule)] font-chrome text-xs text-[var(--ink)] hover:bg-[var(--ink)] hover:text-[var(--bg)] transition-colors"
                 >
-                  Reset Parameters
+                  Reset filters
                 </button>
               </motion.div>
             ) : (
@@ -252,69 +364,71 @@ const Blog = () => {
                   <motion.article
                     key={blog.id}
                     layout
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
+                    transition={{ delay: Math.min(index * 0.04, 0.4) }}
                     onClick={() => handleBlogClick(blog.id)}
-                    className="group border-b border-white/10 py-8 md:py-12 cursor-pointer relative"
+                    className="group border-b border-[var(--rule)] py-8 cursor-pointer relative"
                   >
-                    {/* Hover Background Shift */}
-                    <div className="absolute inset-0 bg-white/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-300 -mx-6 px-6 rounded-2xl" />
+                    <div className="absolute inset-0 bg-[var(--bg-raised)] opacity-0 group-hover:opacity-40 transition-opacity duration-200 -mx-4 px-4 rounded-[12px]" />
 
-                    <div className="relative z-10 flex flex-col md:flex-row md:items-baseline gap-6 md:gap-12">
-
-                      {/* Left: Meta Column */}
-                      <div className="md:w-48 flex-shrink-0 flex flex-col gap-2">
-                        <span className="text-xs font-mono text-cyan-500">
+                    <div className="relative z-10 grid grid-cols-1 md:grid-cols-[140px_1fr_110px] gap-4 md:gap-8 items-start">
+                      {/* Column 1: Date + category */}
+                      <div className="flex flex-row md:flex-col items-center md:items-start gap-3 md:gap-2">
+                        <span className="font-chrome text-xs text-[var(--accent)]">
                           {new Date(blog.publishDate).toLocaleDateString('en-US', {
-                            month: '2-digit',
-                            day: '2-digit',
-                            year: 'numeric'
+                            month: '2-digit', day: '2-digit', year: 'numeric',
                           }).replace(/\//g, '.')}
                         </span>
-                        <span className="text-[10px] font-mono text-gray-500 tracking-widest uppercase border border-white/10 px-2 py-1 rounded w-fit group-hover:border-cyan-500/30 group-hover:text-cyan-400 transition-colors">
+                        <span className="font-chrome text-[10px] text-[var(--ink-faint)] tracking-widest uppercase border border-[var(--rule)] px-2 py-1 rounded-[8px] w-fit group-hover:border-[var(--accent-rule)] group-hover:text-[var(--accent)] transition-colors">
                           {blog.category}
                         </span>
                       </div>
 
-                      {/* Middle: Content Block */}
-                      <div className="flex-1 space-y-4">
-                        <h2 className="text-2xl md:text-4xl font-bold text-white group-hover:text-cyan-400 transition-colors tracking-tight leading-tight">
+                      {/* Column 2: Title, excerpt, tags */}
+                      <div className="min-w-0">
+                        <h2 className="font-editorial text-2xl md:text-3xl font-semibold text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors leading-tight mb-2">
                           {blog.title}
                         </h2>
-                        <p className="text-gray-400 text-sm md:text-base font-light leading-relaxed max-w-2xl">
+                        <p className="text-[var(--ink-dim)] text-[15px] leading-relaxed max-w-2xl mb-3">
                           {blog.excerpt}
                         </p>
-
-                        {/* Tags */}
-                        <div className="flex flex-wrap gap-2 pt-2">
-                          {blog.hashtags?.slice(0, 3).map((tag: string, i: number) => (
-                            <span key={i} className="text-[10px] text-gray-600 group-hover:text-gray-400 transition-colors">
-                              #{tag}
-                            </span>
-                          ))}
-                        </div>
+                        {blog.hashtags && blog.hashtags.length > 0 && (
+                          <div className="flex flex-wrap gap-3">
+                            {blog.hashtags.slice(0, 3).map((tag: string, i: number) => (
+                              <button
+                                key={i}
+                                onClick={(e) => handleTagClick(e, tag)}
+                                className={`font-chrome text-[11px] transition-colors ${selectedHashtag.toLowerCase() === tag.toLowerCase()
+                                    ? 'text-[var(--accent)]'
+                                    : 'text-[var(--ink-faint)] hover:text-[var(--ink-dim)]'
+                                  }`}
+                              >
+                                #{tag}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
 
-                      {/* Right: Metrics & Arrow */}
-                      <div className="md:w-32 flex-shrink-0 flex md:flex-col items-center md:items-end justify-between md:justify-start gap-4">
-                        <div className="flex flex-row md:flex-col items-center md:items-end gap-3 text-[10px] font-mono text-gray-500">
-                          <div className="flex items-center gap-1.5">
-                            <Clock size={12} />
+                      {/* Column 3: Metrics + arrow */}
+                      <div className="flex md:flex-col items-center md:items-end justify-between md:justify-start gap-3 md:gap-4">
+                        <div className="flex flex-row md:flex-col items-center md:items-end gap-2.5 font-chrome text-[10px] text-[var(--ink-faint)]">
+                          <span className="flex items-center gap-1.5">
+                            <Clock size={11} />
                             {blog.readTime}
-                          </div>
+                          </span>
                           {blog.views > 0 && (
-                            <div className="flex items-center gap-1.5">
-                              <Eye size={12} />
+                            <span className="flex items-center gap-1.5">
+                              <Eye size={11} />
                               {blog.views}
-                            </div>
+                            </span>
                           )}
                         </div>
-                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-cyan-500 group-hover:border-cyan-500 transition-all duration-300">
-                          <ArrowRight size={16} className="text-gray-400 group-hover:text-black group-hover:-rotate-45 transition-all duration-300" />
+                        <div className="w-9 h-9 rounded-full border border-[var(--rule)] flex items-center justify-center group-hover:bg-[var(--accent)] group-hover:border-[var(--accent)] transition-all duration-200">
+                          <ArrowRight size={15} className="text-[var(--ink-faint)] group-hover:text-[var(--bg)] group-hover:-rotate-45 transition-all duration-200" />
                         </div>
                       </div>
-
                     </div>
                   </motion.article>
                 ))}
