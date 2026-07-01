@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import ResetToDefaultModal from './ResetToDefaultModal';
 
 // Reusable "Tech" Input Style
-const TechInput = ({ label, name, value, onChange, placeholder, type = "text", required = false, rows, options }: any) => (
+const TechInput = ({ label, name, value, onChange, placeholder, type = "text", required = false, rows, options, error }: any) => (
   <div className="group relative">
     <label className="block text-[10px] font-mono text-cyan-600 mb-1 uppercase tracking-widest group-focus-within:text-cyan-400">
       {label} {required && '*'}
@@ -23,7 +23,7 @@ const TechInput = ({ label, name, value, onChange, placeholder, type = "text", r
         onChange={onChange}
         rows={rows || 3}
         placeholder={placeholder}
-        className="w-full bg-black/40 border border-white/10 p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors resize-none placeholder-gray-700"
+        className={`w-full bg-black/40 border ${error ? 'border-red-500' : 'border-white/10'} p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors resize-none placeholder-gray-700`}
       />
     ) : type === 'select' ? (
       <select
@@ -31,7 +31,7 @@ const TechInput = ({ label, name, value, onChange, placeholder, type = "text", r
         value={value}
         onChange={onChange}
         required={required}
-        className="w-full bg-black/40 border border-white/10 p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors"
+        className={`w-full bg-black/40 border ${error ? 'border-red-500' : 'border-white/10'} p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors`}
       >
         <option value="" disabled>{placeholder || 'Select an option'}</option>
         {options && options.map((opt: string) => (
@@ -46,14 +46,15 @@ const TechInput = ({ label, name, value, onChange, placeholder, type = "text", r
         onChange={onChange}
         placeholder={placeholder}
         required={required}
-        className="w-full bg-black/40 border border-white/10 p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors placeholder-gray-700"
+        className={`w-full bg-black/40 border ${error ? 'border-red-500' : 'border-white/10'} p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors placeholder-gray-700`}
       />
     )}
+    {error && <p className="mt-1 text-[10px] text-red-500 font-mono animate-pulse">{error}</p>}
   </div>
 );
 
-const LIVE_TAB     = 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30';
-const DEFAULT_TAB  = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
+const LIVE_TAB = 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30';
+const DEFAULT_TAB = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
 const INACTIVE_TAB = 'text-gray-500 hover:text-white border-transparent';
 
 const ProjectsManager = () => {
@@ -70,7 +71,7 @@ const ProjectsManager = () => {
   const [showReset, setShowReset] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [resetStatus, setResetStatus] = useState<string | null>(null);
-  
+
   // Initial Form State
   const initialFormState = {
     title: '', description: '', details: '', link: '',
@@ -117,19 +118,27 @@ const ProjectsManager = () => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    
+
     // Prevent double submission
     if (isSubmitting) return;
-    
+
     setIsSubmitting(true);
     setErrors({});
 
+    console.log('[submit] mode:', mode, 'editingProject:', editingProject);
+    console.log('[submit] formData before validation:', formData);
+
     // Prepare project data
-    const projectData = {
+    const projectData: any = {
       ...formData,
-      tech: formData.tech.split(',').map((t: string) => t.trim()).filter((t: string) => t),
+      tech: formData.tech ? formData.tech.split(',').map((t: string) => t.trim()).filter((t: string) => t) : [],
       year: parseInt(formData.year)
     };
+
+    // Strip empty strings for optional URL/image fields to prevent Yup validation errors
+    if (projectData.link === '') projectData.link = null;
+    if (projectData.github === '') projectData.github = null;
+    if (projectData.image === '') projectData.image = null;
 
     // Validate data
     const validation = await validateData(projectData, projectSchema) as {
@@ -137,7 +146,9 @@ const ProjectsManager = () => {
       errors: Record<string, string>;
       data: typeof projectData | null;
     };
-    
+
+    console.log('[submit] validation result:', validation);
+
     if (!validation.isValid) {
       setErrors(validation.errors);
       setIsSubmitting(false);
@@ -146,26 +157,32 @@ const ProjectsManager = () => {
     }
 
     try {
+      let result: { success: boolean; message?: string } | undefined;
       if (editingProject) {
         if (mode === 'live') {
-          await updateProject(editingProject.id, validation.data);
+          result = await updateProject(editingProject.id, validation.data);
         } else {
-          await updateDefaultProject(editingProject.id, validation.data);
+          result = await updateDefaultProject(editingProject.id, validation.data);
         }
         auditLog(`PROJECT_UPDATED_${mode.toUpperCase()}`, { projectId: editingProject.id });
       } else {
         if (mode === 'live') {
-          await addProject(validation.data);
+          result = await addProject(validation.data);
         } else {
-          await addDefaultProject(validation.data);
+          result = await addDefaultProject(validation.data);
         }
         auditLog(`PROJECT_ADDED_${mode.toUpperCase()}`);
+      }
+      // Surface Firestore-level failures (permission denied, network, etc.)
+      if (result && !result.success) {
+        throw new Error(result.message || 'Failed to save project to database.');
       }
       await loadProjects();
       setIsModalOpen(false);
       setFormData(initialFormState);
       setErrors({});
     } catch (error) {
+      console.log('[submit] catch error:', error);
       const errorMessage = handleSecureError(error as Error, 'Saving project');
       setErrors({ submit: errorMessage });
       auditLog('PROJECT_SAVE_ERROR', { error: errorMessage });
@@ -181,10 +198,14 @@ const ProjectsManager = () => {
       return;
     }
     try {
+      let result: { success: boolean; message?: string } | undefined;
       if (mode === 'live') {
-        await deleteProject(deleteConfirmation.projectId);
+        result = await deleteProject(deleteConfirmation.projectId);
       } else {
-        await deleteDefaultProject(deleteConfirmation.projectId);
+        result = await deleteDefaultProject(deleteConfirmation.projectId);
+      }
+      if (result && !result.success) {
+        throw new Error(result.message || 'Failed to delete project from database.');
       }
       await loadProjects();
       setDeleteConfirmation({ open: false, projectId: null, projectTitle: '' });
@@ -230,14 +251,14 @@ const ProjectsManager = () => {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white p-6 md:p-12 font-mono">
-      
+
       {/* Background Grid */}
       <div className="fixed inset-0 pointer-events-none opacity-20"
-           style={{ backgroundImage: `linear-gradient(#1a1a1a 1px, transparent 1px), linear-gradient(90deg, #1a1a1a 1px, transparent 1px)`, backgroundSize: '40px 40px' }} 
+        style={{ backgroundImage: `linear-gradient(#1a1a1a 1px, transparent 1px), linear-gradient(90deg, #1a1a1a 1px, transparent 1px)`, backgroundSize: '40px 40px' }}
       />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        
+
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-white/10 pb-6 gap-6">
           <div>
@@ -249,7 +270,7 @@ const ProjectsManager = () => {
               Project <span className="text-gray-600">Manifest</span>
             </h1>
           </div>
-          
+
           <div className="flex items-center gap-3 flex-wrap">
             {/* Mode toggle */}
             <div className="flex gap-1 bg-white/5 border border-white/10 p-1">
@@ -349,17 +370,17 @@ const ProjectsManager = () => {
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
               className="absolute inset-0 bg-black/80 backdrop-blur-sm"
             />
-            
-            <motion.div 
-              initial={{ scale: 0.95, opacity: 0 }} 
-              animate={{ scale: 1, opacity: 1 }} 
+
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               className="relative w-full max-w-2xl bg-[#0a0a0a] border border-white/20 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             >
@@ -377,50 +398,51 @@ const ProjectsManager = () => {
               {/* Modal Body */}
               <form onSubmit={handleSubmit} className="p-6 overflow-y-auto custom-scrollbar">
                 <div className="grid grid-cols-2 gap-6">
-                  
+
                   {/* Basic Info */}
                   <div className="col-span-2">
-                    <TechInput label="PROJECT_TITLE" name="title" value={formData.title} onChange={handleChange} required placeholder="e.g. Neural Network V1" />
+                    <TechInput label="PROJECT_TITLE" name="title" value={formData.title} onChange={handleChange} required placeholder="e.g. Neural Network V1" error={errors.title} />
                   </div>
 
-                  <TechInput 
-                    label="CATEGORY" 
-                    name="category" 
-                    value={formData.category} 
-                    onChange={handleChange} 
-                    required 
+                  <TechInput
+                    label="CATEGORY"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    required
                     type="select"
                     options={['Web Development', 'Mobile App', 'AI/ML', 'Desktop App', 'Game Development', 'Other']}
+                    error={errors.category}
                   />
-                  <TechInput label="RELEASE_YEAR" name="year" value={formData.year} onChange={handleChange} required placeholder="2025" />
+                  <TechInput label="RELEASE_YEAR" name="year" value={formData.year} onChange={handleChange} required placeholder="2025" error={errors.year} />
 
                   {/* Descriptions */}
                   <div className="col-span-2">
-                    <TechInput label="SHORT_DESCRIPTION" name="description" value={formData.description} onChange={handleChange} type="textarea" rows={2} required placeholder="Brief overview for the card..." />
+                    <TechInput label="SHORT_DESCRIPTION" name="description" value={formData.description} onChange={handleChange} type="textarea" rows={2} required placeholder="Brief overview for the card..." error={errors.description} />
                   </div>
                   <div className="col-span-2">
-                    <TechInput label="FULL_TECHNICAL_DETAILS" name="details" value={formData.details} onChange={handleChange} type="textarea" rows={4} placeholder="In-depth explanation..." />
+                    <TechInput label="FULL_TECHNICAL_DETAILS" name="details" value={formData.details} onChange={handleChange} type="textarea" rows={4} placeholder="In-depth explanation..." error={errors.details} />
                   </div>
 
                   {/* Links & Assets */}
-                  <TechInput label="LIVE_DEPLOYMENT_URL" name="link" value={formData.link} onChange={handleChange} placeholder="https://..." />
-                  <TechInput label="SOURCE_CODE_REPO" name="github" value={formData.github} onChange={handleChange} placeholder="https://github.com/..." />
-                  
+                  <TechInput label="LIVE_DEPLOYMENT_URL" name="link" value={formData.link} onChange={handleChange} placeholder="https://..." error={errors.link} />
+                  <TechInput label="SOURCE_CODE_REPO" name="github" value={formData.github} onChange={handleChange} placeholder="https://github.com/..." error={errors.github} />
+
                   <div className="col-span-2">
-                    <TechInput label="IMAGE_ASSET_PATH" name="image" value={formData.image} onChange={handleChange} placeholder="/images/project.png or URL" />
+                    <TechInput label="IMAGE_ASSET_PATH" name="image" value={formData.image} onChange={handleChange} placeholder="/images/project.png or URL" error={errors.image} />
                   </div>
 
                   {/* Tech Stack */}
                   <div className="col-span-2">
-                    <TechInput label="TECHNOLOGIES (CSV)" name="tech" value={formData.tech} onChange={handleChange} placeholder="React, Node.js, Python..." />
+                    <TechInput label="TECHNOLOGIES (CSV)" name="tech" value={formData.tech} onChange={handleChange} placeholder="React, Node.js, Python..." error={errors.tech} />
                   </div>
 
                   {/* Featured Toggle */}
                   <div className="col-span-2 flex items-center gap-3 border border-white/10 p-4 bg-white/5">
-                    <input 
-                      type="checkbox" 
-                      name="featured" 
-                      checked={formData.featured} 
+                    <input
+                      type="checkbox"
+                      name="featured"
+                      checked={formData.featured}
                       onChange={handleChange}
                       className="w-4 h-4 accent-cyan-500 bg-black border-white/20"
                     />
@@ -428,17 +450,17 @@ const ProjectsManager = () => {
                   </div>
                 </div>
 
-                  {/* Actions */}
+                {/* Actions */}
                 <div className="flex gap-4 mt-8 pt-6 border-t border-white/10">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => setIsModalOpen(false)}
                     className="flex-1 py-3 border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 text-xs font-bold transition-colors"
                   >
                     ABORT
                   </button>
-                  <button 
-                    type="submit" 
+                  <button
+                    type="submit"
                     disabled={isSubmitting}
                     className="flex-1 py-3 bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
@@ -464,17 +486,17 @@ const ProjectsManager = () => {
       <AnimatePresence>
         {deleteConfirmation.open && (
           <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setDeleteConfirmation({ open: false, projectId: null, projectTitle: '' })}
               className="absolute inset-0 bg-black/80 backdrop-blur-sm"
             />
-            
-            <motion.div 
-              initial={{ scale: 0.95, opacity: 0 }} 
-              animate={{ scale: 1, opacity: 1 }} 
+
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               className="relative w-full max-w-md bg-[#0a0a0a] border border-red-500/50 shadow-2xl overflow-hidden"
             >
@@ -484,8 +506,8 @@ const ProjectsManager = () => {
                   <AlertTriangle size={20} className="text-red-500" />
                   <h2 className="text-sm font-bold text-white tracking-widest">DELETION_WARNING</h2>
                 </div>
-                <button 
-                  onClick={() => setDeleteConfirmation({ open: false, projectId: null, projectTitle: '' })} 
+                <button
+                  onClick={() => setDeleteConfirmation({ open: false, projectId: null, projectTitle: '' })}
                   className="text-gray-500 hover:text-white"
                 >
                   <X size={18} />
@@ -501,7 +523,7 @@ const ProjectsManager = () => {
                   <p className="text-cyan-400 font-mono text-sm font-bold">{deleteConfirmation.projectTitle}</p>
                   <p className="text-gray-500 text-xs mt-1">ID: {deleteConfirmation.projectId}</p>
                 </div>
-                
+
                 <p className="text-red-400 text-xs mb-4 font-mono">
                   ⚠️ THIS ACTION CANNOT BE UNDONE
                 </p>
@@ -526,8 +548,8 @@ const ProjectsManager = () => {
                 )}
 
                 <div className="flex gap-4">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => {
                       setDeleteConfirmation({ open: false, projectId: null, projectTitle: '' });
                       setConfirmText('');
@@ -537,8 +559,8 @@ const ProjectsManager = () => {
                   >
                     CANCEL
                   </button>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={handleDelete}
                     disabled={confirmText !== 'DELETE'}
                     className="flex-1 py-3 bg-red-500 hover:bg-red-400 text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"

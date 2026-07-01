@@ -36,8 +36,8 @@ const TechInput = ({ label, name, value, onChange, placeholder, type = "text", r
   </div>
 );
 
-const LIVE_TAB     = 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30';
-const DEFAULT_TAB  = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
+const LIVE_TAB = 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30';
+const DEFAULT_TAB = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
 const INACTIVE_TAB = 'text-gray-500 hover:text-white border-transparent';
 
 const BlogManager = () => {
@@ -49,7 +49,7 @@ const BlogManager = () => {
   const [showReset, setShowReset] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [status, setStatus] = useState<any>(null);
-  
+
   // Initial Form State
   const initialFormState = {
     title: '',
@@ -109,21 +109,25 @@ const BlogManager = () => {
     };
 
     try {
+      let result: { success: boolean; message?: string } | undefined;
       if (editingBlog) {
-        mode === 'live'
+        result = mode === 'live'
           ? await updateBlog(editingBlog.id, blogData)
           : await updateDefaultBlog(editingBlog.id, blogData);
       } else {
-        mode === 'live'
+        result = mode === 'live'
           ? await addBlog(blogData)
           : await addDefaultBlog(blogData);
+      }
+      if (result && !result.success) {
+        throw new Error(result.message || 'Failed to save blog to database.');
       }
       await loadBlogs();
       setIsModalOpen(false);
       setFormData(initialFormState);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving blog:', error);
-      showStatus('Error saving blog. Please try again.', true);
+      showStatus(error.message || 'Error saving blog. Please try again.', true);
     }
   };
 
@@ -131,14 +135,17 @@ const BlogManager = () => {
 
   const handleDelete = async () => {
     try {
-      mode === 'live'
+      const result = mode === 'live'
         ? await deleteBlog(deleteModal.blogId)
         : await deleteDefaultBlog(deleteModal.blogId);
+      if (result && !result.success) {
+        throw new Error(result.message || 'Failed to delete blog.');
+      }
       await loadBlogs();
       setDeleteModal({ open: false, blogId: null, blogTitle: '' });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting blog:', error);
-      showStatus('Error deleting blog. Please try again.', true);
+      showStatus(error.message || 'Error deleting blog. Please try again.', true);
     }
   };
 
@@ -254,20 +261,20 @@ const BlogManager = () => {
             </div>
 
             {/* Actions */}
-              <div className="flex gap-2 pt-4 border-t border-white/5">
-                <button
-                  onClick={() => handleOpenModal(blog)}
-                  className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white text-[10px] font-mono transition-all"
-                >
-                  <Edit size={12} /> EDIT
-                </button>
-                <button
-                  onClick={() => openDeleteModal(blog)}
-                  className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-red-500/10 hover:red-500/20 border border-red-500/30 text-red-400 text-[10px] font-mono transition-all"
-                >
-                  <Trash2 size={12} /> DELETE
-                </button>
-              </div>
+            <div className="flex gap-2 pt-4 border-t border-white/5">
+              <button
+                onClick={() => handleOpenModal(blog)}
+                className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white text-[10px] font-mono transition-all"
+              >
+                <Edit size={12} /> EDIT
+              </button>
+              <button
+                onClick={() => openDeleteModal(blog)}
+                className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-red-500/10 hover:red-500/20 border border-red-500/30 text-red-400 text-[10px] font-mono transition-all"
+              >
+                <Trash2 size={12} /> DELETE
+              </button>
+            </div>
           </motion.div>
         ))}
       </div>
