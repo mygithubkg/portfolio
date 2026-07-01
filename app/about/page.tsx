@@ -43,6 +43,7 @@ export default function About() {
             <span>Identity Verified</span>
             <span className="w-12 h-[1px] bg-cyan-500/50" />
           </div>
+          <h1 className="sr-only">About Karrtik Gupta</h1>
           <h2 className="text-5xl md:text-8xl lg:text-[9rem] font-black text-white tracking-tighter leading-[0.85] uppercase">
             System <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-400 to-gray-800">

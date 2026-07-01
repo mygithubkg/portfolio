@@ -9,11 +9,39 @@ import ClientLoadingWrapper from '@/components/ClientLoadingWrapper';
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.karrtikgupta.me"),
   title: {
     template: '%s | Karrtik Gupta',
-    default: 'Karrtik Gupta | Portfolio',
+    default: 'Karrtik Gupta | Full-Stack & AI Engineer',
   },
-  description: 'Full Stack Developer portfolio showcasing projects, skills, and experience.',
+  description: 'Karrtik Gupta is a Full-Stack & AI Engineer specializing in Next.js, Node.js, Applied NLP, and GenAI. Explore his portfolio of scalable web apps and intelligent agents.',
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Karrtik Gupta | Full-Stack & AI Engineer",
+    description: "Karrtik Gupta is a Full-Stack & AI Engineer specializing in Next.js, Node.js, Applied NLP, and GenAI. Explore his portfolio of scalable web apps and intelligent agents.",
+    url: "https://www.karrtikgupta.me",
+    siteName: "Karrtik Gupta",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Karrtik Gupta Portfolio",
+      },
+    ],
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Karrtik Gupta | Full-Stack & AI Engineer",
+    description: "Karrtik Gupta is a Full-Stack & AI Engineer specializing in Next.js, Node.js, Applied NLP, and GenAI. Explore his portfolio of scalable web apps and intelligent agents.",
+    images: ["/og-image.png"],
+  },
+  robots: { index: true, follow: true },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({

@@ -114,6 +114,26 @@ function BlogDetailPage() {
       />
 
       <article className="min-h-screen py-24 relative overflow-hidden bg-[#050505]">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Article",
+              headline: blog.title,
+              description: blog.excerpt,
+              author: {
+                "@type": "Person",
+                name: blog.author || "Karrtik Gupta",
+                url: "https://www.karrtikgupta.me",
+              },
+              datePublished: blog.createdAt || blog.publishDate,
+              dateModified: blog.updatedAt || blog.createdAt || blog.publishDate,
+              image: blog.imageUrl ?? "https://www.karrtikgupta.me/og-image.png",
+              url: `https://www.karrtikgupta.me/blog/${id}`,
+            }),
+          }}
+        />
         {/* Background Decor */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none" />

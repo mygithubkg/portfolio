@@ -182,8 +182,8 @@ export default function Home() {
 
           <div className="mb-8 md:mb-16 flex items-end justify-between">
             <div>
-              <h2 className="text-[10px] md:text-sm font-mono text-cyan-500 tracking-widest uppercase mb-2 md:mb-4">Core Modules</h2>
-              <h3 className="text-3xl md:text-5xl font-bold text-white tracking-tight">Technical Arsenal.</h3>
+              <h3 className="text-[10px] md:text-sm font-mono text-cyan-500 tracking-widest uppercase mb-2 md:mb-4">Core Modules</h3>
+              <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight">Technical Arsenal.</h2>
             </div>
             {/* Mobile Swipe Indicator */}
             <div className="md:hidden flex items-center gap-1 text-[10px] font-mono text-gray-500 uppercase tracking-widest">
