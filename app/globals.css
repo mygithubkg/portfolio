@@ -1,26 +1,237 @@
+
 @import "tailwindcss";
 
+/* ============================================================
+   CSS CUSTOM PROPERTIES (used by Services.jsx, AdminLogin.jsx, etc.)
+   ============================================================ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #09090b;
+  --foreground: #fafafa;
+  --surface: #18181b;
+  --surfaceLight: #27272a;
+  --accent: #6366f1;
+  --accentLight: #818cf8;
+  --accentDark: #4f46e5;
+  --border: #27272a;
+  --text: #fafafa;
+  --textSecondary: #a1a1aa;
+  --error: #ef4444;
+  --success: #22c55e;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ============================================================
+   BASE RESETS & TYPOGRAPHY
+   ============================================================ */
+html {
+  scroll-behavior: smooth;
+  background: #09090b;
+  color: #fafafa;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: 10px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  color: #fafafa;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+h1 { font-weight: 800; font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+
+p {
+  font-weight: 400;
+  line-height: 1.75;
+  color: #a1a1aa;
+  font-size: 1rem;
+}
+
+/* ============================================================
+   GLASS CARD & MINIMAL CARD
+   ============================================================ */
+.glass-card,
+.minimal-card {
+  background: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover,
+.minimal-card:hover {
+  background: #18181b;
+  border-color: #3f3f46;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+button {
+  color: #fafafa;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid #27272a;
+  background: #18181b;
+  cursor: pointer;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+}
+
+button:hover,
+button:focus {
+  background: #27272a;
+  border-color: #3f3f46;
+}
+
+button:active {
+  background: #18181b;
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 8px;
+  background: #09090b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+::-webkit-scrollbar-track {
+  background: #09090b;
+}
+
+/* ============================================================
+   FOCUS / SELECTION
+   ============================================================ */
+*:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+::selection {
+  background: #6366f1;
+  color: #ffffff;
+}
+
+* {
+  transition: color 0.3s, background-color 0.3s, border-color 0.3s;
+}
+
+a {
+  color: #a1a1aa;
+  text-decoration: none;
+  transition: color 0.3s;
+  font-size: 1rem;
+}
+
+a:hover {
+  color: #fafafa;
+}
+
+/* ============================================================
+   GRADIENT TEXT OVERRIDE
+   ============================================================ */
+.gradient-text {
+  color: #fafafa;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
+}
+
+/* ============================================================
+   TSPARTICLES
+   ============================================================ */
+#tsparticles {
+  opacity: 0.05;
+  transition: opacity 1s ease-in-out;
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ============================================================
+   RESPONSIVE TYPOGRAPHY
+   ============================================================ */
+@media (min-width: 640px) {
+  html { font-size: 16px; }
+  h1 { font-size: 3.5rem; }
+  h2 { font-size: 2.5rem; }
+  h3 { font-size: 2rem; }
+  p  { font-size: 1.125rem; }
+}
+
+@media (min-width: 1024px) {
+  html { font-size: 18px; }
+  h1 { font-size: 4rem; }
+  h2 { font-size: 3rem; }
+  h3 { font-size: 2.25rem; }
+  p  { font-size: 1.125rem; }
+}
+
+@media (max-width: 640px) {
+  .glass-card,
+  .minimal-card {
+    border-radius: 0.75rem;
+  }
+  button {
+    padding: 0.625em 1.25em;
+    font-size: 0.875rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  button:hover,
+  a:hover { transform: none; }
+  .glass-card:hover,
+  .minimal-card:hover { transform: none; }
 }
