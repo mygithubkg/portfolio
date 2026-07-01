@@ -23,11 +23,14 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.emailjs.com",
+      // Allow same-origin, EmailJS CDN, Vercel preview toolbar, and Microsoft Clarity
+      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.emailjs.com https://vercel.live https://*.vercel-scripts.com https://www.clarity.ms",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://firebasestorage.googleapis.com https://images.unsplash.com",
-      "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://api.emailjs.com wss://*.firebaseio.com",
+      "img-src 'self' data: blob: https://firebasestorage.googleapis.com https://images.unsplash.com https://www.clarity.ms",
+      // Clarity sends analytics data to c.clarity.ms; Vercel live uses pusher for toolbar WS
+      "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://api.emailjs.com wss://*.firebaseio.com https://www.clarity.ms https://*.clarity.ms wss://ws-us3.pusher.com https://sockjs-us3.pusher.com",
+      "frame-src https://vercel.live",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
