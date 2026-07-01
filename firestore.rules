@@ -1,0 +1,101 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================
+    // ADMIN AUTHENTICATION CHECK
+    //
+    // After creating your Firebase Auth admin account:
+    // 1. Get your UID from Firebase Console → Authentication → Users
+    // 2. Replace the placeholder below with your actual UID
+    // 3. Deploy: firebase deploy --only firestore:rules
+    // See MIGRATION.md for full instructions.
+    // ============================================
+    function isAdmin() {
+      return request.auth != null &&
+             request.auth.uid == 'lWIOtJ3nlRXFzuG9sGKz8TpUVZ03';
+    }
+
+    // ============================================
+    // LIVE DATA — Publicly readable, Admin-write only
+    // ============================================
+
+    match /about/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /contact/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /services/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /projects/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /blogs/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /timeline/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /techStack/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ============================================
+    // DEFAULTS DATA — Admin read/write only
+    // These collections mirror the live structure but
+    // are only accessible to the authenticated admin.
+    // Used by the admin panel's "Defaults" tab and
+    // "Reset to Default" functionality.
+    // ============================================
+
+    match /defaults_about/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    match /defaults_contact/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    match /defaults_services/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    match /defaults_projects/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    match /defaults_blogs/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    match /defaults_timeline/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    match /defaults_techStack/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // ============================================
+    // DEFAULT DENY — Block everything else
+    // ============================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
