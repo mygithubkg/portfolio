@@ -1,37 +1,21 @@
 "use client"
-import React, { useState, useEffect } from 'react';
-import LoadingPage from './LoadingPage';
+import React from 'react';
 import ErrorBoundary from './ErrorBoundary';
-import { clarity } from 'react-microsoft-clarity';
+import Script from 'next/script';
 
 export default function ClientLoadingWrapper({ children }: { children: React.ReactNode }) {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Replace 'YOUR_PROJECT_ID' with your actual Project ID from Microsoft Clarity
-    const clarityProjectId = 'xa0yfqw4yh';
-
-    // Initialize Clarity
-    if (typeof window !== 'undefined') {
-      clarity.init(clarityProjectId);
-    }
-  }, []);
-
-  const handleLoadingComplete = () => {
-    setIsLoading(false);
-  };
-
-  if (isLoading) {
-    return (
-      <ErrorBoundary>
-        <LoadingPage onComplete={handleLoadingComplete} />
-      </ErrorBoundary>
-    );
-  }
-
   return (
     <ErrorBoundary>
       {children}
+      <Script id="microsoft-clarity" strategy="lazyOnload">
+        {`
+          (function(c,l,a,r,i,t,y){
+              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+          })(window, document, "clarity", "script", "xa0yfqw4yh");
+        `}
+      </Script>
     </ErrorBoundary>
   );
 }

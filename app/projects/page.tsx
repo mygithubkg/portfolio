@@ -136,12 +136,18 @@ export default function Projects() {
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] via-[#0a0a0c]/20 to-transparent z-10 md:hidden" />
                     {isFeatured && <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#0a0a0c] z-10" />}
 
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover filter grayscale-[30%] group-hover:grayscale-0 transition-all duration-700 transform group-hover:scale-105"
-                      onError={(e: any) => { e.target.style.display = 'none'; }}
-                    />
+                    {project.image ? (
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-full object-cover filter grayscale-[30%] group-hover:grayscale-0 transition-all duration-700 transform group-hover:scale-105"
+                        onError={(e: any) => { e.target.style.display = 'none'; }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-[#050505] text-gray-700 text-xs font-mono">
+                        NO_IMAGE
+                      </div>
+                    )}
 
                     {/* Status Badge */}
                     <div className="absolute top-5 left-5 md:top-6 md:left-6 z-20">
@@ -250,12 +256,18 @@ export default function Projects() {
 
                     {/* Visuals */}
                     <motion.div layoutId={`image-${project.id}`} className="w-full h-[250px] md:h-auto md:w-1/2 relative shrink-0 bg-[#050505]">
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="absolute inset-0 w-full h-full object-cover opacity-80"
-                        onError={(e: any) => e.target.style.display = 'none'}
-                      />
+                      {project.image ? (
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className="absolute inset-0 w-full h-full object-cover opacity-80"
+                          onError={(e: any) => e.target.style.display = 'none'}
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-gray-700 font-mono text-xs">
+                          NO_IMAGE
+                        </div>
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:to-[#0a0a0c]" />
                     </motion.div>
 

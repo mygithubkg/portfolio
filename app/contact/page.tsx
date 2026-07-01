@@ -22,6 +22,7 @@ export default function Contact() {
   const [status, setStatus] = useState('IDLE'); // IDLE, SENDING, SUCCESS, ERROR
   const [activeField, setActiveField] = useState<string | null>(null);
   const [time, setTime] = useState(new Date());
+  const [mounted, setMounted] = useState(false);
 
   // Fetch contact data from global context
   const { data, loading } = useData();
@@ -46,6 +47,7 @@ export default function Contact() {
 
   // Update clock every second
   useEffect(() => {
+    setMounted(true);
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
@@ -145,7 +147,7 @@ export default function Contact() {
               <FaMapMarkerAlt /> Chandigarh, India
             </div>
             <div className="flex items-center gap-2">
-              <Clock size={12} /> {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} IST
+              <Clock size={12} /> {mounted ? time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--'} IST
             </div>
           </motion.div>
         </div>

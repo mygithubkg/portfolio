@@ -6,7 +6,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ClientLoadingWrapper from '@/components/ClientLoadingWrapper';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: {
@@ -41,7 +41,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.className} bg-background text-foreground antialiased`}>
+      <body className={`${inter.className} ${inter.variable} bg-background text-foreground antialiased`}>
         <Providers>
           <ClientLoadingWrapper>
             <Header />

@@ -1,13 +1,13 @@
 "use client"
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  getProjects, 
-  getTimeline, 
-  getTechStack, 
-  getContactContent, 
+import {
+  getProjects,
+  getTimeline,
+  getTechStack,
+  getContactContent,
   getSocials,
-  getServicesContent 
+  getServicesContent
 } from '@/lib/utils/dataManager';
 
 const DataContext = createContext<any>(null);
@@ -28,7 +28,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     const fetchAllData = async () => {
       try {
         setLoading(true);
-        
+
         // Fetch all data in parallel for maximum performance
         const [projects, timeline, techStack, contact, socials, services] = await Promise.all([
           getProjects(),

@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
+import heroImg from '@/public/karrtik.png';
 import { FaReact, FaNodeJs, FaPython, FaBrain, FaCloud, FaLayerGroup } from 'react-icons/fa';
 import { SiOpenai, SiTailwindcss, SiFirebase, SiExpress } from 'react-icons/si';
 import { ArrowRight, TerminalSquare, Cpu, GitMerge, ChevronRight } from 'lucide-react';
@@ -143,7 +145,7 @@ export default function Home() {
                   <p className="text-gray-500 animate-pulse">root@karrtik:~# executing setup...</p>
                 </div>
                 <div className="absolute bottom-0 right-0 w-48 h-48 opacity-20 grayscale mix-blend-screen pointer-events-none">
-                  <img src="/karrtik.png" alt="Profile Ghost" className="w-full h-full object-cover" />
+                  <Image src={heroImg} alt="Profile Ghost" className="w-full h-full object-cover" priority />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] to-transparent" />
                 </div>
               </div>

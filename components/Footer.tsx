@@ -8,9 +8,11 @@ import Link from 'next/link';
 export default function Footer() {
   const [time, setTime] = useState(new Date());
   const [copied, setCopied] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   // Live Clock Effect
   useEffect(() => {
+    setMounted(true);
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
@@ -50,7 +52,7 @@ export default function Footer() {
             <div className="w-px h-4 bg-white/20" />
             <div className="flex items-center gap-2">
               <Clock size={14} className="text-cyan-500" />
-              <span>{time.toLocaleTimeString('en-US', { hour12: false })} IST</span>
+              <span>{mounted ? time.toLocaleTimeString('en-US', { hour12: false }) : '--:--:--'} IST</span>
             </div>
           </div>
         </div>
@@ -128,7 +130,7 @@ export default function Footer() {
             <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-1">
               <Clock size={16} className="text-cyan-500" />
               <span className="font-mono text-[10px] text-gray-400">
-                {time.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}
+                {mounted ? time.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }) : '--:--'}
               </span>
             </div>
           </div>
