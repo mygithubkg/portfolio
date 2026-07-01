@@ -96,7 +96,7 @@ const ProjectsManager = () => {
       setProjects(data);
       if (mode === 'live') window.dispatchEvent(new Event('projectsUpdated'));
     } catch (error) {
-      const errorMessage = handleSecureError(error, 'Loading projects');
+      const errorMessage = handleSecureError(error as Error, 'Loading projects');
       console.error(errorMessage);
     }
   };
@@ -132,7 +132,11 @@ const ProjectsManager = () => {
     };
 
     // Validate data
-    const validation = await validateData(projectData, projectSchema);
+    const validation = await validateData(projectData, projectSchema) as {
+      isValid: boolean;
+      errors: Record<string, string>;
+      data: typeof projectData | null;
+    };
     
     if (!validation.isValid) {
       setErrors(validation.errors);
@@ -162,7 +166,7 @@ const ProjectsManager = () => {
       setFormData(initialFormState);
       setErrors({});
     } catch (error) {
-      const errorMessage = handleSecureError(error, 'Saving project');
+      const errorMessage = handleSecureError(error as Error, 'Saving project');
       setErrors({ submit: errorMessage });
       auditLog('PROJECT_SAVE_ERROR', { error: errorMessage });
     } finally {
@@ -188,7 +192,7 @@ const ProjectsManager = () => {
       setErrors({});
       auditLog(`PROJECT_DELETED_${mode.toUpperCase()}`, { projectId: deleteConfirmation.projectId });
     } catch (error) {
-      const errorMessage = handleSecureError(error, 'Deleting project');
+      const errorMessage = handleSecureError(error as Error, 'Deleting project');
       setErrors({ delete: errorMessage });
       auditLog('PROJECT_DELETE_ERROR', { error: errorMessage });
     }
