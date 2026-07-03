@@ -15,7 +15,7 @@ export async function generateMetadata(
       title: post?.title,
       description: post?.summary ?? post?.excerpt,
       type: "article",
-      url: `https://www.karrtikgupta.me/blog/${resolvedParams.id}`,
+      url: `https://www.karrtikgupta.com/blog/${resolvedParams.id}`,
       images: post?.imageUrl
         ? [{ url: post.imageUrl, width: 1200, height: 630 }]
         : [{ url: "/og-image.png", width: 1200, height: 630 }],

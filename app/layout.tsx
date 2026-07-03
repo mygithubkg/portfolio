@@ -9,10 +9,10 @@ import ClientLoadingWrapper from '@/components/ClientLoadingWrapper';
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.karrtikgupta.com"),
+  metadataBase: new URL("https://karrtikgupta.com"),
   title: {
     template: '%s | Karrtik Gupta',
-    default: 'Karrtik Gupta', // trailing space removed
+    default: 'Karrtik Gupta',
   },
   description:
     'Karrtik Gupta (also searched as Kartik Gupta) is a Full-Stack & AI Engineer specializing in Next.js, Node.js, Applied NLP, and GenAI. Explore his portfolio of scalable web apps and intelligent agents.',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     title: "Karrtik Gupta | Full-Stack & AI Engineer",
     description:
       "Karrtik Gupta is a Full-Stack & AI Engineer specializing in Next.js, Node.js, Applied NLP, and GenAI. Explore his portfolio of scalable web apps and intelligent agents.",
-    url: "https://www.karrtikgupta.com", // now matches metadataBase
+    url: "https://karrtikgupta.com",
     siteName: "Karrtik Gupta",
     images: [
       {
@@ -79,8 +79,8 @@ export default function RootLayout({
               "@type": "Person",
               "name": "Karrtik Gupta",
               "alternateName": ["Kartik Gupta", "Karthik Gupta"],
-              "url": "https://www.karrtikgupta.com",
-              "image": "https://www.karrtikgupta.com/og-image.png",
+              "url": "https://karrtikgupta.com",
+              "image": "https://karrtikgupta.com/og-image.png",
               "jobTitle": "Full Stack & AI Engineer",
               "alumniOf": {
                 "@type": "CollegeOrUniversity",
