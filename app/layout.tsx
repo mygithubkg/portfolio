@@ -9,19 +9,32 @@ import ClientLoadingWrapper from '@/components/ClientLoadingWrapper';
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.karrtikgupta.me"),
+  metadataBase: new URL("https://www.karrtikgupta.com"),
   title: {
     template: '%s | Karrtik Gupta',
-    default: 'Karrtik Gupta ',
+    default: 'Karrtik Gupta', // trailing space removed
   },
-  description: 'Karrtik Gupta is a Full-Stack & AI Engineer specializing in Next.js, Node.js, Applied NLP, and GenAI. Explore his portfolio of scalable web apps and intelligent agents.',
+  description:
+    'Karrtik Gupta (also searched as Kartik Gupta) is a Full-Stack & AI Engineer specializing in Next.js, Node.js, Applied NLP, and GenAI. Explore his portfolio of scalable web apps and intelligent agents.',
+  keywords: [
+    'Karrtik Gupta',
+    'Kartik Gupta',
+    'Karthik Gupta',
+    'Karrtik Gupta AI Engineer',
+    'Karrtik Gupta PEC',
+    'Karrtik Gupta Punjab Engineering College',
+    'Karrtik Gupta full stack developer',
+    'Karrtik Gupta projects',
+    'Karrtik Gupta freelancer',
+  ],
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title: "Karrtik Gupta | Full-Stack & AI Engineer",
-    description: "Karrtik Gupta is a Full-Stack & AI Engineer specializing in Next.js, Node.js, Applied NLP, and GenAI. Explore his portfolio of scalable web apps and intelligent agents.",
-    url: "https://www.karrtikgupta.me",
+    description:
+      "Karrtik Gupta is a Full-Stack & AI Engineer specializing in Next.js, Node.js, Applied NLP, and GenAI. Explore his portfolio of scalable web apps and intelligent agents.",
+    url: "https://www.karrtikgupta.com", // now matches metadataBase
     siteName: "Karrtik Gupta",
     images: [
       {
@@ -37,7 +50,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Karrtik Gupta | Full-Stack & AI Engineer",
-    description: "Karrtik Gupta is a Full-Stack & AI Engineer specializing in Next.js, Node.js, Applied NLP, and GenAI. Explore his portfolio of scalable web apps and intelligent agents.",
+    description:
+      "Karrtik Gupta is a Full-Stack & AI Engineer specializing in Next.js, Node.js, Applied NLP, and GenAI. Explore his portfolio of scalable web apps and intelligent agents.",
     images: ["/og-image.png"],
   },
   robots: { index: true, follow: true },
@@ -64,12 +78,18 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Person",
               "name": "Karrtik Gupta",
-              "url": "https://karrtikgupta.com",
+              "alternateName": ["Kartik Gupta", "Karthik Gupta"],
+              "url": "https://www.karrtikgupta.com",
+              "image": "https://www.karrtikgupta.com/og-image.png",
+              "jobTitle": "Full Stack & AI Engineer",
+              "alumniOf": {
+                "@type": "CollegeOrUniversity",
+                "name": "Punjab Engineering College"
+              },
               "sameAs": [
                 "https://github.com/mygithubkg",
                 "https://www.linkedin.com/in/karrtik-gupta/"
-              ],
-              "jobTitle": "Full Stack Developer"
+              ]
             })
           }}
         />
