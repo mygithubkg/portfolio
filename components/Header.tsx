@@ -54,6 +54,7 @@ export default function Header() {
               alt="Karrtik Gupta Logo"
               width={32}
               height={32}
+              style={{ height: 'auto' }}
               className="rounded-full object-contain"
             />
             <span className="font-bold text-white text-base md:text-sm tracking-tight">Karrtik Gupta</span>

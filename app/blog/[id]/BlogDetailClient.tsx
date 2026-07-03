@@ -440,8 +440,22 @@ export default function BlogDetailClient({ blog, id }: { blog: any; id: string }
                 <div className="flex flex-wrap items-center justify-between gap-4 py-6 border-y border-[var(--rule)]">
                   <div className="flex items-center gap-3">
                     <span className="text-[13px] font-chrome text-[var(--ink-faint)]">Share</span>
-                    <button onClick={handleShare} className="w-9 h-9 rounded-[8px] bg-[var(--bg-raised)] border border-[var(--rule)] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--accent)] hover:border-[var(--accent-rule)] transition-all" title="Share"><Share2 size={14} /></button>
-                    <button onClick={() => { navigator.clipboard.writeText(window.location.href); showToast('Link copied'); }} className="w-9 h-9 rounded-[8px] bg-[var(--bg-raised)] border border-[var(--rule)] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--accent)] hover:border-[var(--accent-rule)] transition-all" title="Copy link"><Link2 size={14} /></button>
+                    <button
+                      onClick={handleShare}
+                      aria-label="Share this post"
+                      className="w-9 h-9 rounded-[8px] bg-[var(--bg-raised)] border border-[var(--rule)] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--accent)] hover:border-[var(--accent-rule)] transition-all"
+                      title="Share"
+                    >
+                      <Share2 size={14} />
+                    </button>
+                    <button
+                      onClick={() => { navigator.clipboard.writeText(window.location.href); showToast('Link copied'); }}
+                      aria-label="Copy link to this post"
+                      className="w-9 h-9 rounded-[8px] bg-[var(--bg-raised)] border border-[var(--rule)] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--accent)] hover:border-[var(--accent-rule)] transition-all"
+                      title="Copy link"
+                    >
+                      <Link2 size={14} />
+                    </button>
                   </div>
                   <button onClick={toggleBookmark} className={`flex items-center gap-2 px-4 py-2 rounded-[8px] text-[13px] font-chrome transition-all border ${bookmarked ? 'bg-[var(--accent-dim)] text-[var(--accent)] border-[var(--accent-rule)]' : 'bg-[var(--bg-raised)] text-[var(--ink-faint)] border-[var(--rule)] hover:text-[var(--ink)]'}`}>
                     <Bookmark size={13} fill={bookmarked ? 'currentColor' : 'none'} />
@@ -497,14 +511,40 @@ export default function BlogDetailClient({ blog, id }: { blog: any; id: string }
           {showDock && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.15 }} className="fixed bottom-6 right-6 z-40 flex items-center gap-1 p-1 rounded-[10px] bg-[var(--bg-raised)]/95 backdrop-blur border border-[var(--rule)] shadow-lg">
               {tocItems.length > 0 && (
-                <button onClick={() => setShowToc(!showToc)} className="xl:hidden w-9 h-9 rounded-[8px] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--ink)] hover:bg-[var(--bg-raised-2)] transition-colors" title="Contents">
+                <button
+                  onClick={() => setShowToc(!showToc)}
+                  aria-label={showToc ? 'Close table of contents' : 'Open table of contents'}
+                  className="xl:hidden w-9 h-9 rounded-[8px] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--ink)] hover:bg-[var(--bg-raised-2)] transition-colors"
+                  title="Contents"
+                >
                   {showToc ? <X size={15} /> : <List size={15} />}
                 </button>
               )}
-              <button onClick={handleShare} className="w-9 h-9 rounded-[8px] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--accent)] hover:bg-[var(--bg-raised-2)] transition-colors" title="Share"><Share2 size={15} /></button>
-              <button onClick={toggleBookmark} className={`w-9 h-9 rounded-[8px] flex items-center justify-center transition-colors ${bookmarked ? 'text-[var(--accent)]' : 'text-[var(--ink-faint)] hover:text-[var(--ink)] hover:bg-[var(--bg-raised-2)]'}`} title="Bookmark"><Bookmark size={15} fill={bookmarked ? 'currentColor' : 'none'} /></button>
+              <button
+                onClick={handleShare}
+                aria-label="Share this post"
+                className="w-9 h-9 rounded-[8px] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--accent)] hover:bg-[var(--bg-raised-2)] transition-colors"
+                title="Share"
+              >
+                <Share2 size={15} />
+              </button>
+              <button
+                onClick={toggleBookmark}
+                aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark this post'}
+                className={`w-9 h-9 rounded-[8px] flex items-center justify-center transition-colors ${bookmarked ? 'text-[var(--accent)]' : 'text-[var(--ink-faint)] hover:text-[var(--ink)] hover:bg-[var(--bg-raised-2)]'}`}
+                title="Bookmark"
+              >
+                <Bookmark size={15} fill={bookmarked ? 'currentColor' : 'none'} />
+              </button>
               <span className="w-px h-5 bg-[var(--rule)] mx-0.5" />
-              <button onClick={scrollToTop} className="w-9 h-9 rounded-[8px] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--ink)] hover:bg-[var(--bg-raised-2)] transition-colors" title="Back to top"><ChevronUp size={15} /></button>
+              <button
+                onClick={scrollToTop}
+                aria-label="Back to top"
+                className="w-9 h-9 rounded-[8px] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--ink)] hover:bg-[var(--bg-raised-2)] transition-colors"
+                title="Back to top"
+              >
+                <ChevronUp size={15} />
+              </button>
             </motion.div>
           )}
         </AnimatePresence>

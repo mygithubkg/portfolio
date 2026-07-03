@@ -1,4 +1,3 @@
-
 @import "tailwindcss";
 
 /* ============================================================
@@ -33,7 +32,8 @@ html {
   background: #09090b;
   color: #fafafa;
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  font-size: 10px;
+  font-size: 16px;
+  /* was 10px — too small on mobile before breakpoints kick in */
   line-height: 1.75;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -47,7 +47,12 @@ body {
   color: var(--foreground);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   font-weight: 700;
   color: #fafafa;
@@ -55,10 +60,22 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.2;
 }
 
-h1 { font-weight: 800; font-size: 2.5rem; }
-h2 { font-size: 2rem; }
-h3 { font-size: 1.5rem; }
-h4 { font-size: 1.25rem; }
+h1 {
+  font-weight: 800;
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+h4 {
+  font-size: 1.25rem;
+}
 
 p {
   font-weight: 400;
@@ -150,7 +167,15 @@ button:active {
   color: #ffffff;
 }
 
-* {
+/* Scoped transitions — do NOT use * here, it forces the browser to track
+   transitions on every DOM node (big main-thread cost on complex pages). */
+button,
+a,
+.glass-card,
+.minimal-card,
+input,
+select,
+textarea {
   transition: color 0.3s, background-color 0.3s, border-color 0.3s;
 }
 
@@ -176,45 +201,63 @@ a:hover {
   background-clip: unset;
 }
 
-/* ============================================================
-   TSPARTICLES
-   ============================================================ */
-#tsparticles {
-  opacity: 0.05;
-  transition: opacity 1s ease-in-out;
-  position: fixed !important;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  pointer-events: none;
-}
+/* tsparticles styles removed — library is not loaded on any active page */
 
 /* ============================================================
    RESPONSIVE TYPOGRAPHY
    ============================================================ */
 @media (min-width: 640px) {
-  html { font-size: 16px; }
-  h1 { font-size: 3.5rem; }
-  h2 { font-size: 2.5rem; }
-  h3 { font-size: 2rem; }
-  p  { font-size: 1.125rem; }
+  html {
+    font-size: 16px;
+  }
+
+  /* unchanged — already the default now */
+  h1 {
+    font-size: 3.5rem;
+  }
+
+  h2 {
+    font-size: 2.5rem;
+  }
+
+  h3 {
+    font-size: 2rem;
+  }
+
+  p {
+    font-size: 1.125rem;
+  }
 }
 
 @media (min-width: 1024px) {
-  html { font-size: 18px; }
-  h1 { font-size: 4rem; }
-  h2 { font-size: 3rem; }
-  h3 { font-size: 2.25rem; }
-  p  { font-size: 1.125rem; }
+  html {
+    font-size: 18px;
+  }
+
+  h1 {
+    font-size: 4rem;
+  }
+
+  h2 {
+    font-size: 3rem;
+  }
+
+  h3 {
+    font-size: 2.25rem;
+  }
+
+  p {
+    font-size: 1.125rem;
+  }
 }
 
 @media (max-width: 640px) {
+
   .glass-card,
   .minimal-card {
     border-radius: 0.75rem;
   }
+
   button {
     padding: 0.625em 1.25em;
     font-size: 0.875rem;
@@ -230,8 +273,14 @@ a:hover {
 }
 
 @media (hover: none) and (pointer: coarse) {
+
   button:hover,
-  a:hover { transform: none; }
+  a:hover {
+    transform: none;
+  }
+
   .glass-card:hover,
-  .minimal-card:hover { transform: none; }
+  .minimal-card:hover {
+    transform: none;
+  }
 }
