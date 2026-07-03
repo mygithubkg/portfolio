@@ -5,7 +5,6 @@ import { Cpu, Terminal, Crosshair, Sparkles, ArrowDown } from 'lucide-react';
 import { useData } from '@/context/DataContext';
 import Image from 'next/image';
 import heroImg from '@/public/karrtik.png';
-export const revalidate = 60;
 export default function About() {
   const { data, loading } = useData();
   const timeline = data?.timeline || [];
