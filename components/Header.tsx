@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, Terminal, Home, User, Layers, BookOpen, Send } from 'lucide-react';
+import { ArrowUpRight, Home, User, Layers, BookOpen, Send } from 'lucide-react';
+import Image from 'next/image';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -48,9 +49,13 @@ export default function Header() {
             href="/"
             className="flex items-center gap-2 pl-3 pr-4 py-2 group"
           >
-            <div className="w-8 h-8 md:w-6 md:h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-cyan-500 group-hover:bg-cyan-500 group-hover:text-black transition-colors">
-              <Terminal size={14} />
-            </div>
+            <Image
+              src="/logo.png"
+              alt="Karrtik Gupta Logo"
+              width={32}
+              height={32}
+              className="rounded-full object-contain"
+            />
             <span className="font-bold text-white text-base md:text-sm tracking-tight">Karrtik Gupta</span>
           </Link>
 

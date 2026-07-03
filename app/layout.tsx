@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.karrtikgupta.me"),
   title: {
     template: '%s | Karrtik Gupta',
-    default: 'Karrtik Gupta | Full-Stack & AI Engineer',
+    default: 'Karrtik Gupta ',
   },
   description: 'Karrtik Gupta is a Full-Stack & AI Engineer specializing in Next.js, Node.js, Applied NLP, and GenAI. Explore his portfolio of scalable web apps and intelligent agents.',
   alternates: {
@@ -42,6 +42,11 @@ export const metadata: Metadata = {
   },
   robots: { index: true, follow: true },
   manifest: "/site.webmanifest",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
