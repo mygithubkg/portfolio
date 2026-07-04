@@ -491,7 +491,7 @@ export default function BlogDetailClient({ blog, id }: { blog: any; id: string }
                     {tocItems.map((item, i) => {
                       const isActive = activeHeading === item.id;
                       return (
-                        <li key={item.id} className="relative">
+                        <li key={`${item.id}-${i}`} className="relative">
                           <span className={`absolute -left-4 top-0 bottom-0 w-[1px] transition-colors duration-300 ${isActive ? 'bg-[var(--accent)]' : 'bg-transparent'}`} />
                           <a href={`#${item.id}`} className={`flex items-baseline gap-2.5 py-1.5 font-chrome text-[13px] leading-snug transition-colors ${item.level === 3 ? 'pl-4' : ''} ${isActive ? 'text-[var(--accent)]' : 'text-[var(--ink-faint)] hover:text-[var(--ink-dim)]'}`}>
                             <span className="text-[11px] tabular-nums">{pad2(i + 1)}</span>
@@ -560,7 +560,7 @@ export default function BlogDetailClient({ blog, id }: { blog: any; id: string }
                     {tocItems.map((item, i) => {
                       const isActive = activeHeading === item.id;
                       return (
-                        <li key={item.id}>
+                        <li key={`${item.id}-${i}`}>
                           <a href={`#${item.id}`} onClick={() => setShowToc(false)} className={`flex items-baseline gap-2.5 px-2 py-2 rounded-[6px] text-sm transition-all ${item.level === 3 ? 'pl-6' : ''} ${isActive ? 'text-[var(--accent)] bg-[var(--accent-dim)]' : 'text-[var(--ink-dim)] hover:text-[var(--ink)] hover:bg-[var(--bg-raised-2)]'}`}>
                             <span className="font-chrome text-[11px] text-[var(--ink-faint)] tabular-nums">{pad2(i + 1)}</span>
                             <span className="font-editorial">{item.text}</span>

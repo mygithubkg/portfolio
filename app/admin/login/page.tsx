@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAdminAuth } from '@/context/AdminAuthContext';
@@ -11,6 +11,12 @@ const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const { login } = useAdminAuth();
   const router = useRouter();
 
@@ -23,7 +29,7 @@ const AdminLogin = () => {
     await new Promise(resolve => setTimeout(resolve, 500));
 
     const result = await login(email, password);
-    
+
     if (result.success) {
       router.push('/admin/dashboard');
     } else {
@@ -37,8 +43,8 @@ const AdminLogin = () => {
       {/* Animated Background Effects */}
       <motion.div
         className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl"
-        animate={{ 
-          scale: [1, 1.3, 1], 
+        animate={{
+          scale: [1, 1.3, 1],
           opacity: [0.4, 0.7, 0.4],
           x: [0, 50, 0],
           y: [0, -50, 0]
@@ -47,17 +53,17 @@ const AdminLogin = () => {
       />
       <motion.div
         className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accentLight/10 rounded-full blur-3xl"
-        animate={{ 
-          scale: [1.2, 1, 1.2], 
+        animate={{
+          scale: [1.2, 1, 1.2],
           opacity: [0.7, 0.4, 0.7],
           x: [0, -50, 0],
           y: [0, 50, 0]
         }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
-      
+
       {/* Floating particles */}
-      {[...Array(20)].map((_, i) => (
+      {isMounted && [...Array(20)].map((_, i) => (
         <motion.div
           key={i}
           className="absolute w-1 h-1 bg-accent/30 rounded-full"
@@ -83,7 +89,7 @@ const AdminLogin = () => {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6, type: "spring", bounce: 0.4 }}
       >
-        <motion.div 
+        <motion.div
           className="bg-surface/90 backdrop-blur-2xl border border-border/50 rounded-2xl p-8 shadow-2xl relative overflow-hidden"
           whileHover={{ boxShadow: "0 20px 60px rgba(59, 130, 246, 0.3)" }}
           transition={{ duration: 0.3 }}
@@ -103,7 +109,7 @@ const AdminLogin = () => {
               ease: "linear",
             }}
           />
-          
+
           {/* Header */}
           <motion.div
             className="text-center mb-8 relative z-10"
@@ -111,13 +117,13 @@ const AdminLogin = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <motion.div 
+            <motion.div
               className="w-20 h-20 bg-gradient-to-br from-accent/20 to-accentLight/20 rounded-2xl flex items-center justify-center mx-auto mb-4 relative"
               whileHover={{ scale: 1.1, rotate: 5 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
               <motion.div
-                animate={{ 
+                animate={{
                   boxShadow: [
                     "0 0 20px rgba(59, 130, 246, 0.3)",
                     "0 0 40px rgba(59, 130, 246, 0.6)",
@@ -137,7 +143,7 @@ const AdminLogin = () => {
                 <Sparkles className="w-5 h-5 text-accentLight" />
               </motion.div>
             </motion.div>
-            <motion.h1 
+            <motion.h1
               className="text-3xl font-bold text-white mb-2"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -145,7 +151,7 @@ const AdminLogin = () => {
             >
               Admin Portal
             </motion.h1>
-            <motion.p 
+            <motion.p
               className="text-textSecondary"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -195,7 +201,7 @@ const AdminLogin = () => {
               <label className="block text-textSecondary text-sm font-medium mb-2">
                 Email
               </label>
-              <motion.div 
+              <motion.div
                 className="relative group"
                 whileFocus={{ scale: 1.02 }}
               >
@@ -228,7 +234,7 @@ const AdminLogin = () => {
               <label className="block text-textSecondary text-sm font-medium mb-2">
                 Password
               </label>
-              <motion.div 
+              <motion.div
                 className="relative group"
                 whileFocus={{ scale: 1.02 }}
               >
@@ -279,14 +285,14 @@ const AdminLogin = () => {
                 whileHover={{ x: "100%" }}
                 transition={{ duration: 0.6 }}
               />
-              
+
               {isLoading ? (
-                <motion.div 
+                <motion.div
                   className="flex items-center justify-center gap-2"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                 >
-                  <motion.div 
+                  <motion.div
                     className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
