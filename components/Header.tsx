@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, Home, User, Layers, BookOpen, Send } from 'lucide-react';
+import { ArrowUpRight, Home, User, Layers, BookOpen, Send, Award } from 'lucide-react';
 import Image from 'next/image';
 
 export default function Header() {
@@ -24,6 +24,7 @@ export default function Header() {
     { path: '/about', label: 'Identity', icon: User },
     { path: '/projects', label: 'Systems', icon: Layers },
     { path: '/blog', label: 'Journal', icon: BookOpen },
+    { path: '/certifications', label: 'Badges', icon: Award },
   ];
 
   return (
