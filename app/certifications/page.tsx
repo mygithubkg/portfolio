@@ -362,7 +362,7 @@ export default function CoverFlowShowcase() {
   }, [currentIndex, goTo]);
 
   // Swipe / drag navigation
-  const handleDragEnd = (_e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+  const handleDragEnd = (_e: any, info: PanInfo) => {
     const threshold = 60;
     if (info.offset.x < -threshold) goTo(currentIndex + 1);
     else if (info.offset.x > threshold) goTo(currentIndex - 1);
