@@ -1,12 +1,9 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ClientLoadingWrapper from '@/components/ClientLoadingWrapper';
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://karrtikgupta.com"),
@@ -94,7 +91,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.className} ${inter.variable} bg-background text-foreground antialiased`}>
+      <body className="bg-background text-foreground antialiased font-editorial">
         <Providers>
           <ClientLoadingWrapper>
             <Header />
