@@ -4,7 +4,6 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Cpu, Terminal, Crosshair, Sparkles, ArrowDown } from 'lucide-react';
 import { useData } from '@/context/DataContext';
 import Image from 'next/image';
-import heroImg from '@/public/karrtik.png';
 export default function About() {
   const { data, loading } = useData();
   const timeline = data?.timeline || [];
@@ -60,8 +59,10 @@ export default function About() {
               {/* Profile Image Node */}
               <div className="group relative w-48 h-48 md:w-64 md:h-64 rounded-3xl overflow-hidden bg-gray-900 border border-white/10 shadow-2xl">
                 <Image
-                  src={heroImg}
+                  src="https://res.cloudinary.com/f8njovya/image/upload/v1783444605/karrtik_oxxcds.png"
                   alt="Karrtik Gupta"
+                  width={400}
+                  height={400}
                   className="w-full h-full object-cover filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-in-out"
                   priority
                 />

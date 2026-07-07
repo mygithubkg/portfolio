@@ -54,9 +54,9 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
   manifest: "/site.webmanifest",
   icons: {
-    icon: "/logo.png",
-    shortcut: "/logo.png",
-    apple: "/logo.png",
+    icon: "https://res.cloudinary.com/f8njovya/image/upload/v1783444604/logo_ejmhtr.png",
+    shortcut: "https://res.cloudinary.com/f8njovya/image/upload/v1783444604/logo_ejmhtr.png",
+    apple: "https://res.cloudinary.com/f8njovya/image/upload/v1783444604/logo_ejmhtr.png",
   },
 };
 

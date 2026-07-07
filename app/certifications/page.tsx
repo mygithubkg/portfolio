@@ -41,7 +41,7 @@ export const credentials = [
     icon: Briefcase,
     accent: "#5B8DEF",
     skills: ["AI Azure", "Enterprise Tech", "Practical Application"],
-    link: "#",
+    link: "https://res.cloudinary.com/f8njovya/image/upload/v1783444283/Screenshot_2026-07-07_224106_npli4x.png",
   },
   {
     id: "mck-1",
@@ -52,7 +52,7 @@ export const credentials = [
     icon: TrendingUp,
     accent: "#C7C9D9",
     skills: ["Structured Problem Solving", "Consulting Frameworks", "Leadership"],
-    link: "#",
+    link: "https://www.credly.com/badges/43e76812-bf3d-4ac8-9ce2-b9116a52437f/public_url",
   },
   {
     id: "ggl-adk-1",
@@ -63,7 +63,7 @@ export const credentials = [
     icon: Bot,
     accent: "#E0A93E",
     skills: ["Agent Development Kit", "Intelligent Agents", "Google Cloud"],
-    link: "#",
+    link: "https://www.skills.google/public_profiles/98a14d26-8779-428d-9f21-9b6521e99766/badges/24858699",
   },
   {
     id: "ggl-adk-2",
@@ -74,7 +74,7 @@ export const credentials = [
     icon: Cloud,
     accent: "#5FA8E0",
     skills: ["Agent Development", "ADK", "Google Cloud"],
-    link: "#",
+    link: "https://www.skills.google/public_profiles/98a14d26-8779-428d-9f21-9b6521e99766/badges/24713548",
   },
   {
     id: "ggl-agents",
@@ -85,7 +85,7 @@ export const credentials = [
     icon: Cloud,
     accent: "#4FC08D",
     skills: ["Google Cloud Agents", "Cloud Architecture"],
-    link: "#",
+    link: "https://www.skills.google/public_profiles/98a14d26-8779-428d-9f21-9b6521e99766/badges/24694022",
   },
   {
     id: "ggl-engineer",
@@ -96,7 +96,7 @@ export const credentials = [
     icon: MonitorPlay,
     accent: "#E0637A",
     skills: ["AI Agents", "Engineering", "Artificial Intelligence"],
-    link: "#",
+    link: "https://www.skills.google/public_profiles/98a14d26-8779-428d-9f21-9b6521e99766/badges/24520438",
   },
   {
     id: "helsinki-1",
@@ -107,7 +107,7 @@ export const credentials = [
     icon: BookOpen,
     accent: "#8B85E8",
     skills: ["Artificial Intelligence", "Machine Learning Concepts"],
-    link: "https://certificates.mooc.fi/validate/ff1hmix5j38",
+    link: "https://res.cloudinary.com/f8njovya/image/upload/v1783443886/Certificate_Elements_of_AI_wxax47.png",
   },
   {
     id: "outskill-1",
@@ -118,7 +118,7 @@ export const credentials = [
     icon: Bot,
     accent: "#3FBF8F",
     skills: ["Generative AI", "Prompt Engineering"],
-    link: "#",
+    link: "https://res.cloudinary.com/f8njovya/image/upload/v1783444115/Screenshot_2026-07-07_223807_y4z2qx.png",
   },
   {
     id: "coursera-1",
@@ -129,7 +129,7 @@ export const credentials = [
     icon: Mail,
     accent: "#4FB2D6",
     skills: ["Microsoft Outlook", "Mail Applications", "Calendar Management"],
-    link: "https://coursera.org/verify/YEEN9XW7NUSM",
+    link: "https://www.coursera.org/account/accomplishments/verify/YEEN9XW7NUSM",
   },
 ];
 
@@ -362,7 +362,7 @@ export default function CoverFlowShowcase() {
   }, [currentIndex, goTo]);
 
   // Swipe / drag navigation
-  const handleDragEnd = (_e: any, info: PanInfo) => {
+  const handleDragEnd = (_e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const threshold = 60;
     if (info.offset.x < -threshold) goTo(currentIndex + 1);
     else if (info.offset.x > threshold) goTo(currentIndex - 1);

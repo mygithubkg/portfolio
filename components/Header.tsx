@@ -51,7 +51,7 @@ export default function Header() {
             className="flex items-center gap-2 pl-3 pr-4 py-2 group"
           >
             <Image
-              src="/logo.png"
+              src="https://res.cloudinary.com/f8njovya/image/upload/v1783444604/logo_ejmhtr.png"
               alt="Karrtik Gupta Logo"
               width={32}
               height={32}

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getBlogById } from '@/lib/utils/blogData';
 import BlogDetailClient from './BlogDetailClient';
-
+export const revalidate = 60;
 type Props = { params: Promise<{ id: string }> };
 
 const BASE_URL = 'https://www.karrtikgupta.com';

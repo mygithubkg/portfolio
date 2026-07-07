@@ -26,7 +26,7 @@ const securityHeaders = [
       "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.emailjs.com https://vercel.live https://*.vercel-scripts.com https://*.clarity.ms https://apis.google.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https://firebasestorage.googleapis.com https://images.unsplash.com https://*.clarity.ms https://c.bing.com",
+      "img-src 'self' data: blob: https://firebasestorage.googleapis.com https://images.unsplash.com https://*.clarity.ms https://c.bing.com https://res.cloudinary.com",
       "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://api.emailjs.com wss://*.firebaseio.com https://www.clarity.ms https://*.clarity.ms wss://ws-us3.pusher.com https://sockjs-us3.pusher.com",
       "frame-src https://vercel.live https://*.firebaseapp.com",
       "frame-ancestors 'none'",
@@ -46,6 +46,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
       },
     ],
   },
