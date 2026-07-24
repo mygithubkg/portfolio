@@ -24,46 +24,8 @@ import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-const TOKENS_STYLE = `
-  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400;1,8..60,500&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
-  :root {
-    --bg: #0A0B0D;
-    --bg-raised: #121417;
-    --bg-raised-2: #17191D;
-    --rule: rgba(255,255,255,0.08);
-    --rule-strong: rgba(255,255,255,0.16);
-    --ink: #ECEAE2;
-    --ink-dim: #9A9D9F;
-    --ink-faint: #55585C;
-    --accent: #5FE0D0;
-    --accent-dim: rgba(95,224,208,0.10);
-    --accent-rule: rgba(95,224,208,0.28);
-  }
-
-  .font-editorial { font-family: 'Source Serif 4', Georgia, 'Iowan Old Style', ui-serif, serif; }
-  .font-chrome { font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace; }
-
-  ::selection { background: var(--accent-dim); color: var(--ink); }
-  html { scroll-behavior: smooth; }
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--rule-strong); border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.24); }
-
-  .prose-body pre { background: transparent !important; padding: 0 !important; margin: 0 !important; border: none !important; overflow-x: auto; }
-  .prose-body pre code { background: transparent !important; padding: 0 !important; border: none !important; font-size: 0.875rem !important; line-height: 1.75 !important; }
-  .prose-body > *:first-child { margin-top: 0 !important; }
-
-  .ledger-track { position: relative; }
-  .ledger-track::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 1px;
-    background: var(--rule);
-  }
-`;
+// Blog detail styles are inherited from globals.css via the theme system.
+// The .prose-body and .ledger-track styles are in globals.css.
 
 function extractText(node: React.ReactNode): string {
   if (typeof node === 'string') return node;
@@ -112,7 +74,7 @@ function Toast({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 8 }}
           transition={{ duration: 0.15 }}
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] px-4 py-2.5 bg-[var(--bg-raised-2)] border border-[var(--rule)] rounded-[8px] text-[var(--ink-dim)] text-[13px] font-chrome flex items-center gap-2 shadow-lg"
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] px-4 py-2.5 bg-[var(--rule)] border border-[var(--rule)] rounded-[8px] text-[var(--ink-dim)] text-[13px] font-chrome flex items-center gap-2 shadow-lg"
         >
           <Check size={13} className="text-[var(--accent)]" />
           {message}
@@ -326,11 +288,10 @@ export default function BlogDetailClient({ blog, id }: { blog: any; id: string }
 
   return (
     <>
-      <style>{TOKENS_STYLE}</style>
       <motion.div className="fixed top-0 left-0 right-0 h-[2px] bg-[var(--accent)] origin-left z-50" style={{ scaleX }} />
       <Toast message={toast.message} visible={toast.visible} onDone={hideToast} />
 
-      <article className="min-h-screen bg-[var(--bg)] text-[var(--ink)]">
+      <article className="min-h-screen pb-28 md:pb-8" style={{ background: 'var(--bg-hero)', color: 'var(--ink)' }}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -464,7 +425,7 @@ export default function BlogDetailClient({ blog, id }: { blog: any; id: string }
                 </div>
                 <div className="py-8">
                   <div className="flex items-start gap-4 p-6 rounded-[16px] bg-[var(--bg-raised)] border border-[var(--rule)]">
-                    <div className="w-11 h-11 rounded-[8px] bg-[var(--bg-raised-2)] border border-[var(--rule)] flex items-center justify-center text-[var(--ink)] font-chrome font-medium text-[13px] flex-shrink-0">{authorInitials}</div>
+                    <div className="w-11 h-11 rounded-[8px] bg-[var(--rule)] border border-[var(--rule)] flex items-center justify-center text-[var(--ink)] font-chrome font-medium text-[13px] flex-shrink-0">{authorInitials}</div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[var(--ink)] font-semibold font-editorial text-lg mb-1">{blog.author || 'Karrtik Gupta'}</p>
                       <p className="text-[var(--ink-dim)] text-sm leading-relaxed mb-3">{blog.authorBio || 'Developer, writer, and creator. Building things for the web and sharing what I learn along the way.'}</p>
@@ -514,7 +475,7 @@ export default function BlogDetailClient({ blog, id }: { blog: any; id: string }
                 <button
                   onClick={() => setShowToc(!showToc)}
                   aria-label={showToc ? 'Close table of contents' : 'Open table of contents'}
-                  className="xl:hidden w-9 h-9 rounded-[8px] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--ink)] hover:bg-[var(--bg-raised-2)] transition-colors"
+                  className="xl:hidden w-9 h-9 rounded-[8px] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--ink)] hover:bg-[var(--rule)] transition-colors"
                   title="Contents"
                 >
                   {showToc ? <X size={15} /> : <List size={15} />}
@@ -523,7 +484,7 @@ export default function BlogDetailClient({ blog, id }: { blog: any; id: string }
               <button
                 onClick={handleShare}
                 aria-label="Share this post"
-                className="w-9 h-9 rounded-[8px] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--accent)] hover:bg-[var(--bg-raised-2)] transition-colors"
+                className="w-9 h-9 rounded-[8px] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--accent)] hover:bg-[var(--rule)] transition-colors"
                 title="Share"
               >
                 <Share2 size={15} />
@@ -531,7 +492,7 @@ export default function BlogDetailClient({ blog, id }: { blog: any; id: string }
               <button
                 onClick={toggleBookmark}
                 aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark this post'}
-                className={`w-9 h-9 rounded-[8px] flex items-center justify-center transition-colors ${bookmarked ? 'text-[var(--accent)]' : 'text-[var(--ink-faint)] hover:text-[var(--ink)] hover:bg-[var(--bg-raised-2)]'}`}
+                className={`w-9 h-9 rounded-[8px] flex items-center justify-center transition-colors ${bookmarked ? 'text-[var(--accent)]' : 'text-[var(--ink-faint)] hover:text-[var(--ink)] hover:bg-[var(--rule)]'}`}
                 title="Bookmark"
               >
                 <Bookmark size={15} fill={bookmarked ? 'currentColor' : 'none'} />
@@ -540,7 +501,7 @@ export default function BlogDetailClient({ blog, id }: { blog: any; id: string }
               <button
                 onClick={scrollToTop}
                 aria-label="Back to top"
-                className="w-9 h-9 rounded-[8px] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--ink)] hover:bg-[var(--bg-raised-2)] transition-colors"
+                className="w-9 h-9 rounded-[8px] flex items-center justify-center text-[var(--ink-faint)] hover:text-[var(--ink)] hover:bg-[var(--rule)] transition-colors"
                 title="Back to top"
               >
                 <ChevronUp size={15} />
@@ -561,7 +522,7 @@ export default function BlogDetailClient({ blog, id }: { blog: any; id: string }
                       const isActive = activeHeading === item.id;
                       return (
                         <li key={`${item.id}-${i}`}>
-                          <a href={`#${item.id}`} onClick={() => setShowToc(false)} className={`flex items-baseline gap-2.5 px-2 py-2 rounded-[6px] text-sm transition-all ${item.level === 3 ? 'pl-6' : ''} ${isActive ? 'text-[var(--accent)] bg-[var(--accent-dim)]' : 'text-[var(--ink-dim)] hover:text-[var(--ink)] hover:bg-[var(--bg-raised-2)]'}`}>
+                          <a href={`#${item.id}`} onClick={() => setShowToc(false)} className={`flex items-baseline gap-2.5 px-2 py-2 rounded-[6px] text-sm transition-all ${item.level === 3 ? 'pl-6' : ''} ${isActive ? 'text-[var(--accent)] bg-[var(--accent-dim)]' : 'text-[var(--ink-dim)] hover:text-[var(--ink)] hover:bg-[var(--rule)]'}`}>
                             <span className="font-chrome text-[11px] text-[var(--ink-faint)] tabular-nums">{pad2(i + 1)}</span>
                             <span className="font-editorial">{item.text}</span>
                           </a>

@@ -219,10 +219,12 @@ function CredentialCard({ cert, index, currentIndex, total, isMobile, reduceMoti
           rotateY: isCenter ? springY : 0,
           transformStyle: "preserve-3d",
           boxShadow: isCenter
-            ? `0 30px 80px -20px ${cert.accent}33, 0 0 0 1px rgba(255,255,255,0.06)`
-            : "0 20px 40px -20px rgba(0,0,0,0.6)",
+            ? `0 30px 80px -20px ${cert.accent}33, 0 0 0 1px var(--border-nav)`
+            : "0 20px 40px -20px rgba(0,0,0,0.3)",
+          background: 'linear-gradient(to bottom, var(--bg-raised), var(--bg-card))',
+          border: '1px solid var(--border-nav)',
         }}
-        className="w-full h-full rounded-2xl bg-gradient-to-b from-[#131418] to-[#0a0b0e] border border-white/10 relative overflow-hidden"
+        className="w-full h-full rounded-2xl relative overflow-hidden"
       >
         {/* faint paper grain */}
         <div
@@ -369,7 +371,10 @@ export default function CoverFlowShowcase() {
   };
 
   return (
-    <section className="min-h-screen py-20 md:py-32 bg-[#07080B] text-gray-300 relative overflow-hidden flex flex-col justify-center">
+    <section
+      className="min-h-screen py-20 md:py-32 relative overflow-hidden flex flex-col justify-center"
+      style={{ background: 'var(--bg-hero)', color: 'var(--ink-dim)' }}
+    >
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600..900&family=JetBrains+Mono:wght@400;500;600&display=swap');`}</style>
 
       <div
@@ -384,8 +389,8 @@ export default function CoverFlowShowcase() {
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 font-mono text-xs mb-6 uppercase tracking-[0.2em]"
-            style={{ color: ACCENT }}
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full font-mono text-xs mb-6 uppercase tracking-[0.2em]"
+            style={{ color: ACCENT, background: 'var(--bg-pill)', border: '1px solid var(--border-nav)' }}
           >
             <ShieldCheck size={14} />
             <span>Verified dossier &mdash; {credentials.length} entries</span>
@@ -396,8 +401,8 @@ export default function CoverFlowShowcase() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.08 }}
-            className="text-4xl sm:text-5xl md:text-7xl font-semibold text-white tracking-tight leading-[1.05]"
-            style={{ fontFamily: "'Fraunces', ui-serif, Georgia, serif" }}
+            className="text-4xl sm:text-5xl md:text-7xl font-semibold tracking-tight leading-[1.05]"
+            style={{ color: 'var(--ink)', fontFamily: "'Fraunces', ui-serif, Georgia, serif" }}
           >
             Career <span style={{ color: ACCENT }}>Milestones</span>
           </motion.h2>
@@ -433,7 +438,8 @@ export default function CoverFlowShowcase() {
               onClick={() => goTo(currentIndex - 1)}
               disabled={currentIndex === 0}
               aria-label="Previous credential"
-              className="w-11 h-11 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white hover:bg-white/10 disabled:opacity-25 transition-all active:scale-90"
+              className="w-11 h-11 rounded-full flex items-center justify-center disabled:opacity-25 transition-all active:scale-90"
+              style={{ border: '1px solid var(--border-nav)', background: 'var(--bg-pill)', color: 'var(--ink)' }}
             >
               <ChevronLeft size={20} />
             </button>
@@ -445,7 +451,7 @@ export default function CoverFlowShowcase() {
                   <motion.span
                     animate={{
                       height: i === currentIndex ? 20 : 8,
-                      backgroundColor: i === currentIndex ? ACCENT : "rgba(255,255,255,0.15)",
+                      backgroundColor: i === currentIndex ? ACCENT : "var(--rule-strong)",
                     }}
                     transition={{ type: "spring", stiffness: 300, damping: 24 }}
                     className="w-[3px] rounded-full block"
@@ -458,13 +464,14 @@ export default function CoverFlowShowcase() {
               onClick={() => goTo(currentIndex + 1)}
               disabled={currentIndex === credentials.length - 1}
               aria-label="Next credential"
-              className="w-11 h-11 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-white hover:bg-white/10 disabled:opacity-25 transition-all active:scale-90"
+              className="w-11 h-11 rounded-full flex items-center justify-center disabled:opacity-25 transition-all active:scale-90"
+              style={{ border: '1px solid var(--border-nav)', background: 'var(--bg-pill)', color: 'var(--ink)' }}
             >
               <ChevronRight size={20} />
             </button>
           </div>
 
-          <span className="font-mono text-xs text-white/40 uppercase tracking-[0.2em]">
+          <span className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--ink-faint)' }}>
             {String(currentIndex + 1).padStart(2, "0")} of {String(credentials.length).padStart(2, "0")}
           </span>
         </div>

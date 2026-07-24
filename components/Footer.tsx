@@ -10,7 +10,6 @@ export default function Footer() {
   const [copied, setCopied] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Live Clock Effect
   useEffect(() => {
     setMounted(true);
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -24,123 +23,215 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#030303] text-white pt-24 pb-12 md:pb-24 border-t border-white/5 relative overflow-hidden select-none">
+    <footer
+      className="pt-24 pb-32 md:pb-24 relative overflow-hidden select-none"
+      style={{
+        background: 'var(--bg-hero)',
+        borderTop: '1px solid var(--border-card)',
+        color: 'var(--ink)',
+      }}
+    >
+      {/* Subtle ambient glow */}
+      <div
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-[300px] rounded-t-full blur-[100px] pointer-events-none opacity-40"
+        style={{ background: 'var(--accent-dim)' }}
+      />
 
-      {/* Subtle Ambient Background */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-[300px] bg-cyan-500/10 blur-[100px] rounded-t-full pointer-events-none" />
+      <div className="w-[90%] md:w-[80%] mx-auto px-4 md:px-8 relative z-10">
 
-      <div className="w-[80%] mx-auto px-4 md:px-8 relative z-10">
-
-        {/* --- HEADER (Adapts from Mobile to Desktop) --- */}
+        {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 md:mb-12">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-cyan-400 font-mono text-[10px] uppercase tracking-widest mb-4">
-              <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" />
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-widest mb-4"
+              style={{
+                background: 'var(--bg-pill)',
+                border: '1px solid var(--border-nav)',
+                color: 'var(--accent)',
+              }}
+            >
+              <span
+                className="w-1.5 h-1.5 rounded-full animate-pulse"
+                style={{ background: 'var(--accent)' }}
+              />
               System Online
             </div>
-            <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white leading-none">
-              Let's <span className="text-cyan-500">Connect.</span>
+            <h2
+              className="text-4xl md:text-6xl font-black tracking-tight leading-none"
+              style={{ color: 'var(--ink)' }}
+            >
+              Let's{' '}
+              <span style={{ color: 'var(--accent)' }}>Connect.</span>
             </h2>
           </div>
 
-          {/* Desktop Telemetry (Hidden on Mobile) */}
-          <div className="hidden md:flex items-center gap-6 font-mono text-xs text-gray-500 bg-white/5 border border-white/10 px-4 py-2 rounded-xl">
+          {/* Desktop Telemetry */}
+          <div
+            className="hidden md:flex items-center gap-6 font-mono text-xs px-4 py-2 rounded-xl"
+            style={{
+              background: 'var(--bg-pill)',
+              border: '1px solid var(--border-nav)',
+              color: 'var(--ink-dim)',
+            }}
+          >
             <div className="flex items-center gap-2">
-              <MapPin size={14} className="text-cyan-500" />
+              <MapPin size={14} style={{ color: 'var(--accent)' }} />
               <span>GZB_IND</span>
             </div>
-            <div className="w-px h-4 bg-white/20" />
+            <div className="w-px h-4" style={{ background: 'var(--rule-strong)' }} />
             <div className="flex items-center gap-2">
-              <Clock size={14} className="text-cyan-500" />
+              <Clock size={14} style={{ color: 'var(--accent)' }} />
               <span>{mounted ? time.toLocaleTimeString('en-US', { hour12: false }) : '--:--:--'} IST</span>
             </div>
           </div>
         </div>
 
-        {/* --- BENTO CONTROL CENTER (The App UI) --- */}
+        {/* --- BENTO CONTACT GRID --- */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
 
-          {/* 1. PRIMARY ACTION: EMAIL WIDGET (Spans full width on mobile, 2 cols on desktop) */}
+          {/* 1. EMAIL WIDGET */}
           <motion.div
             whileTap={{ scale: 0.97 }}
             onClick={handleCopyEmail}
-            className="col-span-2 bg-[#0a0a0c] border border-white/10 rounded-[2rem] p-6 md:p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[160px] md:min-h-[200px]"
+            className="col-span-2 rounded-[2rem] p-6 md:p-8 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[160px] md:min-h-[200px] transition-all"
+            style={{
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-nav)',
+            }}
           >
-            {/* Hover/Tap Glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 via-cyan-500/5 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              style={{ background: 'linear-gradient(135deg, var(--accent-dim), transparent)' }}
+            />
 
             <div className="flex justify-between items-start relative z-10">
-              <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-cyan-500 group-hover:bg-cyan-500 group-hover:text-black transition-colors duration-300">
+              <div
+                className="w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-300"
+                style={{ background: 'var(--rule)', color: 'var(--accent)' }}
+              >
                 <Mail size={20} />
               </div>
-              <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 font-mono text-[10px] text-gray-400 flex items-center gap-2">
+              <div
+                className="px-3 py-1 rounded-full font-mono text-[10px] flex items-center gap-2"
+                style={{
+                  background: 'var(--bg-pill)',
+                  border: '1px solid var(--border-nav)',
+                  color: 'var(--ink-dim)',
+                }}
+              >
                 {copied ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
                 {copied ? 'COPIED' : 'COPY'}
               </div>
             </div>
 
             <div className="relative z-10 mt-8">
-              <p className="text-xs font-mono text-gray-500 mb-1">Direct Line</p>
-              <h3 className="text-lg md:text-2xl font-bold text-white group-hover:text-cyan-400 transition-colors break-all">
+              <p className="text-xs font-mono mb-1" style={{ color: 'var(--ink-faint)' }}>
+                Direct Line
+              </p>
+              <h3
+                className="text-lg md:text-2xl font-bold break-all transition-colors"
+                style={{ color: 'var(--ink)' }}
+              >
                 karrtikgupta9@gmail.com
               </h3>
             </div>
           </motion.div>
 
-          {/* 2. SECONDARY ACTION: LINKEDIN */}
+          {/* 2. LINKEDIN */}
           <motion.a
             href="https://www.linkedin.com/in/karrtik-gupta/"
             target="_blank"
             rel="noopener noreferrer"
             whileTap={{ scale: 0.95 }}
-            className="col-span-1 bg-[#0a0a0c] border border-white/10 rounded-[2rem] p-6 cursor-pointer group flex flex-col justify-between min-h-[160px] md:min-h-[200px] hover:border-[#0A66C2]/50 transition-colors"
+            className="col-span-1 rounded-[2rem] p-6 cursor-pointer group flex flex-col justify-between min-h-[160px] md:min-h-[200px] transition-colors"
+            style={{
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-nav)',
+            }}
           >
-            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 group-hover:bg-[#0A66C2] group-hover:text-white transition-colors duration-300">
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300"
+              style={{ background: 'var(--rule)', color: 'var(--ink-dim)' }}
+            >
               <Linkedin size={18} />
             </div>
             <div>
-              <p className="text-[10px] font-mono text-gray-500 mb-1">Network</p>
-              <p className="font-bold text-white text-sm md:text-base">LinkedIn</p>
+              <p className="text-[10px] font-mono mb-1" style={{ color: 'var(--ink-faint)' }}>
+                Network
+              </p>
+              <p className="font-bold text-sm md:text-base" style={{ color: 'var(--ink)' }}>
+                LinkedIn
+              </p>
             </div>
           </motion.a>
 
-          {/* 3. SECONDARY ACTION: GITHUB */}
+          {/* 3. GITHUB */}
           <motion.a
             href="https://github.com/mygithubkg"
             target="_blank"
             rel="noopener noreferrer"
             whileTap={{ scale: 0.95 }}
-            className="col-span-1 bg-[#0a0a0c] border border-white/10 rounded-[2rem] p-6 cursor-pointer group flex flex-col justify-between min-h-[160px] md:min-h-[200px] hover:border-white/30 transition-colors"
+            className="col-span-1 rounded-[2rem] p-6 cursor-pointer group flex flex-col justify-between min-h-[160px] md:min-h-[200px] transition-colors"
+            style={{
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-nav)',
+            }}
           >
-            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 group-hover:bg-white group-hover:text-black transition-colors duration-300">
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300"
+              style={{ background: 'var(--rule)', color: 'var(--ink-dim)' }}
+            >
               <Github size={18} />
             </div>
             <div>
-              <p className="text-[10px] font-mono text-gray-500 mb-1">Repositories</p>
-              <p className="font-bold text-white text-sm md:text-base">GitHub</p>
+              <p className="text-[10px] font-mono mb-1" style={{ color: 'var(--ink-faint)' }}>
+                Repositories
+              </p>
+              <p className="font-bold text-sm md:text-base" style={{ color: 'var(--ink)' }}>
+                GitHub
+              </p>
             </div>
           </motion.a>
 
-          {/* 4. MOBILE TELEMETRY ROW (Hidden on Desktop) */}
+          {/* 4. MOBILE TELEMETRY ROW */}
           <div className="col-span-2 md:hidden flex gap-3 mt-2">
-            <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-1">
-              <MapPin size={16} className="text-cyan-500" />
-              <span className="font-mono text-[10px] text-gray-400">GZB, INDIA</span>
+            <div
+              className="flex-1 rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-1"
+              style={{ background: 'var(--bg-pill)', border: '1px solid var(--border-nav)' }}
+            >
+              <MapPin size={16} style={{ color: 'var(--accent)' }} />
+              <span className="font-mono text-[10px]" style={{ color: 'var(--ink-dim)' }}>
+                GZB, INDIA
+              </span>
             </div>
-            <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-1">
-              <Clock size={16} className="text-cyan-500" />
-              <span className="font-mono text-[10px] text-gray-400">
-                {mounted ? time.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }) : '--:--'}
+            <div
+              className="flex-1 rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-1"
+              style={{ background: 'var(--bg-pill)', border: '1px solid var(--border-nav)' }}
+            >
+              <Clock size={16} style={{ color: 'var(--accent)' }} />
+              <span className="font-mono text-[10px]" style={{ color: 'var(--ink-dim)' }}>
+                {mounted
+                  ? time.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })
+                  : '--:--'}
               </span>
             </div>
           </div>
         </div>
 
         {/* --- BOTTOM SYSTEM BAR --- */}
-        <div className="mt-12 md:mt-24 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-mono text-gray-600 uppercase tracking-widest">
+        <div
+          className="mt-12 md:mt-24 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-mono uppercase tracking-widest"
+          style={{ borderTop: '1px solid var(--border-card)', color: 'var(--ink-faint)' }}
+        >
           <p>© {new Date().getFullYear()} Karrtik Gupta</p>
 
-          <Link href="/admin/login" className="flex items-center gap-2 hover:text-cyan-500 transition-colors pb-4 md:pb-0">
+          <Link
+            href="/admin/login"
+            className="flex items-center gap-2 pb-4 md:pb-0 transition-colors"
+            style={{ color: 'var(--ink-faint)' }}
+            onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.color = 'var(--accent)'}
+            onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.color = 'var(--ink-faint)'}
+          >
             <Terminal size={12} />
             <span>Sys_Admin</span>
           </Link>

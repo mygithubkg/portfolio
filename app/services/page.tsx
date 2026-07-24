@@ -61,16 +61,17 @@ const tierLabel: Record<Tier, string> = {
   exploring: 'EXPLORING',
 };
 
-const tierClass: Record<Tier, string> = {
-  core: 'border-cyan-400/40 text-cyan-400',
-  comfortable: 'border-white/20 text-white/60',
-  exploring: 'border-white/10 text-white/40 border-dashed',
-};
-
 function TierTag({ tier }: { tier: Tier }) {
+  const styleMap: Record<Tier, React.CSSProperties> = {
+    core: { borderColor: 'var(--accent-rule)', color: 'var(--accent)' },
+    comfortable: { borderColor: 'var(--border-nav)', color: 'var(--ink-dim)' },
+    exploring: { borderColor: 'var(--border-card)', color: 'var(--ink-faint)', borderStyle: 'dashed' },
+  };
+
   return (
     <span
-      className={`inline-flex items-center font-mono text-[10px] tracking-widest uppercase border px-2 py-0.5 rounded-sm ${tierClass[tier]}`}
+      className="inline-flex items-center font-mono text-[10px] tracking-widest uppercase border px-2 py-0.5 rounded-sm"
+      style={styleMap[tier]}
     >
       {tierLabel[tier]}
     </span>
@@ -80,24 +81,36 @@ function TierTag({ tier }: { tier: Tier }) {
 function SkillCard({ skill, idx }: { skill: Skill; idx: number }) {
   return (
     <motion.div
-      className="group border border-white/10 hover:border-cyan-400/30 bg-white/[0.02] p-5 sm:p-6 transition-colors duration-300"
+      className="group p-5 sm:p-6 transition-colors duration-300 rounded-xl"
+      style={{ background: 'var(--bg-raised)', border: '1px solid var(--border-card)' }}
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ delay: idx * 0.05, duration: 0.5 }}
       viewport={{ once: true }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = 'var(--accent-rule)';
+        (e.currentTarget as HTMLElement).style.background = 'var(--accent-dim)';
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-card)';
+        (e.currentTarget as HTMLElement).style.background = 'var(--bg-raised)';
+      }}
     >
       <div className="flex items-start gap-4">
-        <div className="text-2xl sm:text-3xl flex-shrink-0 text-white/50 group-hover:text-cyan-400 transition-colors duration-300">
+        <div
+          className="text-2xl sm:text-3xl flex-shrink-0 transition-colors duration-300"
+          style={{ color: 'var(--ink-faint)' }}
+        >
           {skill.icon}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-2 mb-1.5">
-            <h3 className="text-base sm:text-lg font-bold text-white truncate">
+          <div className="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
+            <h3 className="text-base sm:text-lg font-bold truncate" style={{ color: 'var(--ink)' }}>
               {skill.name}
             </h3>
             <TierTag tier={skill.tier} />
           </div>
-          <p className="text-white/50 text-xs sm:text-sm leading-relaxed">
+          <p className="text-xs sm:text-sm leading-relaxed" style={{ color: 'var(--ink-dim)' }}>
             {skill.description}
           </p>
         </div>
@@ -108,8 +121,12 @@ function SkillCard({ skill, idx }: { skill: Skill; idx: number }) {
 
 export default function Skills() {
   return (
-    <section className="py-16 sm:py-24 lg:py-32 relative bg-[#030303]">
+    <section
+      className="py-16 sm:py-24 lg:py-32 pb-32 md:pb-24 relative"
+      style={{ background: 'var(--bg-section)', color: 'var(--ink)' }}
+    >
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6">
+
         {/* Section Header */}
         <motion.div
           className="mb-12 sm:mb-16"
@@ -118,13 +135,14 @@ export default function Skills() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <div className="font-mono text-xs tracking-[0.2em] uppercase text-cyan-400 mb-4">
+          <div className="font-mono text-xs tracking-[0.2em] uppercase mb-4" style={{ color: 'var(--accent)' }}>
             /ROOT/SKILLS
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-            Skills that drive <span className="text-cyan-400">innovation</span>
+          <h1 className="sr-only">Skills</h1>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4" style={{ color: 'var(--ink)' }}>
+            Skills that drive <span style={{ color: 'var(--accent)' }}>innovation</span>
           </h2>
-          <p className="text-base sm:text-lg text-white/50 max-w-2xl">
+          <p className="text-base sm:text-lg max-w-2xl leading-relaxed" style={{ color: 'var(--ink-dim)' }}>
             A toolkit grouped by how I actually use it — not a mastery bar.
             Core tools I reach for daily, comfortable tools I've shipped with,
             and areas I'm actively growing into.
@@ -135,7 +153,7 @@ export default function Skills() {
         <div className="space-y-12 sm:space-y-16 mb-16 sm:mb-20">
           {categories.map((category) => (
             <div key={category.id}>
-              <div className="font-mono text-xs tracking-[0.2em] uppercase text-white/40 mb-4 sm:mb-5">
+              <div className="font-mono text-xs tracking-[0.2em] uppercase mb-4 sm:mb-5" style={{ color: 'var(--ink-faint)' }}>
                 {category.label}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
@@ -149,32 +167,47 @@ export default function Skills() {
 
         {/* CTA Section */}
         <motion.div
-          className="border border-white/10 p-6 sm:p-10"
+          className="p-6 sm:p-10 rounded-2xl"
+          style={{ border: '1px solid var(--border-card)', background: 'var(--bg-raised)' }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <div className="font-mono text-xs tracking-[0.2em] uppercase text-cyan-400 mb-4">
+          <div className="font-mono text-xs tracking-[0.2em] uppercase mb-4" style={{ color: 'var(--accent)' }}>
             /ROOT/CONTACT
           </div>
-          <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
+          <h3 className="text-xl sm:text-2xl font-bold mb-3" style={{ color: 'var(--ink)' }}>
             Ready to collaborate?
           </h3>
-          <p className="text-white/50 mb-6 max-w-2xl text-sm sm:text-base leading-relaxed">
+          <p className="mb-6 max-w-2xl text-sm sm:text-base leading-relaxed" style={{ color: 'var(--ink-dim)' }}>
             I'm always excited to work on new projects and explore cutting-edge
             technologies. Let's discuss how we can bring your ideas to life.
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <a
               href="/contact"
-              className="w-full sm:w-auto text-center font-mono text-sm tracking-wide uppercase bg-cyan-400 text-black px-6 py-3 rounded-sm hover:bg-cyan-300 transition-colors"
+              className="w-full sm:w-auto text-center font-mono text-sm tracking-wide uppercase px-6 py-3 rounded-lg transition-colors"
+              style={{ background: 'var(--accent)', color: '#000' }}
             >
               Start a Project
             </a>
             <a
               href="/projects"
-              className="w-full sm:w-auto text-center font-mono text-sm tracking-wide uppercase border border-white/20 text-white px-6 py-3 rounded-sm hover:border-cyan-400/50 hover:text-cyan-400 transition-colors"
+              className="w-full sm:w-auto text-center font-mono text-sm tracking-wide uppercase px-6 py-3 rounded-lg transition-all"
+              style={{
+                border: '1px solid var(--border-nav)',
+                color: 'var(--ink-dim)',
+                background: 'transparent',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.color = 'var(--accent)';
+                (e.currentTarget as HTMLElement).style.borderColor = 'var(--accent-rule)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.color = 'var(--ink-dim)';
+                (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-nav)';
+              }}
             >
               View My Work
             </a>

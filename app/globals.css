@@ -2,35 +2,157 @@
 @import "tailwindcss";
 
 /* ============================================================
-   CSS CUSTOM PROPERTIES (used by Services.jsx, AdminLogin.jsx, etc.)
+   DARK THEME (default) — :root acts as dark
    ============================================================ */
-:root {
-  /* New Tokens */
-  --bg: #0A0B0D;
-  --bg-raised: #121417;
+:root,
+[data-theme="dark"] {
+  /* Core backgrounds */
+  --bg:          #0A0B0D;
+  --bg-raised:   #121417;
   --bg-raised-2: #17191D;
-  --rule: rgba(255, 255, 255, 0.08);
-  --rule-strong: rgba(255, 255, 255, 0.16);
-  --ink: #ECEAE2;
-  --ink-dim: #9A9D9F;
-  --ink-faint: #55585C;
-  --accent: #5FE0D0;
-  --accent-dim: rgba(95, 224, 208, 0.10);
-  --accent-rule: rgba(95, 224, 208, 0.28);
+  --bg-card:     #0a0a0c;
+  --bg-glass:    rgba(10, 10, 12, 0.80);
+  --bg-hero:     #030303;
+  --bg-section:  #050505;
+  --bg-ticker:   #0a0a0c;
+  --bg-pill:     rgba(255,255,255,0.04);
 
-  /* Mapped Legacy Tokens */
-  --background: var(--bg);
-  --foreground: var(--ink);
-  --surface: var(--bg-raised);
-  --surfaceLight: var(--bg-raised-2);
-  --accentLight: #818cf8;
-  /* Optional fallback */
-  --accentDark: #4f46e5;
-  --border: var(--rule-strong);
-  --text: var(--ink);
+  /* Borders / dividers */
+  --rule:        rgba(255, 255, 255, 0.08);
+  --rule-strong: rgba(255, 255, 255, 0.16);
+  --border-nav:  rgba(255, 255, 255, 0.10);
+  --border-card: rgba(255, 255, 255, 0.05);
+
+  /* Text */
+  --ink:       #ECEAE2;
+  --ink-dim:   #9A9D9F;
+  --ink-faint: #55585C;
+  --ink-invert: #030303;
+
+  /* Accent (cyan) */
+  --accent:      #5FE0D0;
+  --accent-dim:  rgba(95, 224, 208, 0.10);
+  --accent-rule: rgba(95, 224, 208, 0.28);
+  --accent-glow: rgba(34, 211, 238, 0.40);
+  --accent-hero: #22d3ee;
+
+  /* Mapped legacy tokens */
+  --background:    var(--bg);
+  --foreground:    var(--ink);
+  --surface:       var(--bg-raised);
+  --surfaceLight:  var(--bg-raised-2);
+  --accentLight:   #818cf8;
+  --accentDark:    #4f46e5;
+  --border:        var(--rule-strong);
+  --text:          var(--ink);
   --textSecondary: var(--ink-dim);
-  --error: #ef4444;
+  --error:   #ef4444;
   --success: #22c55e;
+
+  /* Glass / nav specific */
+  --nav-bg-scroll: rgba(10, 10, 12, 0.85);
+  --nav-bg:        rgba(10, 10, 12, 0.45);
+  --dock-bg:       rgba(10, 10, 12, 0.92);
+
+  /* Scrollbar */
+  --scrollbar-track: #09090b;
+  --scrollbar-thumb: #27272a;
+  --scrollbar-hover: #3f3f46;
+
+  /* Card defaults */
+  --card-bg:        #18181b;
+  --card-border:    #27272a;
+  --card-hover-bg:  #18181b;
+  --card-hover-border: #3f3f46;
+
+  /* Button */
+  --btn-bg:     #18181b;
+  --btn-border: #27272a;
+  --btn-text:   #fafafa;
+  --btn-hover:  #27272a;
+
+  /* Gradient text fallback */
+  --gradient-text: #fafafa;
+}
+
+/* ============================================================
+   LIGHT THEME
+   ============================================================ */
+[data-theme="light"] {
+  /* Core backgrounds */
+  --bg:          #F7F6F3;
+  --bg-raised:   #EEECEA;
+  --bg-raised-2: #E5E3DF;
+  --bg-card:     #FFFFFF;
+  --bg-glass:    rgba(247, 246, 243, 0.85);
+  --bg-hero:     #F2F1ED;
+  --bg-section:  #EEEDE9;
+  --bg-ticker:   #EEECEA;
+  --bg-pill:     rgba(0, 0, 0, 0.04);
+
+  /* Borders / dividers */
+  --rule:        rgba(0, 0, 0, 0.08);
+  --rule-strong: rgba(0, 0, 0, 0.14);
+  --border-nav:  rgba(0, 0, 0, 0.10);
+  --border-card: rgba(0, 0, 0, 0.07);
+
+  /* Text */
+  --ink:       #1A1917;
+  --ink-dim:   #5C5A56;
+  --ink-faint: #A8A6A1;
+  --ink-invert: #F7F6F3;
+
+  /* Accent (cyan — slightly deeper for contrast on light) */
+  --accent:      #0891B2;
+  --accent-dim:  rgba(8, 145, 178, 0.10);
+  --accent-rule: rgba(8, 145, 178, 0.28);
+  --accent-glow: rgba(8, 145, 178, 0.30);
+  --accent-hero: #0891B2;
+
+  /* Mapped legacy tokens */
+  --background:    var(--bg);
+  --foreground:    var(--ink);
+  --surface:       var(--bg-raised);
+  --surfaceLight:  var(--bg-raised-2);
+  --accentLight:   #6366f1;
+  --accentDark:    #4f46e5;
+  --border:        var(--rule-strong);
+  --text:          var(--ink);
+  --textSecondary: var(--ink-dim);
+  --error:   #dc2626;
+  --success: #16a34a;
+
+  /* Glass / nav specific */
+  --nav-bg-scroll: rgba(247, 246, 243, 0.90);
+  --nav-bg:        rgba(247, 246, 243, 0.60);
+  --dock-bg:       rgba(238, 236, 234, 0.95);
+
+  /* Scrollbar */
+  --scrollbar-track: #E5E3DF;
+  --scrollbar-thumb: #C4C2BE;
+  --scrollbar-hover: #A8A6A1;
+
+  /* Card defaults */
+  --card-bg:           #FFFFFF;
+  --card-border:       #E0DED9;
+  --card-hover-bg:     #F7F6F3;
+  --card-hover-border: #C8C6C1;
+
+  /* Button */
+  --btn-bg:     #FFFFFF;
+  --btn-border: #E0DED9;
+  --btn-text:   #1A1917;
+  --btn-hover:  #F0EFEB;
+
+  /* Gradient text fallback */
+  --gradient-text: #1A1917;
+}
+
+/* ============================================================
+   THEME TRANSITION — applied globally on theme toggle
+   ============================================================ */
+html {
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
 @theme inline {
@@ -97,7 +219,6 @@ html {
   color: var(--ink);
   font-family: 'Source Serif 4', Georgia, 'Iowan Old Style', ui-serif, serif;
   font-size: 16px;
-  /* was 10px — too small on mobile before breakpoints kick in */
   line-height: 1.75;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -109,6 +230,7 @@ body {
   overflow-x: hidden;
   background: var(--bg);
   color: var(--ink);
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
 h1,
@@ -122,6 +244,7 @@ h6 {
   color: var(--ink);
   letter-spacing: -0.03em;
   line-height: 1.2;
+  transition: color 0.35s ease;
 }
 
 h1 {
@@ -146,6 +269,7 @@ p {
   line-height: 1.75;
   color: var(--ink-dim);
   font-size: 1rem;
+  transition: color 0.35s ease;
 }
 
 /* ============================================================
@@ -153,30 +277,30 @@ p {
    ============================================================ */
 .glass-card,
 .minimal-card {
-  background: #18181b;
-  border: 1px solid #27272a;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 1rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card:hover,
 .minimal-card:hover {
-  background: #18181b;
-  border-color: #3f3f46;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  background: var(--card-hover-bg);
+  border-color: var(--card-hover-border);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
 }
 
 /* ============================================================
    BUTTONS
    ============================================================ */
 button {
-  color: #fafafa;
+  color: var(--btn-text);
   border-radius: 0.5rem;
   font-weight: 500;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid #27272a;
-  background: #18181b;
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
   cursor: pointer;
   font-size: 1rem;
   letter-spacing: 0.01em;
@@ -184,12 +308,12 @@ button {
 
 button:hover,
 button:focus {
-  background: #27272a;
-  border-color: #3f3f46;
+  background: var(--btn-hover);
+  border-color: var(--card-hover-border);
 }
 
 button:active {
-  background: #18181b;
+  background: var(--btn-bg);
 }
 
 /* ============================================================
@@ -197,28 +321,28 @@ button:active {
    ============================================================ */
 ::-webkit-scrollbar {
   width: 8px;
-  background: #09090b;
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: var(--scrollbar-thumb);
   border-radius: 8px;
   transition: background 0.3s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: var(--scrollbar-hover);
 }
 
 ::-webkit-scrollbar-track {
-  background: #09090b;
+  background: var(--scrollbar-track);
 }
 
 /* ============================================================
    FOCUS / SELECTION
    ============================================================ */
 *:focus-visible {
-  outline: 2px solid #6366f1;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -231,8 +355,7 @@ button:active {
   color: var(--ink);
 }
 
-/* Scoped transitions — do NOT use * here, it forces the browser to track
-   transitions on every DOM node (big main-thread cost on complex pages). */
+/* Scoped transitions */
 button,
 a,
 .glass-card,
@@ -244,28 +367,26 @@ textarea {
 }
 
 a {
-  color: #a1a1aa;
+  color: var(--ink-dim);
   text-decoration: none;
   transition: color 0.3s;
   font-size: 1rem;
 }
 
 a:hover {
-  color: #fafafa;
+  color: var(--ink);
 }
 
 /* ============================================================
    GRADIENT TEXT OVERRIDE
    ============================================================ */
 .gradient-text {
-  color: #fafafa;
+  color: var(--gradient-text);
   background: none;
   -webkit-background-clip: unset;
   -webkit-text-fill-color: unset;
   background-clip: unset;
 }
-
-/* tsparticles styles removed — library is not loaded on any active page */
 
 /* ============================================================
    RESPONSIVE TYPOGRAPHY
@@ -275,7 +396,6 @@ a:hover {
     font-size: 16px;
   }
 
-  /* unchanged — already the default now */
   h1 {
     font-size: 3.5rem;
   }
@@ -347,4 +467,47 @@ a:hover {
   .minimal-card:hover {
     transform: none;
   }
+}
+
+/* ============================================================
+   BLOG PROSE STYLES (previously inlined in BlogDetailClient)
+   ============================================================ */
+.prose-body pre {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow-x: auto;
+}
+
+.prose-body pre code {
+  background: transparent !important;
+  padding: 0 !important;
+  border: none !important;
+  font-size: 0.875rem !important;
+  line-height: 1.75 !important;
+}
+
+.prose-body > *:first-child {
+  margin-top: 0 !important;
+}
+
+/* TOC sidebar track line */
+.ledger-track {
+  position: relative;
+}
+
+.ledger-track::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--rule);
+}
+
+/* 3D card perspective */
+.perspective-1000 {
+  perspective: 1000px;
 }

@@ -13,34 +13,8 @@ import {
   Check,
 } from 'lucide-react';
 
-const TOKENS_STYLE = `
-  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-  :root {
-    --bg: #0A0B0D;
-    --bg-raised: #121417;
-    --bg-raised-2: #17191D;
-    --rule: rgba(255,255,255,0.08);
-    --rule-strong: rgba(255,255,255,0.16);
-    --ink: #ECEAE2;
-    --ink-dim: #9A9D9F;
-    --ink-faint: #55585C;
-    --accent: #5FE0D0;
-    --accent-dim: rgba(95,224,208,0.10);
-    --accent-rule: rgba(95,224,208,0.28);
-  }
 
-  .font-editorial { font-family: 'Source Serif 4', Georgia, 'Iowan Old Style', ui-serif, serif; }
-  .font-chrome { font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace; }
-
-  ::selection { background: var(--accent-dim); color: var(--ink); }
-
-  @keyframes blink-cursor { 0%, 45% { opacity: 1; } 50%, 95% { opacity: 0; } 100% { opacity: 1; } }
-  .blink { animation: blink-cursor 1.1s steps(1) infinite; }
-
-  @keyframes skeleton-pulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.6; } }
-  .skeleton { animation: skeleton-pulse 1.6s ease-in-out infinite; background: var(--bg-raised); border-radius: 4px; }
-`;
 
 const CATEGORY_ALL = 'All';
 
@@ -129,7 +103,7 @@ export default function BlogListClient({ initialBlogs }: { initialBlogs: any[] }
 
   return (
     <section className="min-h-screen py-24 relative bg-[var(--bg)] text-[var(--ink-dim)] selection:bg-[var(--accent-dim)] selection:text-[var(--accent)]">
-      <style>{TOKENS_STYLE}</style>
+      
 
       <div className="w-[90%] md:w-[80%] mx-auto relative z-10 max-w-5xl">
 
