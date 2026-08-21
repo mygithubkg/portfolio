@@ -1,37 +1,20 @@
 "use client"
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Edit, Trash2, X, Save, BookOpen, Calendar, Tag, User, Hash, Eye, RotateCcw, AlertTriangle, Settings } from 'lucide-react';
+import { Plus, Edit, Trash2, X, BookOpen, Calendar, Tag, User, Hash, Eye, AlertTriangle, Settings } from 'lucide-react';
 import { getBlogs, addBlog, updateBlog, deleteBlog } from '@/lib/utils/blogData';
 import { getDefaultBlogs, addDefaultBlog, updateDefaultBlog, deleteDefaultBlog, resetSectionToDefault } from '@/lib/utils/defaultsManager';
 import ResetToDefaultModal from './ResetToDefaultModal';
 
+// Dynamically import TipTap editor to avoid SSR issues
+const RichBlogEditor = dynamic(() => import('./RichBlogEditor'), {
+  ssr: false,
+  loading: () => <div className="flex-1 flex items-center justify-center"><span className="font-mono text-xs text-textSecondary animate-pulse">LOADING_EDITOR…</span></div>
+});
+
 const DesktopEditor = ({ formData, handleChange, handleSubmit, editingBlog, onClose }: any) => {
   const [showDossier, setShowDossier] = useState(false);
-  const [currentLine, setCurrentLine] = useState('');
-  const [showPlusBtn, setShowPlusBtn] = useState(true);
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const handleKeyUp = (e: any) => {
-    const text = e.target.value;
-    const cursor = e.target.selectionStart;
-    const lastNewline = text.lastIndexOf('\n', cursor - 1);
-    const nextNewline = text.indexOf('\n', cursor);
-    const end = nextNewline === -1 ? text.length : nextNewline;
-    const line = text.substring(lastNewline + 1, end);
-    setCurrentLine(line);
-    if (line === '') {
-      setShowPlusBtn(true);
-    } else {
-      setShowPlusBtn(false);
-      setMenuOpen(false);
-    }
-  };
-
-  const insertMarkdown = (snippet: string) => {
-    handleChange({ target: { name: 'content', value: formData.content + snippet } });
-    setMenuOpen(false);
-  };
 
   return (
     <motion.div 
@@ -48,10 +31,12 @@ const DesktopEditor = ({ formData, handleChange, handleSubmit, editingBlog, onCl
             <button type="button" onClick={onClose} className="text-text hover:text-accent font-sans text-sm transition-colors flex items-center gap-2">
               &larr; Discard
             </button>
-            <span className="font-mono text-xs text-textSecondary bg-surface px-2 py-1 rounded">Unsaved changes</span>
+            <span className="font-mono text-xs text-textSecondary bg-surface px-2 py-1 rounded border border-border">
+              {editingBlog ? 'Editing entry' : 'New entry'}
+            </span>
           </div>
           <div className="flex items-center gap-4">
-            <button type="button" onClick={() => setShowDossier(!showDossier)} className="text-text hover:text-accent font-sans text-sm flex items-center gap-2 transition-colors">
+            <button type="button" onClick={() => setShowDossier(!showDossier)} className={`font-sans text-sm flex items-center gap-2 transition-colors ${showDossier ? 'text-accent' : 'text-text hover:text-accent'}`}>
               <Settings size={16} /> Dossier
             </button>
             <button type="submit" className="bg-accent text-background px-6 py-2 font-mono text-xs hover:opacity-90 transition-opacity">
@@ -63,69 +48,78 @@ const DesktopEditor = ({ formData, handleChange, handleSubmit, editingBlog, onCl
         {/* Main area */}
         <div className="flex flex-1 overflow-hidden">
           {/* Canvas */}
-          <div className="flex-1 overflow-y-auto py-20 relative">
-            <div className="max-w-[750px] mx-auto px-6 relative">
+          <div className="flex-1 overflow-y-auto flex flex-col">
+            {/* Title */}
+            <div className="max-w-[750px] mx-auto w-full px-6 pt-16 pb-4">
               <input 
                 name="title" 
                 value={formData.title} 
                 onChange={handleChange}
                 placeholder="Title your journal entry..."
-                className="w-full bg-transparent border-0 outline-none font-display text-5xl text-text placeholder-textSecondary/30 resize-none"
+                className="w-full bg-transparent border-0 outline-none font-display text-5xl text-text placeholder-textSecondary/30 leading-tight"
               />
-              <div className="border-b border-border my-6"></div>
-              
-              <div className="relative">
-                {showPlusBtn && (
-                  <div className="absolute -left-12 top-0 mt-1 flex gap-2 z-10">
-                    <button type="button" onClick={() => setMenuOpen(!menuOpen)} className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-textSecondary hover:text-accent hover:border-accent bg-background transition-colors">
-                      <Plus size={16} className={`transition-transform ${menuOpen ? 'rotate-45' : ''}`} />
-                    </button>
-                    {menuOpen && (
-                      <div className="absolute left-10 top-0 flex gap-2 bg-surface border border-border p-1 rounded shadow-lg">
-                        <button type="button" onClick={() => insertMarkdown('![alt text](url)')} className="px-2 py-1 font-mono text-xs text-textSecondary hover:text-accent whitespace-nowrap">[ IMAGE ]</button>
-                        <button type="button" onClick={() => insertMarkdown('```\n\n```')} className="px-2 py-1 font-mono text-xs text-textSecondary hover:text-accent whitespace-nowrap">[ CODE ]</button>
-                        <button type="button" onClick={() => insertMarkdown('\n---\n')} className="px-2 py-1 font-mono text-xs text-textSecondary hover:text-accent whitespace-nowrap">[ DIVIDER ]</button>
-                      </div>
-                    )}
-                  </div>
-                )}
-                <textarea 
-                  name="content"
-                  value={formData.content}
-                  onChange={handleChange}
-                  onKeyUp={handleKeyUp}
-                  placeholder="Begin writing..."
-                  className="w-full bg-transparent border-0 outline-none font-sans text-lg leading-relaxed text-text placeholder-textSecondary/40 resize-none min-h-[60vh] focus:ring-0"
-                />
-              </div>
+              <div className="border-b border-border mt-8 mb-0" />
+            </div>
+
+            {/* Rich editor fills remaining space */}
+            <div className="max-w-[750px] mx-auto w-full px-6 flex-1 flex flex-col">
+              <RichBlogEditor
+                content={formData.content}
+                onChange={(html: string) => handleChange({ target: { name: 'content', value: html } })}
+              />
             </div>
           </div>
 
-          {/* Dossier */}
+          {/* Dossier Sidebar */}
           <AnimatePresence>
             {showDossier && (
               <motion.div 
                 initial={{ x: 320 }} 
                 animate={{ x: 0 }} 
                 exit={{ x: 320 }}
-                transition={{ duration: 0.2 }}
-                className="w-80 border-l border-border bg-surface flex flex-col overflow-y-auto p-8 space-y-8 shrink-0"
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className="w-80 border-l border-border bg-surface flex flex-col overflow-y-auto p-8 space-y-6 shrink-0"
               >
-                <div className="font-mono text-[10px] uppercase tracking-widest text-textSecondary">DOSSIER_SETTINGS</div>
+                <div className="flex items-center justify-between">
+                  <div className="font-mono text-[10px] uppercase tracking-widest text-textSecondary">DOSSIER_SETTINGS</div>
+                  <button type="button" onClick={() => setShowDossier(false)} className="text-textSecondary hover:text-text"><X size={14} /></button>
+                </div>
                 
-                <input name="author" value={formData.author} onChange={handleChange} placeholder="Author" className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40" />
-                <input type="date" name="publishDate" value={formData.publishDate} onChange={handleChange} className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40" />
-                <select name="category" value={formData.category} onChange={handleChange} className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none text-textSecondary">
-                  <option value="Web Development">Web Development</option>
-                  <option value="AI/ML">AI/ML</option>
-                  <option value="Tutorial">Tutorial</option>
-                  <option value="DevOps">DevOps</option>
-                  <option value="Other">Other</option>
-                </select>
-                <input name="readTime" value={formData.readTime} onChange={handleChange} placeholder="Read Time" className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40" />
-                <textarea name="excerpt" value={formData.excerpt} onChange={handleChange} rows={4} placeholder="Excerpt" className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40 resize-none" />
-                <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="Image URL" className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40" />
-                <input name="hashtags" value={formData.hashtags} onChange={handleChange} placeholder="react, nextjs, typescript" className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40" />
+                <div className="space-y-1">
+                  <label className="font-mono text-[9px] uppercase tracking-widest text-textSecondary">Author</label>
+                  <input name="author" value={formData.author} onChange={handleChange} placeholder="Author name" className="border-b border-border bg-transparent w-full py-2 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40 focus:border-accent transition-colors" />
+                </div>
+                <div className="space-y-1">
+                  <label className="font-mono text-[9px] uppercase tracking-widest text-textSecondary">Publish Date</label>
+                  <input type="date" name="publishDate" value={formData.publishDate} onChange={handleChange} className="border-b border-border bg-transparent w-full py-2 text-text font-sans text-sm focus:outline-none focus:border-accent transition-colors" />
+                </div>
+                <div className="space-y-1">
+                  <label className="font-mono text-[9px] uppercase tracking-widest text-textSecondary">Category</label>
+                  <select name="category" value={formData.category} onChange={handleChange} className="border-b border-border bg-transparent w-full py-2 text-text font-sans text-sm focus:outline-none focus:border-accent transition-colors">
+                    <option value="Web Development">Web Development</option>
+                    <option value="AI/ML">AI/ML</option>
+                    <option value="Tutorial">Tutorial</option>
+                    <option value="DevOps">DevOps</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="font-mono text-[9px] uppercase tracking-widest text-textSecondary">Read Time</label>
+                  <input name="readTime" value={formData.readTime} onChange={handleChange} placeholder="5 min read" className="border-b border-border bg-transparent w-full py-2 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40 focus:border-accent transition-colors" />
+                </div>
+                <div className="space-y-1">
+                  <label className="font-mono text-[9px] uppercase tracking-widest text-textSecondary">Excerpt</label>
+                  <textarea name="excerpt" value={formData.excerpt} onChange={handleChange} rows={4} placeholder="Short excerpt shown in the blog list..." className="border-b border-border bg-transparent w-full py-2 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40 resize-none focus:border-accent transition-colors" />
+                </div>
+                <div className="space-y-1">
+                  <label className="font-mono text-[9px] uppercase tracking-widest text-textSecondary">Cover Image URL</label>
+                  <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="https://res.cloudinary.com/..." className="border-b border-border bg-transparent w-full py-2 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40 focus:border-accent transition-colors" />
+                  {formData.imageUrl && <img src={formData.imageUrl} alt="cover" className="w-full aspect-video object-cover mt-2 border border-border" />}
+                </div>
+                <div className="space-y-1">
+                  <label className="font-mono text-[9px] uppercase tracking-widest text-textSecondary">Hashtags (comma separated)</label>
+                  <input name="hashtags" value={formData.hashtags} onChange={handleChange} placeholder="react, nextjs, typescript" className="border-b border-border bg-transparent w-full py-2 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40 focus:border-accent transition-colors" />
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -596,24 +590,6 @@ const BlogManager = () => {
         )}
       </AnimatePresence>
 
-      {/* Reset to Default */}
-      <ResetToDefaultModal
-        isOpen={showReset}
-        onClose={() => setShowReset(false)}
-        onConfirm={handleReset}
-        sectionName="Blogs"
-        isLoading={isResetting}
-      />
-
-      {/* Reset button (floating) */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <button
-          onClick={() => setShowReset(true)}
-          className="flex items-center gap-2 px-4 py-3 bg-surface border border-accent/40 text-accent hover:bg-accent/10 text-xs font-mono transition-colors shadow-xl"
-        >
-          <RotateCcw size={14} /> RESET_BLOGS_TO_DEFAULT
-        </button>
-      </div>
     </div>
   );
 };
