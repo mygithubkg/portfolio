@@ -83,7 +83,7 @@ function SkillCard({ skill, idx }: { skill: Skill; idx: number }) {
     <motion.div
       className="group p-5 sm:p-6 transition-colors duration-300 rounded-xl"
       style={{ background: 'var(--bg-raised)', border: '1px solid var(--border-card)' }}
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ delay: idx * 0.05, duration: 0.5 }}
       viewport={{ once: true }}
@@ -122,14 +122,14 @@ function SkillCard({ skill, idx }: { skill: Skill; idx: number }) {
 export default function Skills() {
   return (
     <section
-      className="py-16 sm:py-24 lg:py-32 pb-32 md:pb-24 relative"
+      className="py-block sm:py-section lg:py-section pb-32 md:pb-24 relative"
       style={{ background: 'var(--bg-section)', color: 'var(--ink)' }}
     >
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6">
 
         {/* Section Header */}
         <motion.div
-          className="mb-12 sm:mb-16"
+          className="mb-group sm:mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}

@@ -41,7 +41,7 @@ const ResetToDefaultModal = ({ isOpen, onClose, onConfirm, sectionName = 'this s
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/85 backdrop-blur-sm"
+            className="absolute inset-0 bg-background/85 backdrop-blur-sm"
           />
 
           {/* Modal */}
@@ -61,7 +61,7 @@ const ResetToDefaultModal = ({ isOpen, onClose, onConfirm, sectionName = 'this s
                 <AlertTriangle size={18} className="text-amber-400" />
                 <h2 className="text-sm font-bold text-white font-mono tracking-widest">RESET_TO_DEFAULT</h2>
               </div>
-              <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors">
+              <button onClick={onClose} className="text-textSecondary hover:text-white transition-colors">
                 <X size={18} />
               </button>
             </div>
@@ -91,7 +91,7 @@ const ResetToDefaultModal = ({ isOpen, onClose, onConfirm, sectionName = 'this s
                   onKeyDown={(e) => e.key === 'Enter' && handleConfirm()}
                   placeholder="RESET"
                   autoFocus
-                  className="w-full bg-black/60 border border-white/10 focus:border-amber-500 p-3 text-white font-mono text-sm focus:outline-none transition-colors placeholder-gray-700"
+                  className="w-full bg-background/60 border border-white/10 focus:border-amber-500 p-3 text-white font-mono text-sm focus:outline-none transition-colors placeholder-gray-700"
                 />
               </div>
 
@@ -100,7 +100,7 @@ const ResetToDefaultModal = ({ isOpen, onClose, onConfirm, sectionName = 'this s
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 py-3 border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 text-xs font-bold font-mono transition-colors"
+                  className="flex-1 py-3 border border-white/10 text-gray-400 hover:text-white hover:bg-background/5 text-xs font-bold font-mono transition-colors"
                 >
                   CANCEL
                 </button>

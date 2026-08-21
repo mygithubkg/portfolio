@@ -75,7 +75,7 @@ const LoadingPage = ({ onComplete }: { onComplete: () => void }) => {
             key={i}
             className={`h-2.5 md:h-3 w-full rounded-[1px] transition-colors duration-75 ${i < filledBlocks
                 ? 'bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.8)]'
-                : 'bg-white/[0.03]'
+                : 'bg-background/[0.03]'
               }`}
           />
         ))}
@@ -145,9 +145,9 @@ const LoadingPage = ({ onComplete }: { onComplete: () => void }) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="border border-white/5 bg-white/[0.02] p-5 rounded-xl"
+              className="border border-white/5 bg-background/[0.02] p-5 rounded-xl"
             >
-              <div className="flex items-center gap-2 mb-3 text-[10px] text-gray-500 uppercase tracking-[0.2em]">
+              <div className="flex items-center gap-2 mb-3 text-[10px] text-textSecondary uppercase tracking-[0.2em]">
                 <Terminal size={12} />
                 <span>SYS_MOTD</span>
               </div>
@@ -166,7 +166,7 @@ const LoadingPage = ({ onComplete }: { onComplete: () => void }) => {
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-cyan-400 mb-6 shadow-[0_0_30px_rgba(34,211,238,0.15)]"
+                className="w-16 h-16 rounded-2xl bg-background/5 border border-white/10 flex items-center justify-center text-cyan-400 mb-6 shadow-[0_0_30px_rgba(34,211,238,0.15)]"
               >
                 <Terminal size={32} />
               </motion.div>
@@ -192,7 +192,7 @@ const LoadingPage = ({ onComplete }: { onComplete: () => void }) => {
 
             <div className="w-full mb-8">
               <div className="flex justify-between items-end mb-3">
-                <span className="text-[10px] text-gray-500 uppercase tracking-widest">Loading Engine</span>
+                <span className="text-[10px] text-textSecondary uppercase tracking-widest">Loading Engine</span>
                 <span className="text-sm text-cyan-400 font-bold tabular-nums">{Math.round(progress)}%</span>
               </div>
               {renderProgressBar()}

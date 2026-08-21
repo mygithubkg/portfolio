@@ -4,6 +4,27 @@ import { Providers } from './providers';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ClientLoadingWrapper from '@/components/ClientLoadingWrapper';
+import { Fraunces, DM_Sans, JetBrains_Mono } from 'next/font/google';
+
+import AmbientBackground from '@/components/AmbientBackground';
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-fraunces',
+});
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-general-sans',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://karrtikgupta.com"),
@@ -19,39 +40,50 @@ export const metadata: Metadata = {
     'Karthik Gupta',
     'Karrtik Gupta AI Engineer',
     'Karrtik Gupta PEC',
-    'Karrtik Gupta Punjab Engineering College',
-    'Karrtik Gupta full stack developer',
-    'Karrtik Gupta projects',
-    'Karrtik Gupta freelancer',
+    'Full Stack Developer',
+    'Next.js Developer',
+    'AI Engineer',
+    'Freelance Developer India',
   ],
+  authors: [{ name: 'Karrtik Gupta', url: 'https://karrtikgupta.com' }],
+  creator: 'Karrtik Gupta',
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Karrtik Gupta | Full-Stack & AI Engineer",
+    type: 'website',
+    locale: 'en_IN',
+    url: 'https://karrtikgupta.com',
+    title: 'Karrtik Gupta | Full-Stack & AI Engineer',
     description:
-      "Karrtik Gupta is a Full-Stack & AI Engineer specializing in Next.js, Node.js, Applied NLP, and GenAI. Explore his portfolio of scalable web apps and intelligent agents.",
-    url: "https://karrtikgupta.com",
-    siteName: "Karrtik Gupta",
+      'Karrtik Gupta is a Full-Stack & AI Engineer specializing in Next.js, Node.js, and GenAI. View his projects and read his journal.',
+    siteName: 'Karrtik Gupta Portfolio',
     images: [
       {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Karrtik Gupta Portfolio",
+        url: 'https://res.cloudinary.com/f8njovya/image/upload/v1783444604/logo_ejmhtr.png',
+        width: 800,
+        height: 600,
+        alt: 'Karrtik Gupta Portfolio',
       },
     ],
-    type: "website",
-    locale: "en_US",
   },
   twitter: {
-    card: "summary_large_image",
-    title: "Karrtik Gupta | Full-Stack & AI Engineer",
-    description:
-      "Karrtik Gupta is a Full-Stack & AI Engineer specializing in Next.js, Node.js, Applied NLP, and GenAI. Explore his portfolio of scalable web apps and intelligent agents.",
-    images: ["/og-image.png"],
+    card: 'summary_large_image',
+    title: 'Karrtik Gupta | Full-Stack & AI Engineer',
+    description: 'Karrtik Gupta is a Full-Stack & AI Engineer building intelligent systems.',
+    images: ['https://res.cloudinary.com/f8njovya/image/upload/v1783444604/logo_ejmhtr.png'],
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   manifest: "/site.webmanifest",
   icons: {
     icon: "https://res.cloudinary.com/f8njovya/image/upload/v1783444604/logo_ejmhtr.png",
@@ -66,7 +98,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" data-scroll-behavior="smooth">
+    <html lang="en" data-scroll-behavior="smooth" className={`${fraunces.variable} ${dmSans.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
@@ -75,9 +107,8 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Person",
               "name": "Karrtik Gupta",
-              "alternateName": ["Kartik Gupta", "Karthik Gupta"],
               "url": "https://karrtikgupta.com",
-              "image": "https://karrtikgupta.com/og-image.png",
+              "image": "https://res.cloudinary.com/f8njovya/image/upload/v1783444605/karrtik_oxxcds.png",
               "jobTitle": "Full Stack & AI Engineer",
               "alumniOf": {
                 "@type": "CollegeOrUniversity",
@@ -91,11 +122,12 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-background text-foreground antialiased font-editorial">
+      <body className="font-sans antialiased text-text bg-background min-h-screen flex flex-col">
+        <AmbientBackground />
         <Providers>
           <ClientLoadingWrapper>
             <Header />
-            <main className="min-h-screen pt-20">
+            <main className="flex-1 w-full flex flex-col pt-20">
               {children}
             </main>
             <Footer />

@@ -2,11 +2,11 @@
 
 import { DataProvider } from '@/context/DataContext';
 import { AdminAuthProvider } from '@/context/AdminAuthContext';
-import { ThemeProvider } from '@/context/ThemeContext';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <DataProvider>
         <AdminAuthProvider>
           {children}

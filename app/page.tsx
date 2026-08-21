@@ -1,681 +1,425 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useData } from '@/context/DataContext';
+import { getBlogs } from '@/lib/utils/blogData';
+import { ArrowRight } from 'lucide-react';
 
-import { FaReact, FaNodeJs, FaPython, FaBrain, FaCloud, FaLayerGroup } from 'react-icons/fa';
-import { SiOpenai, SiTailwindcss, SiFirebase, SiExpress } from 'react-icons/si';
-import { ArrowRight, TerminalSquare, Cpu, GitMerge, ChevronRight } from 'lucide-react';
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-// --- AUTHENTIC DATA: TECH STACK ---
-const techStack = [
-  { icon: <SiOpenai />, name: 'Gemini API', color: '#10a37f' },
-  { icon: <FaReact />, name: 'React 18', color: '#61dafb' },
-  { icon: <FaNodeJs />, name: 'Node.js', color: '#8cc84b' },
-  { icon: <FaPython />, name: 'Python', color: '#3776ab' },
-  { icon: <SiExpress />, name: 'Express.js', color: '#888' },
-  { icon: <SiFirebase />, name: 'Firebase', color: '#ffca28' },
-  { icon: <SiTailwindcss />, name: 'Tailwind', color: '#38bdf8' },
-];
-
-export default function Home() {
-  const { scrollYProgress } = useScroll();
-  const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-
-  // --- 3D MOUSE TRACKING FOR TERMINAL (Desktop Only) ---
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [15, -15]), { damping: 30, stiffness: 200 });
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-15, 15]), { damping: 30, stiffness: 200 });
-
-  const handleMouseMove = (e: any) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    mouseX.set(x);
-    mouseY.set(y);
-  };
-
-  const handleMouseLeave = () => {
-    mouseX.set(0);
-    mouseY.set(0);
-  };
-
+// --- DESKTOP VIEW ---
+const DesktopView = ({ projects, blogs, skills }: { projects: any[], blogs: any[], skills: string[] }) => {
   return (
-    <div
-      className="relative overflow-hidden font-sans"
-      style={{ background: 'var(--bg-hero)', color: 'var(--ink)' }}
-    >
-
-      {/* ==================== SECTOR 1: CINEMATIC HERO ==================== */}
-      <section
-        className="relative min-h-screen flex items-center justify-center overflow-hidden"
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{ perspective: 1200 }}
-      >
-        {/* Ambient glows */}
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[150px] pointer-events-none opacity-60"
-          style={{ background: 'var(--accent-dim)' }} />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none opacity-40"
-          style={{ background: 'rgba(59, 130, 246, 0.06)' }} />
-
-        {/* ── MOBILE HERO (visible only on small screens) ── */}
-        <div className="md:hidden w-full px-5 pt-28 pb-36 flex flex-col gap-6 relative z-10">
-
-          {/* Status badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-3 px-4 py-2 rounded-full w-fit"
-            style={{
-              border: '1px solid var(--border-nav)',
-              background: 'var(--bg-pill)',
-              backdropFilter: 'blur(12px)',
-            }}
+    <div className="w-full">
+      
+      {/* HERO SECTION (Centered) */}
+      <section className="min-h-screen flex flex-col items-center justify-center px-16 relative overflow-hidden">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+          }}
+          className="flex flex-col items-center text-center z-10"
+        >
+          <motion.h1 
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: EASE } } }}
+            className="font-display text-8xl lg:text-9xl text-text tracking-tight whitespace-nowrap mb-6"
           >
-            <div className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-                style={{ background: 'var(--accent)' }} />
-              <span className="relative inline-flex rounded-full h-2 w-2"
-                style={{ background: 'var(--accent)' }} />
-            </div>
-            <span className="font-mono text-[10px] tracking-widest uppercase"
-              style={{ color: 'var(--accent)' }}>
-              SYS_ONLINE // DEV_READY
-            </span>
-          </motion.div>
-
-          {/* Mobile profile card */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.05 }}
-            className="flex items-center gap-4 p-4 rounded-3xl"
-            style={{
-              background: 'var(--bg-raised)',
-              border: '1px solid var(--border-card)',
-            }}
-          >
-            <div className="relative w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0"
-              style={{ border: '2px solid var(--border-card)' }}>
-              <Image
-                src="https://res.cloudinary.com/f8njovya/image/upload/v1783444605/karrtik_oxxcds.png"
-                alt="Karrtik Gupta"
-                width={64}
-                height={64}
-                className="w-full h-full object-cover"
-                priority
-              />
-            </div>
-            <div>
-              <p className="font-bold text-base leading-tight" style={{ color: 'var(--ink)' }}>
-                Karrtik Gupta
-              </p>
-              <p className="font-mono text-xs mt-0.5" style={{ color: 'var(--accent)' }}>
-                Full-Stack &amp; AI Engineer
-              </p>
-              <p className="text-xs mt-1" style={{ color: 'var(--ink-faint)' }}>
-                Punjab Engineering College
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Hero headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-[11.5vw] leading-[0.92] font-black tracking-tighter uppercase"
-            style={{ color: 'var(--ink)' }}
-          >
-            Architecting{' '}
-            <span className="block" style={{ color: 'var(--ink-faint)' }}>
-              Intelligence.
-            </span>
+            Karrtik Gupta.
           </motion.h1>
-
-          {/* Sub text */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.18 }}
-            className="text-base leading-relaxed font-light"
-            style={{ color: 'var(--ink-dim)' }}
+          <motion.p 
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: EASE } } }}
+            className="font-sans text-xl lg:text-2xl text-textSecondary font-light max-w-2xl"
           >
-            Building scalable ecosystems and intelligent agents. Bridging the gap between unstructured data and{' '}
-            <span style={{ color: 'var(--ink)', fontWeight: 500 }}>structured engineering</span>.
+            AI & Full-Stack Architect.<br/>
+            Bridging complex algorithms with scalable human experiences.
           </motion.p>
+        </motion.div>
+      </section>
 
-          {/* Mobile CTA buttons */}
-          <motion.div
+      {/* PROJECTS SECTION (Standard Vertical Scroll, Alternating Layout) */}
+      <section className="py-section px-16 bg-surface border-t border-b border-border">
+        <div className="max-w-[1400px] mx-auto flex flex-col gap-group">
+          
+          <motion.div 
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.26 }}
-            className="flex flex-col gap-3 pt-2"
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1, ease: EASE }}
+            className="w-full flex justify-between items-end border-b border-border pb-8 mb-group"
           >
-            <Link
-              href="/projects"
-              className="group flex items-center justify-center gap-3 w-full px-8 py-4 rounded-2xl font-bold text-sm active:scale-[0.97] transition-all"
-              style={{ background: 'var(--ink)', color: 'var(--ink-invert)' }}
-            >
-              VIEW SYSTEMS
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <Link
-              href="/contact"
-              className="group flex items-center justify-center gap-3 w-full px-8 py-4 rounded-2xl font-bold text-sm active:scale-[0.97] transition-all"
-              style={{
-                background: 'var(--bg-pill)',
-                border: '1px solid var(--border-card)',
-                color: 'var(--ink)',
-              }}
-            >
-              <TerminalSquare size={16} />
-              INITIALIZE CONTACT
-            </Link>
+            <h2 className="font-display text-5xl text-text">Selected Systems</h2>
+            <span className="font-mono text-sm text-textSecondary uppercase tracking-widest hidden md:block">01 / Projects</span>
           </motion.div>
 
-          {/* Mobile mini tech strip */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.34 }}
-            className="flex flex-wrap gap-2 pt-2"
+          <div className="flex flex-col gap-[10rem]">
+            {projects.map((project, i) => {
+              const isEven = i % 2 === 0;
+              return (
+                <motion.div 
+                  key={project.id || i}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-150px" }}
+                  transition={{ duration: 1.2, ease: EASE }}
+                  className={`flex items-center gap-24 ${isEven ? 'flex-row' : 'flex-row-reverse'}`}
+                >
+                  {/* Image Block (60%) */}
+                  <div className="w-[60%] h-[550px] relative rounded-2xl overflow-hidden border border-border bg-background shadow-2xl group">
+                    {project.image ? (
+                      <Image 
+                        src={project.image} 
+                        alt={project.title} 
+                        fill 
+                        className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
+                        sizes="(max-width: 1400px) 60vw, 840px"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center font-display text-4xl text-textSecondary/30">
+                        {project.title}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Details Block (40%) */}
+                  <div className="w-[40%] flex flex-col items-start gap-8">
+                    <h3 className="font-display text-5xl text-text leading-tight">{project.title}</h3>
+                    <ul className="flex flex-col gap-3 border-l border-border pl-6">
+                      {project.tech?.slice(0, 3).map((t: string, idx: number) => (
+                        <li key={idx} className="font-mono text-sm uppercase tracking-widest text-textSecondary">
+                          — {t}
+                        </li>
+                      ))}
+                    </ul>
+                    <Link 
+                      href={project.links?.live || project.links?.code || '/projects'}
+                      target="_blank"
+                      className="group/btn relative inline-flex items-center gap-4 text-text font-mono uppercase tracking-widest text-sm overflow-hidden mt-4"
+                    >
+                      <span className="relative z-10 transition-colors duration-300 group-hover/btn:text-background mix-blend-difference">View Live</span>
+                      <div className="w-10 h-10 rounded-full border border-border flex items-center justify-center transition-all duration-300 group-hover/btn:bg-text group-hover/btn:border-text group-hover/btn:w-full absolute left-0 z-0">
+                        <ArrowRight size={14} className="transition-transform duration-300 group-hover/btn:translate-x-12 opacity-0 group-hover/btn:opacity-100 text-background" />
+                      </div>
+                    </Link>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, ease: EASE }}
+            className="flex justify-center mt-block"
           >
-            {techStack.slice(0, 5).map((tech, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono"
-                style={{
-                  background: 'var(--bg-raised)',
-                  border: '1px solid var(--border-card)',
-                  color: 'var(--ink-dim)',
-                }}
-              >
-                <span style={{ color: tech.color }}>{tech.icon}</span>
-                {tech.name}
-              </div>
-            ))}
+            <Link 
+              href="/projects" 
+              className="px-10 py-5 border border-border rounded-full font-mono text-sm uppercase tracking-widest text-text hover:bg-text hover:text-background transition-colors duration-500"
+            >
+              View All Projects
+            </Link>
           </motion.div>
-        </div>
-
-        {/* ── DESKTOP HERO (visible only on md+) ── */}
-        <div className="hidden md:grid w-[85%] mx-auto relative z-10 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-
-          {/* --- LEFT: Typography & Actions --- */}
-          <div className="lg:col-span-7 space-y-8 relative z-20">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-3 px-4 py-2 rounded-full w-fit"
-              style={{
-                border: '1px solid var(--border-nav)',
-                background: 'var(--bg-pill)',
-                backdropFilter: 'blur(12px)',
-              }}
-            >
-              <div className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-                  style={{ background: 'var(--accent)' }} />
-                <span className="relative inline-flex rounded-full h-2 w-2"
-                  style={{ background: 'var(--accent)' }} />
-              </div>
-              <span className="text-xs font-mono tracking-widest uppercase"
-                style={{ color: 'var(--accent)' }}>
-                SYS_ONLINE // DEV_READY
-              </span>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-7xl lg:text-[5.5rem] font-black tracking-tighter leading-[0.95] uppercase"
-              style={{ color: 'var(--ink)' }}
-            >
-              Architecting <br />
-              <span style={{ color: 'var(--ink-faint)' }}>
-                Intelligence.
-              </span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-xl max-w-xl font-light leading-relaxed"
-              style={{ color: 'var(--ink-dim)' }}
-            >
-              Building scalable ecosystems and intelligent agents. Bridging the gap between unstructured data and{' '}
-              <span style={{ color: 'var(--ink)', fontWeight: 500 }}>structured engineering</span>.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-3 pt-4"
-            >
-              <Link
-                href="/projects"
-                className="group flex items-center justify-center gap-3 px-8 py-4 rounded-full font-bold text-sm transition-all active:scale-[0.97]"
-                style={{ background: 'var(--ink)', color: 'var(--ink-invert)' }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--accent)'; (e.currentTarget as HTMLElement).style.color = '#000'; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--ink)'; (e.currentTarget as HTMLElement).style.color = 'var(--ink-invert)'; }}
-              >
-                VIEW SYSTEMS
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                href="/contact"
-                className="group flex items-center justify-center gap-3 px-8 py-4 rounded-full font-bold text-sm transition-all active:scale-[0.97]"
-                style={{
-                  background: 'var(--bg-pill)',
-                  border: '1px solid var(--border-card)',
-                  color: 'var(--ink)',
-                }}
-              >
-                <TerminalSquare size={16} />
-                INITIALIZE CONTACT
-              </Link>
-            </motion.div>
-          </div>
-
-          {/* --- RIGHT: 3D Holographic Terminal --- */}
-          <div className="hidden lg:block lg:col-span-5 relative h-[600px]">
-            <motion.div
-              style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-              className="absolute inset-0 flex items-center justify-center"
-            >
-              <div
-                className="absolute inset-4 rounded-3xl blur-2xl"
-                style={{ background: 'var(--accent-dim)', transform: 'translateZ(-50px)' }}
-              />
-              <div
-                className="w-full h-full max-h-[500px] backdrop-blur-2xl rounded-3xl p-6 shadow-2xl overflow-hidden relative flex flex-col"
-                style={{
-                  background: 'var(--bg-glass)',
-                  border: '1px solid var(--border-nav)',
-                  transform: 'translateZ(50px)',
-                }}
-              >
-                <div className="flex gap-2 mb-6 pb-4" style={{ borderBottom: '1px solid var(--border-card)' }}>
-                  <div className="w-3 h-3 rounded-full bg-red-500/80" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/80" />
-                </div>
-                <div className="font-mono text-[13px] leading-[1.8] flex-1">
-                  <p><span className="text-purple-400">const</span> <span className="text-yellow-200">Architect</span> <span className="text-purple-400">=</span> <span className="text-blue-400">new</span> <span className="text-teal-300">System</span>({'{'}</p>
-                  <p className="pl-6" style={{ color: 'var(--ink-dim)' }}>identity: <span className="text-green-400">'Karrtik Gupta'</span>,</p>
-                  <p className="pl-6" style={{ color: 'var(--ink-dim)' }}>role: <span className="text-green-400">'Full-Stack &amp; AI Engineer'</span>,</p>
-                  <p className="pl-6" style={{ color: 'var(--ink-dim)' }}>modules: [</p>
-                  <p className="pl-12 text-green-400">'Next.js', 'React',</p>
-                  <p className="pl-12 text-green-400">'Node.js', 'Python',</p>
-                  <p className="pl-12 text-green-400">'LangChain', 'RAG'</p>
-                  <p className="pl-6" style={{ color: 'var(--ink-dim)' }}>],</p>
-                  <p className="pl-6" style={{ color: 'var(--ink-dim)' }}>status: <span className="text-blue-400">await</span> <span className="text-yellow-200">deploy</span>()</p>
-                  <p style={{ color: 'var(--ink-dim)' }}>{'}'});</p>
-                  <br />
-                  <p className="animate-pulse" style={{ color: 'var(--ink-faint)' }}>root@karrtik:~# executing setup...</p>
-                </div>
-                <div className="absolute bottom-0 right-0 w-48 h-48 opacity-20 grayscale mix-blend-screen pointer-events-none">
-                  <Image src="https://res.cloudinary.com/f8njovya/image/upload/v1783444605/karrtik_oxxcds.png" alt="Profile Ghost" width={400} height={400} className="w-full h-full object-cover" priority />
-                  <div className="absolute inset-0 bg-gradient-to-t from-transparent to-transparent" />
-                </div>
-              </div>
-            </motion.div>
-          </div>
 
         </div>
       </section>
 
-      {/* ==================== SECTOR 2: INFINITE TECH TICKER ==================== */}
-      <section
-        className="overflow-hidden py-4 md:py-6 relative flex items-center"
-        style={{
-          borderTop: '1px solid var(--border-card)',
-          borderBottom: '1px solid var(--border-card)',
-          background: 'var(--bg-ticker)',
-        }}
-      >
-        <div
-          className="absolute left-0 w-16 md:w-32 h-full z-10"
-          style={{ background: 'linear-gradient(to right, var(--bg-hero), transparent)' }}
-        />
-        <div
-          className="absolute right-0 w-16 md:w-32 h-full z-10"
-          style={{ background: 'linear-gradient(to left, var(--bg-hero), transparent)' }}
-        />
+      {/* JOURNAL SECTION (Book Reading Grid) */}
+      <section className="py-section px-16 relative">
+        <div className="max-w-[1400px] mx-auto flex flex-col gap-group">
+          
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1, ease: EASE }}
+            className="w-full flex justify-between items-end border-b border-border pb-8 mb-group"
+          >
+            <h2 className="font-display text-5xl text-text">Field Notes</h2>
+            <span className="font-mono text-sm text-textSecondary uppercase tracking-widest hidden md:block">02 / Journal</span>
+          </motion.div>
 
-        <motion.div
-          className="flex gap-12 md:gap-16 whitespace-nowrap px-4 md:px-8"
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        >
-          {[...techStack, ...techStack].map((tech, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-3 transition-colors duration-300 group cursor-default"
-              style={{ color: 'var(--ink-faint)' }}
-            >
-              <span
-                className="text-xl md:text-2xl filter grayscale group-hover:grayscale-0 transition-all duration-300"
-                style={{ color: tech.color }}
+          <div className="grid grid-cols-3 gap-12">
+            {blogs.map((blog, i) => (
+              <motion.div
+                key={blog.id}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, ease: EASE, delay: i * 0.1 }}
               >
-                {tech.icon}
-              </span>
-              <span className="font-mono text-xs md:text-sm tracking-widest uppercase">
-                {tech.name}
-              </span>
+                <Link 
+                  href={`/blog/${blog.id}`}
+                  className="block group"
+                >
+                  <motion.div 
+                    whileHover={{ y: -8 }} 
+                    transition={{ duration: 0.4, ease: EASE }}
+                    className="aspect-[3/4] bg-surface border-[1px] border-border p-10 flex flex-col justify-between items-center text-center shadow-sm group-hover:shadow-2xl transition-shadow duration-500 rounded-lg relative overflow-hidden"
+                  >
+                    {/* Inner Border (Book aesthetic) */}
+                    <div className="absolute inset-4 border-[1px] border-border/50 rounded-sm pointer-events-none" />
+                    
+                    <span className="font-mono text-xs uppercase tracking-widest text-textSecondary border-b border-border pb-4 w-full z-10 shrink-0">
+                      {blog.publishDate || blog.date}
+                    </span>
+                    
+                    <div className="flex-1 flex flex-col justify-center items-center w-full py-4 z-10">
+                      <h3 className="font-display text-3xl xl:text-4xl text-text leading-snug px-4 text-balance line-clamp-4">
+                        {blog.title}
+                      </h3>
+                    </div>
+                    
+                    <span className="font-mono text-xs uppercase tracking-widest text-accent border-t border-border pt-4 w-full group-hover:text-text transition-colors duration-300 z-10 flex justify-center items-center gap-2 shrink-0">
+                      Read <ArrowRight size={14} />
+                    </span>
+                  </motion.div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, ease: EASE }}
+            className="flex justify-center mt-block"
+          >
+            <Link 
+              href="/blog" 
+              className="px-10 py-5 border border-border rounded-full font-mono text-sm uppercase tracking-widest text-text hover:bg-text hover:text-background transition-colors duration-500"
+            >
+              View All Journal
+            </Link>
+          </motion.div>
+
+        </div>
+      </section>
+
+      {/* FOOTER TICKER */}
+      <section className="py-24 border-t border-border overflow-hidden bg-surface">
+        <motion.div 
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{ ease: "linear", duration: 40, repeat: Infinity }}
+          className="flex whitespace-nowrap items-center"
+        >
+          {[...skills, ...skills, ...skills, ...skills, ...skills].map((skill, i) => (
+            <div key={i} className="flex items-center">
+              <span className="font-display text-7xl text-text px-8">{skill}</span>
+              <span className="font-sans text-4xl text-textSecondary/30 px-4">—</span>
             </div>
           ))}
         </motion.div>
       </section>
 
-      {/* ==================== SECTOR 3: BENTO APP CAROUSEL ==================== */}
-      <section className="py-20 md:py-32 relative">
-        <div className="w-full md:w-[85%] mx-auto px-5 md:px-0">
+    </div>
+  );
+};
 
-          <div className="mb-8 md:mb-16 flex items-end justify-between">
-            <div>
-              <h3
-                className="text-[10px] md:text-sm font-mono tracking-widest uppercase mb-2 md:mb-4"
-                style={{ color: 'var(--accent)' }}
-              >
-                Core Modules
-              </h3>
-              <h2
-                className="text-3xl md:text-5xl font-bold tracking-tight"
-                style={{ color: 'var(--ink)' }}
-              >
-                Technical Arsenal.
-              </h2>
-            </div>
-            {/* Mobile Swipe Indicator */}
-            <div
-              className="md:hidden flex items-center gap-1 text-[10px] font-mono uppercase tracking-widest"
-              style={{ color: 'var(--ink-faint)' }}
-            >
-              Swipe <ChevronRight size={12} />
-            </div>
-          </div>
 
-          {/*
-            Mobile: Horizontal swipe carousel
-            Desktop: Bento grid
-          */}
-          <div className="flex md:grid md:grid-cols-3 gap-4 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none pb-8 md:pb-0 -mx-5 px-5 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+// --- MOBILE VIEW ---
+const MobileView = ({ projects, blogs, skills }: { projects: any[], blogs: any[], skills: string[] }) => {
+  return (
+    <div className="w-full">
+      
+      {/* HERO SECTION */}
+      <section className="min-h-[90vh] flex flex-col items-center justify-center px-6 w-full max-w-full relative text-center pt-16 overflow-hidden">
+        <motion.h1 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: EASE }}
+          className="font-display text-[clamp(2rem,11vw,4rem)] text-text tracking-tight leading-[1.1] mb-6 whitespace-nowrap"
+        >
+          Karrtik Gupta.
+        </motion.h1>
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: EASE, delay: 0.1 }}
+          className="font-sans text-[clamp(1rem,4vw,1.25rem)] text-textSecondary font-light px-4"
+        >
+          AI & Full-Stack Architect.
+        </motion.p>
+        
+        {/* Pulsing Dot Indicator */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4"
+        >
+          <span className="font-mono text-[10px] tracking-widest uppercase text-textSecondary">Scroll</span>
+          <motion.div 
+            animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="w-2 h-2 rounded-full bg-accent"
+          />
+        </motion.div>
+      </section>
 
-            {/* Bento Card 1 */}
-            <motion.div
+      {/* PROJECTS SECTION (Sticky Stacking) */}
+      <section className="py-section px-6 bg-surface border-t border-border">
+        <div className="mb-block">
+          <h2 className="font-display text-4xl text-text">Selected Systems</h2>
+          <span className="font-mono text-xs text-textSecondary uppercase tracking-widest mt-2 block">01 / Projects</span>
+        </div>
+
+        <div className="flex flex-col pb-[10vh] relative">
+          {projects.map((project, i) => (
+            <motion.div 
+              key={project.id || i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="w-[85vw] flex-shrink-0 snap-center md:w-auto md:col-span-2 rounded-3xl md:rounded-[2rem] p-8 md:p-12 group transition-all relative overflow-hidden"
-              style={{
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border-card)',
-              }}
-              onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.borderColor = 'var(--accent-rule)'}
-              onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-card)'}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.8, ease: EASE }}
+              className="sticky w-full bg-background border border-border p-6 rounded-2xl shadow-xl flex flex-col gap-6 mb-8"
+              style={{ top: `${(i + 3) * 1.5 + 4}rem` }} // Stacking offset, added extra space to clear header
             >
-              <div
-                className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all duration-700"
-                style={{ color: 'var(--ink)' }}
+              {/* Project Image Frame (Natural Scaling) */}
+              {project.image && (
+                <div className="w-full bg-surface rounded-xl overflow-hidden border border-border flex items-center justify-center p-2 mb-4">
+                  <Image 
+                    src={project.image} 
+                    alt={project.title} 
+                    width={800}
+                    height={450}
+                    className="w-full h-auto object-contain rounded-lg"
+                    sizes="(max-width: 768px) 100vw, 800px"
+                  />
+                </div>
+              )}
+              
+              <h3 className="font-display text-3xl text-text leading-tight">{project.title}</h3>
+              <ul className="flex flex-col gap-2 border-l border-border pl-4">
+                {project.tech?.slice(0, 3).map((t: string, idx: number) => (
+                  <li key={idx} className="font-mono text-[10px] uppercase tracking-widest text-textSecondary">
+                    — {t}
+                  </li>
+                ))}
+              </ul>
+              <Link 
+                href={project.links?.live || project.links?.code || '/projects'}
+                target="_blank"
+                className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-accent mt-4"
               >
-                <FaBrain size={120} />
-              </div>
-              <div
-                className="w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center mb-6 md:mb-8"
-                style={{ background: 'var(--rule)', color: 'var(--accent)' }}
-              >
-                <Cpu size={24} />
-              </div>
-              <h4
-                className="text-xl md:text-3xl font-bold mb-3 md:mb-4 relative z-10"
-                style={{ color: 'var(--ink)' }}
-              >
-                GenAI &amp; LLM Engineering
-              </h4>
-              <p
-                className="text-sm md:text-base leading-relaxed max-w-xl relative z-10"
-                style={{ color: 'var(--ink-dim)' }}
-              >
-                Developing intelligent automation tools and agentic workflows using LLM APIs, LangChain, and RAG architectures. Transforming unstructured datasets into structured intelligence.
-              </p>
-            </motion.div>
-
-            {/* Bento Card 2 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="w-[85vw] flex-shrink-0 snap-center md:w-auto md:col-span-1 rounded-3xl md:rounded-[2rem] p-8 md:p-10 group transition-all"
-              style={{
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border-card)',
-              }}
-              onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.borderColor = 'rgba(96, 165, 250, 0.3)'}
-              onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-card)'}
-            >
-              <div
-                className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center text-blue-400 mb-6"
-                style={{ background: 'var(--rule)' }}
-              >
-                <FaLayerGroup size={20} />
-              </div>
-              <h4
-                className="text-lg md:text-xl font-bold mb-2 md:mb-3"
-                style={{ color: 'var(--ink)' }}
-              >
-                Full-Stack Ecosystems
-              </h4>
-              <p
-                className="text-xs md:text-sm leading-relaxed"
-                style={{ color: 'var(--ink-dim)' }}
-              >
-                Architecting scalable platforms using Next.js, Node.js, and secure databases. Implementing real-time synchronization workflows.
-              </p>
-            </motion.div>
-
-            {/* Bento Card 3 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="w-[85vw] flex-shrink-0 snap-center md:w-auto md:col-span-1 rounded-3xl md:rounded-[2rem] p-8 md:p-10 group transition-all"
-              style={{
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border-card)',
-              }}
-              onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.borderColor = 'rgba(192, 132, 252, 0.3)'}
-              onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-card)'}
-            >
-              <div
-                className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center text-purple-400 mb-6"
-                style={{ background: 'var(--rule)' }}
-              >
-                <GitMerge size={20} />
-              </div>
-              <h4
-                className="text-lg md:text-xl font-bold mb-2 md:mb-3"
-                style={{ color: 'var(--ink)' }}
-              >
-                Applied NLP
-              </h4>
-              <p
-                className="text-xs md:text-sm leading-relaxed"
-                style={{ color: 'var(--ink-dim)' }}
-              >
-                Building end-to-end NLP pipelines to extract and classify text. Leveraging Hugging Face transformers and semantic search capabilities.
-              </p>
-            </motion.div>
-
-            {/* Collaboration Status Card — Desktop only */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="hidden md:flex md:col-span-2 rounded-[2rem] p-8 md:p-10 flex-col md:flex-row md:items-center justify-between gap-6"
-              style={{
-                background: `linear-gradient(135deg, var(--accent-dim), var(--bg-card))`,
-                border: '1px solid var(--border-card)',
-              }}
-            >
-              <div>
-                <p className="text-xs font-mono uppercase tracking-widest mb-2"
-                  style={{ color: 'var(--accent)' }}>
-                  Current Trajectory
-                </p>
-                <h4 className="text-2xl font-bold" style={{ color: 'var(--ink)' }}>
-                  Exploring Agentic Workflows
-                </h4>
-              </div>
-              <Link
-                href="/contact"
-                className="px-6 py-3 rounded-full font-bold text-sm transition-all whitespace-nowrap text-center"
-                style={{ background: 'var(--rule)', color: 'var(--ink)', border: '1px solid var(--rule-strong)' }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--ink)'; (e.currentTarget as HTMLElement).style.color = 'var(--ink-invert)'; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'var(--rule)'; (e.currentTarget as HTMLElement).style.color = 'var(--ink)'; }}
-              >
-                Let's Collaborate
+                View Live <ArrowRight size={14} />
               </Link>
             </motion.div>
+          ))}
+        </div>
 
-          </div>
-
-          {/* Mobile-only Status Card */}
-          <div
-            className="md:hidden mt-4 rounded-3xl p-6 flex flex-col gap-4"
-            style={{
-              background: `linear-gradient(135deg, var(--accent-dim), var(--bg-card))`,
-              border: '1px solid var(--border-card)',
-            }}
+        <div className="flex justify-center mt-8">
+          <Link 
+            href="/projects" 
+            className="px-8 py-4 border border-border rounded-full font-mono text-xs uppercase tracking-widest text-text hover:bg-text hover:text-background transition-colors"
           >
-            <div>
-              <p className="text-[10px] font-mono uppercase tracking-widest mb-1"
-                style={{ color: 'var(--accent)' }}>
-                Current Trajectory
-              </p>
-              <h4 className="text-xl font-bold leading-tight" style={{ color: 'var(--ink)' }}>
-                Exploring Agentic Workflows
-              </h4>
-            </div>
-            <Link
-              href="/contact"
-              className="px-6 py-4 rounded-full font-bold text-xs transition-all text-center active:scale-95"
-              style={{ background: 'var(--ink)', color: 'var(--ink-invert)' }}
+            View All Projects
+          </Link>
+        </div>
+      </section>
+
+      {/* JOURNAL SECTION (Snap Scroll Book Covers) */}
+      <section className="py-section px-6">
+        <div className="mb-block">
+          <h2 className="font-display text-4xl text-text">Field Notes</h2>
+          <span className="font-mono text-xs text-textSecondary uppercase tracking-widest mt-2 block">02 / Journal</span>
+        </div>
+
+        {/* Horizontal Snap Slider */}
+        <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 -mx-6 px-6 hide-scrollbar relative">
+          {blogs.map((blog) => (
+            <Link 
+              key={blog.id}
+              href={`/blog/${blog.id}`} 
+              className="w-[85%] sm:w-[60%] shrink-0 snap-center block group relative"
             >
-              Let's Collaborate
-            </Link>
-          </div>
+              <div className="aspect-[3/4] bg-surface border border-border p-6 flex flex-col justify-between items-center text-center shadow-lg rounded-lg relative overflow-hidden h-full">
+                {/* Inner Border */}
+                <div className="absolute inset-3 border-[1px] border-border/50 rounded-sm pointer-events-none" />
 
-        </div>
-      </section>
-
-      {/* ==================== SECTOR 4: EDITORIAL PHILOSOPHY ==================== */}
-      <section
-        className="py-20 md:py-24"
-        style={{
-          borderTop: '1px solid var(--border-card)',
-          background: 'var(--bg-section)',
-        }}
-      >
-        <div className="w-[90%] md:w-[85%] mx-auto">
-
-          <div className="grid lg:grid-cols-12 gap-10 lg:gap-24">
-
-            {/* Sticky Header Column */}
-            <div className="lg:col-span-5 relative">
-              <div className="lg:sticky lg:top-32 space-y-4 md:space-y-6">
-                <h2
-                  className="text-[10px] md:text-sm font-mono tracking-widest uppercase"
-                  style={{ color: 'var(--accent)' }}
-                >
-                  Operating Principles
-                </h2>
-                <h3
-                  className="text-3xl md:text-5xl font-bold tracking-tight leading-[1.1]"
-                  style={{ color: 'var(--ink)' }}
-                >
-                  Engineering <br className="hidden md:block" /> Philosophy.
-                </h3>
-                <p
-                  className="text-sm md:text-lg"
-                  style={{ color: 'var(--ink-dim)' }}
-                >
-                  The foundational algorithms driving my development process.
-                </p>
-              </div>
-            </div>
-
-            {/* Philosophy Cards */}
-            <div className="lg:col-span-7 flex flex-col gap-4 md:gap-16">
-
-              {[
-                {
-                  num: '01',
-                  title: 'Scalability First',
-                  body: 'Architecture dictates limits. Whether developing a real-time command center syncing multiple hackathon teams or engineering NLP pipelines to process scientific corpora, I build robust systems designed to handle data at an enterprise scale.',
-                },
-                {
-                  num: '02',
-                  title: 'Human-AI Synergy',
-                  body: "AI shouldn't just exist; it must solve complex problems. I bridge the gap between ambiguity and clarity, using advanced prompt engineering to transform unstructured inputs into structured, deterministic solutions.",
-                },
-                {
-                  num: '03',
-                  title: 'Operational Efficiency',
-                  body: 'From optimizing event logistics to fine-tuning machine learning models for peak accuracy, I believe in streamlining organizational and technical workflows to achieve maximum output with minimum friction.',
-                },
-              ].map((item) => (
-                <div
-                  key={item.num}
-                  className="relative rounded-3xl md:rounded-none p-6 md:p-0"
-                  style={{
-                    background: 'var(--bg-raised)',
-                    border: '1px solid var(--border-card)',
-                    // On desktop override with transparent
-                  }}
-                >
-                  {/* Desktop: big number watermark */}
-                  <span
-                    className="hidden md:block absolute -left-16 top-1 text-4xl font-black"
-                    style={{ color: 'var(--rule)' }}
-                  >
-                    {item.num}
-                  </span>
-                  <div className="flex items-center gap-3 mb-2 md:mb-4">
-                    <span className="md:hidden font-mono text-xs" style={{ color: 'var(--accent)' }}>
-                      {item.num} //
-                    </span>
-                    <h4
-                      className="text-lg md:text-2xl font-bold"
-                      style={{ color: 'var(--ink)' }}
-                    >
-                      {item.title}
-                    </h4>
-                  </div>
-                  <p
-                    className="leading-relaxed text-sm md:text-lg font-light"
-                    style={{ color: 'var(--ink-dim)' }}
-                  >
-                    {item.body}
-                  </p>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-textSecondary border-b border-border pb-4 w-full z-10 shrink-0">
+                  {blog.publishDate || blog.date}
+                </span>
+                
+                <div className="flex-1 flex flex-col justify-center items-center w-full py-2 z-10">
+                  <h3 className="font-display text-xl sm:text-2xl text-text leading-snug px-2 text-balance line-clamp-4">
+                    {blog.title}
+                  </h3>
                 </div>
-              ))}
+                
+                <span className="font-mono text-[10px] uppercase tracking-widest text-accent border-t border-border pt-4 w-full z-10 flex items-center justify-center gap-1 group-active:text-text transition-colors shrink-0">
+                  Read <ArrowRight size={12} />
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
 
-            </div>
-          </div>
+        <div className="flex justify-center mt-12">
+          <Link 
+            href="/blog" 
+            className="px-8 py-4 border border-border rounded-full font-mono text-xs uppercase tracking-widest text-text hover:bg-text hover:text-background transition-colors"
+          >
+            View All Journal
+          </Link>
         </div>
       </section>
 
+      {/* FOOTER TICKER */}
+      <section className="py-16 border-t border-border overflow-hidden bg-surface">
+        <motion.div 
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{ ease: "linear", duration: 25, repeat: Infinity }}
+          className="flex whitespace-nowrap items-center"
+        >
+          {[...skills, ...skills, ...skills, ...skills, ...skills].map((skill, i) => (
+            <div key={i} className="flex items-center">
+              <span className="font-display text-4xl text-text px-4">{skill}</span>
+              <span className="font-sans text-2xl text-textSecondary/30 px-2">—</span>
+            </div>
+          ))}
+        </motion.div>
+      </section>
+    </div>
+  );
+};
+
+
+// --- MAIN PAGE (Responsive Switcher) ---
+export default function Home() {
+  const { data } = useData();
+  
+  // Constrain to exactly 3 projects
+  const projects = data?.projects?.slice(0, 3) || [];
+  
+  const techStack = data?.techStack || [];
+  const skills = techStack.length > 0 ? techStack.map((t: any) => t.name) : ["React", "Next.js", "Python", "Generative AI", "Firebase", "Node.js", "TypeScript"];
+
+  const [blogs, setBlogs] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      const fetchedBlogs = await getBlogs();
+      // Constrain to exactly 3 blogs
+      setBlogs(fetchedBlogs ? fetchedBlogs.slice(0, 3) : []);
+    };
+    fetchBlogs();
+  }, []);
+
+  return (
+    <div className="w-full">
+      <div className="hidden lg:block">
+        <DesktopView projects={projects} blogs={blogs} skills={skills} />
+      </div>
+      <div className="block lg:hidden">
+        <MobileView projects={projects} blogs={blogs} skills={skills} />
+      </div>
     </div>
   );
 }

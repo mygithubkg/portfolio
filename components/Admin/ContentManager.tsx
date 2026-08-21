@@ -18,12 +18,12 @@ import ResetToDefaultModal from './ResetToDefaultModal';
 // ── Constants ─────────────────────────────────────────────────────────────────
 const LIVE_TAB     = 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30';
 const DEFAULT_TAB  = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
-const INACTIVE_TAB = 'text-gray-500 hover:text-white border-transparent';
+const INACTIVE_TAB = 'text-textSecondary hover:text-white border-transparent';
 
 // ── Shared input component ────────────────────────────────────────────────────
 const TechInput = ({ label, value, onChange, placeholder, type = 'text', rows }: any) => (
   <div className="group relative mb-6">
-    <label className="block text-xs font-mono text-gray-500 mb-2 group-focus-within:text-cyan-500 transition-colors uppercase tracking-widest">
+    <label className="block text-xs font-mono text-textSecondary mb-2 group-focus-within:text-cyan-500 transition-colors uppercase tracking-widest">
       // {label}
     </label>
     {type === 'textarea' ? (
@@ -49,14 +49,14 @@ const TechInput = ({ label, value, onChange, placeholder, type = 'text', rows }:
 
 const SaveButton = ({ label }: any) => (
   <button type="submit"
-    className="flex items-center gap-2 bg-white text-black px-6 py-3 font-bold text-xs tracking-widest hover:bg-cyan-400 transition-colors">
+    className="flex items-center gap-2 bg-background text-black px-6 py-3 font-bold text-xs tracking-widest hover:bg-cyan-400 transition-colors">
     <Save size={16} /> {label}
   </button>
 );
 
 // ── Mode Toggle ───────────────────────────────────────────────────────────────
 const ModeToggle = ({ mode, setMode }: any) => (
-  <div className="flex gap-1 bg-white/5 border border-white/10 p-1 mb-6">
+  <div className="flex gap-1 bg-background/5 border border-white/10 p-1 mb-6">
     {[['live', '⬤ LIVE_DATA', LIVE_TAB], ['defaults', '◎ DEFAULTS', DEFAULT_TAB]].map(([val, label, active]) => (
       <button key={val} onClick={() => setMode(val)}
         className={`px-4 py-1.5 text-xs font-mono transition-all border ${mode === val ? active : INACTIVE_TAB}`}>
@@ -205,7 +205,7 @@ const ContentManager = () => {
       <div className="max-w-5xl mx-auto relative z-10">
 
         {/* Header */}
-        <div className="flex justify-between items-end mb-12 border-b border-white/10 pb-6">
+        <div className="flex justify-between items-end mb-group border-b border-white/10 pb-6">
           <div>
             <div className="flex items-center gap-2 text-cyan-500 text-xs mb-2">
               <Terminal size={14} /> <span>ADMIN_ACCESS_GRANTED</span>
@@ -234,11 +234,11 @@ const ContentManager = () => {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-8">
+        <div className="grid lg:grid-cols-12 gap-group">
 
           {/* Sidebar */}
           <div className="lg:col-span-3 space-y-2">
-            <div className="text-xs text-gray-500 mb-4 pl-2">SELECT_PARTITION</div>
+            <div className="text-xs text-textSecondary mb-4 pl-2">SELECT_PARTITION</div>
             {sections.map((section) => {
               const Icon = section.icon;
               const isActive = activeSection === section.id;
@@ -246,7 +246,7 @@ const ContentManager = () => {
                 <button key={section.id} onClick={() => setActiveSection(section.id)}
                   className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-all duration-300 border-l-2 ${isActive
                     ? 'border-cyan-500 bg-cyan-500/5 text-cyan-400'
-                    : 'border-transparent text-gray-500 hover:text-white hover:bg-white/5'}`}>
+                    : 'border-transparent text-textSecondary hover:text-white hover:bg-background/5'}`}>
                   <Icon size={16} />
                   <span>{section.label}</span>
                 </button>
@@ -265,7 +265,7 @@ const ContentManager = () => {
               </div>
             )}
 
-            <motion.div key={activeSection + mode} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            <motion.div key={activeSection + mode} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
               className="bg-[#0a0a0a] border border-white/10 p-8 rounded-xl shadow-2xl relative overflow-hidden">
 
@@ -326,7 +326,7 @@ const ContentManager = () => {
                   <div className="space-y-6">
                     {target.map((service, index) => (
                       <div key={service.id}
-                        className="group border border-white/10 bg-black/20 p-6 rounded relative hover:border-white/20 transition-colors">
+                        className="group border border-white/10 bg-background/20 p-6 rounded relative hover:border-white/20 transition-colors">
                         <div className="absolute -left-[1px] top-0 bottom-0 w-[2px] bg-gray-800 group-hover:bg-cyan-500 transition-colors" />
                         <div className="flex justify-between items-start mb-4">
                           <span className="text-xs text-gray-600 font-mono">MODULE_0{index + 1}</span>

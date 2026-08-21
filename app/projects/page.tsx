@@ -1,586 +1,288 @@
-"use client"
-import React, { useState, useEffect, useMemo, MouseEvent } from 'react';
-import { motion, AnimatePresence, useMotionValue, useTransform, useMotionTemplate } from 'framer-motion';
-import {
-  FaReact, FaNodeJs, FaMicrochip, FaHtml5, FaCss3Alt
-} from 'react-icons/fa';
-import {
-  SiFirebase, SiJavascript, SiTailwindcss, SiPostgresql, SiExpress, SiStreamlit, SiScikitlearn
-} from 'react-icons/si';
-import {
-  ArrowUpRight, Code2, TerminalSquare, Eye, Box, Activity, Folder, Sparkles, ArrowRight, LayoutGrid
-} from 'lucide-react';
+"use client";
+import React, { useState } from 'react';
+import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, ArrowUpRight, X } from 'lucide-react';
 import { useData } from '@/context/DataContext';
 
-// --- ICON MAPPING ---
-const techIcons: any = {
-  'React': <FaReact />,
-  'Node.js': <FaNodeJs />,
-  'Firebase': <SiFirebase />,
-  'Python': <FaMicrochip />,
-  'Tailwind CSS': <SiTailwindcss />,
-  'JavaScript': <SiJavascript />,
-  'PostgreSQL': <SiPostgresql />,
-  'Express': <SiExpress />,
-  'Scikit-learn': <SiScikitlearn />,
-  'HTML5': <FaHtml5 />,
-  'CSS3': <FaCss3Alt />,
-  'Streamlit': <SiStreamlit />
+const EASE = [0.16, 1, 0.3, 1] as const;
+
+// --- DESKTOP VIEW ---
+const DesktopView = ({ spotlightProjects, archiveProjects, onOpenModal }: any) => {
+  return (
+    <div className="w-full">
+      {/* HERO */}
+      <section className="min-h-[50vh] flex flex-col items-center justify-center text-center pt-32 pb-16 relative">
+        <motion.h1 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: EASE }}
+          className="font-display text-8xl xl:text-[10rem] text-text tracking-tight leading-none"
+        >
+          Selected Works.
+        </motion.h1>
+      </section>
+
+      {/* PART 1: THE SPOTLIGHT */}
+      <section className="w-full max-w-[1600px] mx-auto px-16 flex flex-col gap-32 pb-section">
+        {spotlightProjects.map((project: any, i: number) => {
+          const isReversed = i % 2 !== 0;
+          return (
+            <motion.div 
+              key={project.id}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 1, ease: EASE }}
+              className={`min-h-[80vh] flex items-center gap-16 xl:gap-24 ${isReversed ? 'flex-row-reverse' : 'flex-row'}`}
+            >
+              {/* Image Block (60%) */}
+              <div 
+                className="w-[60%] aspect-[4/3] xl:aspect-[16/9] relative rounded-2xl overflow-hidden border border-border shadow-2xl bg-surface group shrink-0 cursor-pointer"
+                onClick={() => onOpenModal(project)}
+              >
+                <Image 
+                  src={project.image || "/fallback.jpg"} 
+                  alt={project.title} 
+                  fill 
+                  sizes="(max-width: 1600px) 60vw, 900px"
+                  className="object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 ease-out transform group-hover:scale-105" 
+                />
+              </div>
+              
+              {/* Text Block (40%) */}
+              <div className="w-[40%] flex flex-col gap-8 justify-center group cursor-default">
+                 <span className="font-mono text-sm text-accent uppercase tracking-widest block">
+                    0{i + 1} / {(project.tech || []).slice(0,3).join(" · ")}
+                 </span>
+                 <h2 className="font-display text-5xl xl:text-7xl text-text leading-tight">{project.title}</h2>
+                 <p className="font-sans text-lg text-textSecondary leading-relaxed text-balance">
+                    {project.description}
+                 </p>
+                 <button 
+                   onClick={() => onOpenModal(project)}
+                   className="mt-6 font-mono text-sm uppercase tracking-widest flex items-center gap-3 text-textSecondary hover:text-accent transition-colors w-fit cursor-pointer"
+                 >
+                    Explore Case <ArrowRight size={16} />
+                 </button>
+              </div>
+            </motion.div>
+          );
+        })}
+      </section>
+
+      {/* PART 2: THE ARCHIVE */}
+      <section className="w-full max-w-5xl mx-auto px-16 py-section mt-16 mb-32 border-t border-border relative">
+         <h3 className="font-mono text-sm text-textSecondary uppercase tracking-widest mb-16">The Archive</h3>
+         
+         <div className="flex flex-col border-b border-border">
+            {archiveProjects.map((proj: any, i: number) => (
+              <button 
+                onClick={() => onOpenModal(proj)} 
+                key={i} 
+                className="group w-full flex items-center justify-between border-t border-border py-8 px-6 hover:bg-surface transition-colors duration-500 cursor-pointer text-left"
+              >
+                <div className="flex items-center gap-12 w-2/3">
+                  <span className="font-mono text-sm text-textSecondary w-16">{proj.year}</span>
+                  <span className="font-sans font-bold text-3xl text-text group-hover:translate-x-2 transition-transform duration-500 ease-out">{proj.title}</span>
+                </div>
+                <div className="flex items-center justify-end gap-16 w-1/3">
+                  <span className="font-mono text-sm text-textSecondary uppercase tracking-widest">{proj.category}</span>
+                  <ArrowUpRight size={20} className="text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+              </button>
+            ))}
+         </div>
+      </section>
+    </div>
+  );
 };
 
-/* ── Fallback for projects without an image ── */
-function NoImageFallback({ project }: { project: any }) {
+
+// --- MOBILE VIEW ---
+const MobileView = ({ spotlightProjects, archiveProjects, onOpenModal }: any) => {
   return (
-    <div
-      className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6"
-      style={{ background: 'linear-gradient(135deg, var(--bg-raised), var(--bg-card))' }}
-    >
-      <Box style={{ color: 'var(--accent-dim)' }} size={48} />
-      <div className="flex flex-wrap justify-center gap-2 max-w-[80%]">
-        {(project.tech || []).slice(0, 5).map((t: string, i: number) => (
-          <span
-            key={i}
-            className="flex items-center justify-center w-10 h-10 rounded-xl shadow-lg"
-            style={{
-              background: 'var(--bg-pill)',
-              border: '1px solid var(--border-card)',
-              color: 'var(--ink-dim)',
-            }}
-            title={t}
-          >
-            <span className="text-xl">{techIcons[t] || <FaMicrochip />}</span>
-          </span>
-        ))}
-      </div>
-      <span className="font-mono text-xs tracking-widest uppercase mt-2" style={{ color: 'var(--ink-faint)' }}>
-        {project.category || 'Module'}
-      </span>
-    </div>
-  );
-}
-
-/* ── Terminal Typing Effect Component ── */
-function SystemTerminal({ project }: { project: any }) {
-  const [lines, setLines] = useState<string[]>([]);
-
-  useEffect(() => {
-    setLines([]);
-    const sequence = [
-      `> INITIATING SEQUENCE FOR [${project.title.toUpperCase()}]`,
-      `> RESOLVING DEPENDENCIES: ${(project.tech || []).length} MODULES FOUND`,
-      `> MOUNTING CORE: ${(project.tech || [])[0] || 'SYS_KERNEL'}`,
-      `> STATUS: ${project.status?.toUpperCase() || 'ONLINE AND STABLE'}`
-    ];
-
-    let currentLine = 0;
-    const interval = setInterval(() => {
-      if (currentLine < sequence.length) {
-        setLines(prev => [...prev, sequence[currentLine]]);
-        currentLine++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 400);
-
-    return () => clearInterval(interval);
-  }, [project.id]);
-
-  return (
-    <div
-      className="w-full rounded-lg p-3 font-mono text-[10px] text-green-500 leading-relaxed mb-6 h-[88px] overflow-hidden"
-      style={{
-        background: 'var(--bg-hero)',
-        border: '1px solid var(--border-card)',
-      }}
-    >
-      {lines.map((line, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, x: -5 }}
-          animate={{ opacity: 1, x: 0 }}
+    <div className="w-full">
+      {/* HERO */}
+      <section className="min-h-[40vh] flex flex-col items-center justify-center text-center pt-24 pb-8 overflow-hidden w-full max-w-full">
+        <motion.h1 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: EASE }}
+          className="font-display text-[clamp(3rem,14vw,5rem)] text-text tracking-tight leading-none px-4"
         >
-          {line}
-        </motion.div>
-      ))}
-      <motion.div
-        animate={{ opacity: [1, 0] }}
-        transition={{ repeat: Infinity, duration: 0.8 }}
-        className="w-2 h-3 bg-green-500 mt-1"
-      />
-    </div>
-  );
-}
-
-export default function ProjectsVault() {
-  const { data, loading, error } = useData();
-  const rawProjects = data?.projects || [];
-
-  // --- SMART SORTING LOGIC ---
-  const projects = useMemo(() => {
-    return [...rawProjects].sort((a: any, b: any) => {
-      if (a.featured && !b.featured) return -1;
-      if (!a.featured && b.featured) return 1;
-      const weightScore: Record<string, number> = { lg: 3, md: 2, sm: 1 };
-      const aWeight = weightScore[a.weight] || 0;
-      const bWeight = weightScore[b.weight] || 0;
-      if (aWeight !== bWeight) return bWeight - aWeight;
-      return 0;
-    });
-  }, [rawProjects]);
-
-  const [activeTab, setActiveTab] = useState<string>("All");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  // --- TOP LEVEL HOOKS ---
-  const mouseX = useMotionValue(0.5);
-  const mouseY = useMotionValue(0.5);
-  const rotateX = useTransform(mouseY, [0, 1], [4, -4]);
-  const rotateY = useTransform(mouseX, [0, 1], [-4, 4]);
-  const glareX = useTransform(mouseX, [0, 1], [0, 100]);
-  const glareY = useTransform(mouseY, [0, 1], [0, 100]);
-  const glareBackground = useMotionTemplate`radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.06) 0%, transparent 60%)`;
-
-  function handleMouseMove(e: MouseEvent<HTMLDivElement>) {
-    const rect = e.currentTarget.getBoundingClientRect();
-    mouseX.set((e.clientX - rect.left) / rect.width);
-    mouseY.set((e.clientY - rect.top) / rect.height);
-  }
-
-  function handleMouseLeave() {
-    mouseX.set(0.5);
-    mouseY.set(0.5);
-  }
-
-  const categories = useMemo(() => {
-    const cats = new Set(projects.map((p: any) => p.category || 'Uncategorized'));
-    return ["All", ...Array.from(cats)] as string[];
-  }, [projects]);
-
-  useEffect(() => {
-    if (projects.length > 0 && !selectedId) setSelectedId(projects[0].id);
-  }, [projects, selectedId]);
-
-  const filteredProjects = useMemo(() => {
-    return projects.filter((p: any) =>
-      activeTab === "All" || (p.category || 'Uncategorized') === activeTab
-    );
-  }, [projects, activeTab]);
-
-  const activeProject = projects.find((p: any) => p.id === selectedId) || projects[0];
-
-  // --- EARLY RETURNS ---
-  if (loading) {
-    return (
-      <section
-        className="min-h-screen flex items-center justify-center"
-        style={{ background: 'var(--bg-section)' }}
-      >
-        <div
-          className="font-mono text-sm flex items-center gap-3 tracking-widest uppercase"
-          style={{ color: 'var(--accent)' }}
-        >
-          <div className="w-2 h-2 animate-ping rounded-full" style={{ background: 'var(--accent)' }} />
-          Querying_Databases...
-        </div>
+          Selected Works.
+        </motion.h1>
       </section>
-    );
-  }
 
-  if (error) {
-    return (
-      <section
-        className="min-h-screen flex items-center justify-center text-center"
-        style={{ background: 'var(--bg-section)' }}
-      >
-        <div>
-          <TerminalSquare className="mx-auto text-red-500/50 mb-4" size={48} />
-          <div className="text-red-500 font-mono text-sm uppercase tracking-widest">
-            Sys_Error: Mount Failed
-          </div>
-        </div>
+      {/* PART 1: THE SPOTLIGHT (Sticky Stack) */}
+      <section className="w-[90%] mx-auto pb-section relative">
+         {spotlightProjects.map((project: any, i: number) => (
+           <div 
+             key={project.id} 
+             className="sticky w-full mb-12 shadow-2xl rounded-2xl overflow-hidden border border-border bg-background"
+             style={{ top: `${(i * 1.5) + 6}rem` }}
+             onClick={() => onOpenModal(project)}
+           >
+             {/* Image */}
+             <div className="w-full aspect-video relative border-b border-border bg-surface">
+               <Image 
+                 src={project.image || "/fallback.jpg"} 
+                 alt={project.title} 
+                 fill 
+                 sizes="(max-width: 768px) 90vw, 400px"
+                 className="object-cover grayscale" 
+               />
+             </div>
+             
+             {/* Text Block */}
+             <div className="bg-surface p-8 flex flex-col gap-6 relative">
+                 <span className="font-mono text-[10px] text-accent uppercase tracking-widest block">
+                    0{i + 1} / {(project.tech || []).slice(0,3).join(" · ")}
+                 </span>
+                 <h2 className="font-display text-4xl text-text leading-tight text-balance">{project.title}</h2>
+                 <p className="font-sans text-base text-textSecondary leading-relaxed text-balance line-clamp-3">
+                    {project.description}
+                 </p>
+                 <span className="mt-2 font-mono text-xs uppercase tracking-widest flex items-center gap-2 text-text w-fit active:text-accent transition-colors">
+                    Explore Case <ArrowRight size={14} />
+                 </span>
+             </div>
+           </div>
+         ))}
       </section>
-    );
-  }
 
-  return (
-    <section
-      className="min-h-screen py-20 md:py-32 relative overflow-hidden"
-      style={{ background: 'var(--bg-section)', color: 'var(--ink)' }}
-    >
+      {/* PART 2: THE ARCHIVE */}
+      <section className="w-[90%] mx-auto py-section border-t border-border mb-16">
+         <div className="mb-12">
+           <h3 className="font-mono text-xs text-textSecondary uppercase tracking-widest block">The Archive</h3>
+         </div>
 
-      {/* Background decorations */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 blur-3xl pointer-events-none"
-        style={{ background: 'linear-gradient(to bottom, var(--accent-dim), transparent)' }}
-      />
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `linear-gradient(to right, var(--border-card) 1px, transparent 1px), linear-gradient(to bottom, var(--border-card) 1px, transparent 1px)`,
-          backgroundSize: '32px 32px',
-          WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 0%, #000 70%, transparent 100%)',
-          maskImage: 'radial-gradient(ellipse 80% 50% at 50% 0%, #000 70%, transparent 100%)',
-        }}
-      />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-
-        {/* --- SECTION HEADER --- */}
-        <div
-          className="flex flex-col md:flex-row md:items-end justify-between mb-12 pb-8 gap-6"
-          style={{ borderBottom: '1px solid var(--rule)' }}
-        >
-          <div>
-            <div
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full font-mono text-xs mb-4"
-              style={{
-                background: 'var(--accent-dim)',
-                border: '1px solid var(--accent-rule)',
-                color: 'var(--accent)',
-              }}
-            >
-              <Sparkles size={12} />
-              <span>/ROOT/DEPLOYMENTS</span>
-            </div>
-            <h1
-              className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight uppercase"
-              style={{ color: 'var(--ink)' }}
-            >
-              Live{' '}
-              <span style={{ color: 'var(--ink-faint)' }}>Systems.</span>
-            </h1>
-          </div>
-
-          {projects.length > 0 && (
-            <div
-              className="flex flex-wrap gap-1 p-1 rounded-xl backdrop-blur-md"
-              style={{
-                background: 'var(--bg-pill)',
-                border: '1px solid var(--border-card)',
-              }}
-            >
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => {
-                    setActiveTab(category);
-                    const firstMatch = projects.find((p: any) =>
-                      category === "All" || (p.category || 'Uncategorized') === category
-                    );
-                    if (firstMatch) setSelectedId(firstMatch.id);
-                  }}
-                  className="relative px-4 py-2 rounded-lg text-xs font-mono transition-all duration-300"
-                  style={{ color: activeTab === category ? 'var(--ink)' : 'var(--ink-faint)' }}
-                >
-                  {activeTab === category && (
-                    <motion.div
-                      layoutId="activeCategoryTab"
-                      className="absolute inset-0 rounded-lg -z-10"
-                      style={{
-                        background: 'linear-gradient(135deg, var(--accent-dim), rgba(59,130,246,0.10))',
-                        border: '1px solid var(--accent-rule)',
-                      }}
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                    />
-                  )}
-                  {category}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {projects.length === 0 ? (
-          <div
-            className="py-24 text-center"
-            style={{ borderTop: '1px solid var(--border-card)', borderBottom: '1px solid var(--border-card)' }}
-          >
-            <LayoutGrid className="mx-auto mb-4" size={40} style={{ color: 'var(--ink-faint)' }} />
-            <p className="font-mono text-sm mb-1 tracking-widest uppercase" style={{ color: 'var(--ink-dim)' }}>
-              No_Modules_Deployed
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-
-            {/* --- LEFT PANE: Project List --- */}
-            <div className="lg:col-span-7 space-y-3">
-              <div
-                className="text-xs font-mono uppercase tracking-wider px-2 mb-2 flex justify-between"
-                style={{ color: 'var(--ink-faint)' }}
+         <div className="flex flex-col border-b border-border">
+            {archiveProjects.map((proj: any, i: number) => (
+              <button 
+                onClick={() => onOpenModal(proj)} 
+                key={i} 
+                className="w-full flex items-center justify-between border-t border-border py-6 px-2 active:bg-surface transition-colors text-left cursor-pointer"
               >
-                <span>System Name</span>
-                <span>Status</span>
-              </div>
+                <div className="flex flex-col gap-1">
+                  <span className="font-sans font-bold text-xl text-text">{proj.title}</span>
+                  <span className="font-mono text-[10px] text-textSecondary uppercase tracking-widest">{proj.year}</span>
+                </div>
+                <ArrowUpRight size={18} className="text-accent" />
+              </button>
+            ))}
+         </div>
+      </section>
+    </div>
+  );
+};
 
-              <AnimatePresence mode="popLayout">
-                {filteredProjects.map((project: any) => {
-                  const isSelected = selectedId === project.id;
-                  return (
-                    <motion.div
-                      key={project.id}
-                      layout
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.3 }}
-                      onClick={() => setSelectedId(project.id)}
-                      className="group relative p-4 sm:p-5 rounded-2xl cursor-pointer transition-all duration-300 text-left flex items-center justify-between gap-4 overflow-hidden"
-                      style={{
-                        background: isSelected ? 'var(--rule)' : 'var(--bg-pill)',
-                        border: `1px solid ${isSelected ? 'var(--accent-rule)' : 'var(--border-card)'}`,
-                        boxShadow: isSelected ? '0 0 20px var(--accent-dim)' : 'none',
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isSelected) {
-                          (e.currentTarget as HTMLElement).style.background = 'var(--rule)';
-                          (e.currentTarget as HTMLElement).style.borderColor = 'var(--rule-strong)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isSelected) {
-                          (e.currentTarget as HTMLElement).style.background = 'var(--bg-pill)';
-                          (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-card)';
-                        }
-                      }}
-                    >
-                      {/* Active Left Indicator Bar */}
-                      {isSelected && (
-                        <motion.div
-                          layoutId="activeIndicator"
-                          className="absolute left-0 top-3 bottom-3 w-1 rounded-r-full"
-                          style={{
-                            background: 'var(--accent)',
-                            boxShadow: '0 0 8px var(--accent-glow)',
-                          }}
-                        />
-                      )}
+// --- MODAL COMPONENT ---
+const ProjectModal = ({ project, onClose }: { project: any, onClose: () => void }) => {
+  if (!project) return null;
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3, ease: EASE }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+    >
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-md" onClick={onClose} />
+      <motion.div 
+        initial={{ opacity: 0, y: 50, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+        transition={{ duration: 0.5, ease: EASE }}
+        className="relative w-full max-w-4xl max-h-[90vh] bg-surface border border-border rounded-2xl shadow-2xl overflow-y-auto hide-scrollbar flex flex-col"
+      >
+        <button onClick={onClose} className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10 bg-background/80 backdrop-blur-md p-2 rounded-full border border-border text-text hover:text-accent transition-colors">
+          <X size={20} />
+        </button>
 
-                      <div className="flex items-center gap-4 min-w-0 relative z-10">
-                        <div
-                          className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors"
-                          style={{
-                            background: isSelected ? 'var(--accent-dim)' : 'var(--rule)',
-                            color: isSelected ? 'var(--accent)' : 'var(--ink-dim)',
-                          }}
-                        >
-                          <Folder size={18} />
-                        </div>
-                        <div className="min-w-0">
-                          <h3
-                            className="text-base sm:text-lg font-bold truncate transition-colors flex items-center gap-2"
-                            style={{ color: isSelected ? 'var(--ink)' : 'var(--ink-dim)' }}
-                          >
-                            {project.title}
-                            {project.featured && <Sparkles size={12} className="text-yellow-500/70" />}
-                          </h3>
-                          <div
-                            className="flex items-center gap-3 text-xs font-mono mt-1"
-                            style={{ color: 'var(--ink-faint)' }}
-                          >
-                            <span style={{ color: 'var(--accent)' }}>
-                              {project.category || 'Uncategorized'}
-                            </span>
-                            <span>•</span>
-                            <span className="flex items-center gap-1">
-                              <Box size={10} /> {(project.tech && project.tech.length) || 0} Modules
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3 shrink-0 relative z-10">
-                        <span
-                          className="hidden sm:inline-flex items-center gap-1.5 text-[10px] font-mono px-2.5 py-1 rounded-full uppercase tracking-widest"
-                          style={{
-                            background: 'var(--bg-pill)',
-                            border: '1px solid var(--border-card)',
-                            color: 'var(--ink-dim)',
-                          }}
-                        >
-                          <div
-                            className={`w-1.5 h-1.5 rounded-full ${project.status?.toLowerCase() === 'live' ? 'animate-pulse' : ''}`}
-                            style={{
-                              background: project.status?.toLowerCase() === 'live'
-                                ? '#4ade80'
-                                : 'var(--accent)',
-                            }}
-                          />
-                          {project.status || 'Active'}
-                        </span>
-                        <div
-                          className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300"
-                          style={{
-                            background: isSelected ? 'var(--accent)' : 'transparent',
-                            color: isSelected ? 'var(--ink-invert)' : 'var(--ink-faint)',
-                            transform: isSelected ? 'rotate(0deg)' : 'rotate(-45deg)',
-                          }}
-                        >
-                          <ArrowRight size={16} />
-                        </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
-            </div>
-
-            {/* --- RIGHT PANE: 3D Detail Showcase --- */}
-            <div className="lg:col-span-5 lg:sticky lg:top-24 sm:mt-6 lg:mt-0 perspective-1000">
-              {activeProject && (
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeProject.id}
-                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                    transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-                    onMouseMove={handleMouseMove}
-                    onMouseLeave={handleMouseLeave}
-                    style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-                    className="rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden group cursor-crosshair"
-                    aria-label={`${activeProject.title} project detail`}
-                  >
-                    {/* Theming via inline style to respond to CSS vars */}
-                    <style>{`
-                      .project-detail-card {
-                        background: linear-gradient(to bottom, var(--bg-raised), var(--bg-card));
-                        border: 1px solid var(--border-nav);
-                      }
-                    `}</style>
-                    <div
-                      className="project-detail-card absolute inset-0 rounded-3xl"
-                      style={{
-                        background: 'linear-gradient(to bottom, var(--bg-raised), var(--bg-card))',
-                        border: '1px solid var(--border-nav)',
-                      }}
-                    />
-
-                    {/* Dynamic Glare */}
-                    <motion.div
-                      className="absolute inset-0 pointer-events-none z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"
-                      style={{ background: glareBackground }}
-                    />
-
-                    {/* Image Preview */}
-                    <div
-                      style={{ transform: "translateZ(20px)" }}
-                      className="relative h-48 sm:h-56 w-full rounded-2xl overflow-hidden mb-6 z-10"
-                    >
-                      <div
-                        className="absolute inset-0 rounded-2xl"
-                        style={{ background: 'var(--bg-raised)', border: '1px solid var(--border-card)' }}
-                      />
-                      {activeProject.image ? (
-                        <>
-                          <img
-                            src={activeProject.image}
-                            alt={activeProject.title}
-                            className="w-full h-full object-cover object-top filter brightness-90 group-hover:scale-110 transition-transform duration-1000 ease-out relative z-10"
-                            onError={(e: any) => e.target.style.display = 'none'}
-                          />
-                          <div
-                            className="absolute inset-0 z-20"
-                            style={{ background: 'linear-gradient(to top, var(--bg-raised), transparent)' }}
-                          />
-                        </>
-                      ) : (
-                        <NoImageFallback project={activeProject} />
-                      )}
-                    </div>
-
-                    <div style={{ transform: "translateZ(30px)" }} className="relative z-10">
-                      <div className="flex items-center justify-between mb-4">
-                        <h2
-                          className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight flex items-center gap-2"
-                          style={{ color: 'var(--ink)' }}
-                        >
-                          {activeProject.title}
-                        </h2>
-                      </div>
-
-                      <SystemTerminal project={activeProject} />
-
-                      {/* Tech Stack */}
-                      <div className="mb-8">
-                        <div className="flex flex-wrap gap-2">
-                          {(activeProject.tech || []).map((t: string, i: number) => (
-                            <span
-                              key={i}
-                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono cursor-default transition-colors"
-                              style={{
-                                background: 'var(--bg-pill)',
-                                border: '1px solid var(--border-card)',
-                                color: 'var(--ink-dim)',
-                              }}
-                              onMouseEnter={(e) => {
-                                (e.currentTarget as HTMLElement).style.background = 'var(--accent-dim)';
-                                (e.currentTarget as HTMLElement).style.color = 'var(--accent)';
-                                (e.currentTarget as HTMLElement).style.borderColor = 'var(--accent-rule)';
-                              }}
-                              onMouseLeave={(e) => {
-                                (e.currentTarget as HTMLElement).style.background = 'var(--bg-pill)';
-                                (e.currentTarget as HTMLElement).style.color = 'var(--ink-dim)';
-                                (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-card)';
-                              }}
-                            >
-                              {techIcons[t] || <FaMicrochip />}
-                              {t}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="flex flex-col sm:flex-row gap-3 relative z-20">
-                        {activeProject.link && (
-                          <a
-                            href={activeProject.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex-1 py-3.5 px-4 rounded-xl font-bold text-xs tracking-widest uppercase font-mono transition-all duration-300 flex items-center justify-center gap-2"
-                            style={{
-                              background: 'linear-gradient(135deg, var(--accent), #3b82f6)',
-                              color: '#000',
-                            }}
-                          >
-                            <Eye size={16} />
-                            <span>Deployment</span>
-                          </a>
-                        )}
-
-                        {activeProject.github && (
-                          <a
-                            href={activeProject.github}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex-1 py-3.5 px-4 rounded-xl font-bold text-xs tracking-widest uppercase font-mono transition-all duration-300 flex items-center justify-center gap-2"
-                            style={{
-                              background: 'var(--bg-pill)',
-                              border: '1px solid var(--border-card)',
-                              color: 'var(--ink)',
-                            }}
-                            onMouseEnter={(e) => {
-                              (e.currentTarget as HTMLElement).style.background = 'var(--rule)';
-                            }}
-                            onMouseLeave={(e) => {
-                              (e.currentTarget as HTMLElement).style.background = 'var(--bg-pill)';
-                            }}
-                          >
-                            <Code2 size={16} />
-                            <span>Repository</span>
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              )}
-            </div>
-
+        {project.image && (
+          <div className="w-full aspect-video sm:aspect-[21/9] relative border-b border-border">
+            <Image src={project.image} alt={project.title} fill className="object-cover" />
           </div>
         )}
+        
+        <div className="p-8 sm:p-12 flex flex-col gap-8">
+          <div>
+            <div className="flex items-center gap-4 mb-6">
+              <span className="font-mono text-xs text-textSecondary uppercase tracking-widest">{project.year}</span>
+              <span className="w-8 h-[1px] bg-border" />
+              <span className="font-mono text-xs text-accent uppercase tracking-widest">{project.category}</span>
+            </div>
+            <h2 className="font-display text-4xl sm:text-6xl text-text leading-tight mb-6">{project.title}</h2>
+            <p className="font-sans text-lg text-textSecondary leading-relaxed text-balance">
+              {project.details || project.description}
+            </p>
+          </div>
+
+          {project.tech && project.tech.length > 0 && (
+            <div>
+              <h4 className="font-mono text-xs text-textSecondary uppercase tracking-widest mb-4">Tech Stack</h4>
+              <div className="flex flex-wrap gap-2">
+                {project.tech.map((t: string, i: number) => (
+                  <span key={i} className="font-mono text-[10px] text-text bg-background border border-border px-3 py-1.5 rounded-full uppercase">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-wrap items-center gap-4 pt-8 border-t border-border mt-4">
+            {project.links?.live && (
+              <a href={project.links.live} target="_blank" rel="noreferrer" className="bg-text text-background font-mono text-xs uppercase tracking-widest px-8 py-3 rounded-full hover:bg-accent hover:text-white transition-colors flex items-center gap-2">
+                Live Project <ArrowUpRight size={14} />
+              </a>
+            )}
+            {project.links?.code && (
+              <a href={project.links.code} target="_blank" rel="noreferrer" className="bg-transparent border border-border text-text font-mono text-xs uppercase tracking-widest px-8 py-3 rounded-full hover:border-text transition-colors flex items-center gap-2">
+                Source Code <ArrowUpRight size={14} />
+              </a>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// --- MAIN PAGE (Responsive Switcher) ---
+export default function Projects() {
+  const { data } = useData();
+  const [selectedProject, setSelectedProject] = useState<any>(null);
+  const projects = data?.projects || [];
+
+  // 1. Filter out the chosen Spotlight projects
+  const spotlightNames = ["Personal Portfolio", "AI Summary Pro", "Voice-Enabled Commerce"];
+  
+  // We want to keep the exact order of the spotlightNames array
+  const spotlightProjects = spotlightNames.map(name => 
+    projects.find((p: any) => p.title === name)
+  ).filter(Boolean);
+
+  // 2. The rest become Archive projects
+  const archiveProjects = projects.filter((p: any) => !spotlightNames.includes(p.title));
+
+  return (
+    <div className="w-full relative">
+      <div className="hidden lg:block">
+        <DesktopView spotlightProjects={spotlightProjects} archiveProjects={archiveProjects} onOpenModal={setSelectedProject} />
       </div>
-    </section>
+      <div className="block lg:hidden">
+        <MobileView spotlightProjects={spotlightProjects} archiveProjects={archiveProjects} onOpenModal={setSelectedProject} />
+      </div>
+
+      {/* Global Project Modal */}
+      <AnimatePresence>
+        {selectedProject && (
+          <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

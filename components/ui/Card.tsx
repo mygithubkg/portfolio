@@ -19,7 +19,7 @@ const Card = ({
     elevated: 'bg-surface/95 backdrop-blur-lg shadow-lg hover:shadow-cardHover',
     interactive: 'bg-surface/90 backdrop-blur-lg cursor-pointer hover:scale-105 hover:shadow-cardHover hover:border-accent/30',
     gradient: 'bg-gradient-to-br from-surface/90 to-surfaceLight/90 backdrop-blur-lg',
-    glass: 'bg-white/5 backdrop-blur-xl border-white/10',
+    glass: 'bg-background/5 backdrop-blur-xl border-white/10',
     dark: 'bg-background/80 backdrop-blur-lg border-border/50',
   };
   

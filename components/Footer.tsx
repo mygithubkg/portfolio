@@ -24,44 +24,31 @@ export default function Footer() {
 
   return (
     <footer
-      className="pt-24 pb-32 md:pb-24 relative overflow-hidden select-none"
-      style={{
-        background: 'var(--bg-hero)',
-        borderTop: '1px solid var(--border-card)',
-        color: 'var(--ink)',
-      }}
+      className="py-section relative overflow-hidden select-none bg-surface border-t border-border"
     >
       {/* Subtle ambient glow */}
       <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-[300px] rounded-t-full blur-[100px] pointer-events-none opacity-40"
-        style={{ background: 'var(--accent-dim)' }}
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-[300px] rounded-t-full blur-[100px] pointer-events-none opacity-40 bg-accent/20"
       />
 
       <div className="w-[90%] md:w-[80%] mx-auto px-4 md:px-8 relative z-10">
 
         {/* --- HEADER --- */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 md:mb-12">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 md:mb-group">
           <div>
             <div
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-widest mb-4"
-              style={{
-                background: 'var(--bg-pill)',
-                border: '1px solid var(--border-nav)',
-                color: 'var(--accent)',
-              }}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full font-mono text-[10px] uppercase tracking-widest mb-4 bg-background border border-border text-accent"
             >
               <span
-                className="w-1.5 h-1.5 rounded-full animate-pulse"
-                style={{ background: 'var(--accent)' }}
+                className="w-1.5 h-1.5 rounded-full animate-pulse bg-accent"
               />
               System Online
             </div>
             <h2
-              className="text-4xl md:text-6xl font-black tracking-tight leading-none"
-              style={{ color: 'var(--ink)' }}
+              className="text-4xl md:text-6xl font-display text-text tracking-tight leading-none"
             >
               Let's{' '}
-              <span style={{ color: 'var(--accent)' }}>Connect.</span>
+              <span className="text-accent italic font-serif">collaborate.</span>
             </h2>
           </div>
 

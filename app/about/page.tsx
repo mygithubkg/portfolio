@@ -1,313 +1,251 @@
-"use client"
+"use client";
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { Cpu, Terminal, Crosshair, Sparkles, ArrowDown } from 'lucide-react';
-import { useData } from '@/context/DataContext';
 import Image from 'next/image';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ChevronUp } from 'lucide-react';
 
-export default function About() {
-  const { data, loading } = useData();
-  const timeline = data?.timeline || [];
-  const techStack = data?.techStack || [];
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-  const containerRef = useRef(null);
+const BIO_TEXT = "I am a Full-Stack & AI Engineer obsessed with designing robust systems and intuitive interfaces. I specialize in bridging the gap between heavy, complex backend architectures and flawless human experiences. Currently building intelligent applications with Next.js, Node.js, and GenAI.";
+
+const systemLogs = [
+  {
+    year: "2024",
+    date: "May 2024 - Jul 2024",
+    role: "AI Intern",
+    company: "Edunet Foundation",
+    description: "Architected end-to-end AI workflows. Built robust models for NLP and computer vision tasks utilizing Python and TensorFlow."
+  },
+  {
+    year: "2023",
+    date: "Aug 2023 - May 2024",
+    role: "Executive Board",
+    company: "Technical Society",
+    description: "Directed technical operations and led a team of 20+ developers in executing university-wide hackathons and coding bootcamps."
+  },
+  {
+    year: "2022",
+    date: "Jan 2022 - Dec 2022",
+    role: "Campus Ambassador",
+    company: "Tech Symposium",
+    description: "Spearheaded marketing campaigns and community outreach, driving a 300% increase in student engagement across campus."
+  },
+  {
+    year: "2025",
+    date: "2021 - 2025",
+    role: "B.Tech Electronics",
+    company: "Punjab Engineering College",
+    description: "Pursuing rigorous coursework in embedded systems and applied mathematics while focusing heavily on scalable software architecture."
+  }
+];
+
+// --- DESKTOP VIEW ---
+const DesktopView = () => {
+  const scrollRef = useRef(null);
   const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
+    target: scrollRef,
+    offset: ["start start", "end end"]
   });
-
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  
+  // Map scroll progress to horizontal translation.
+  // 4 cards * 60vw = 240vw total width. Translating -70% of the track length will reveal everything perfectly.
+  const xTransform = useTransform(scrollYProgress, [0, 1], ["0%", "-75%"]);
 
   return (
-    <section
-      ref={containerRef}
-      className="min-h-screen relative"
-      style={{
-        background: 'var(--bg-hero)',
-        color: 'var(--ink)',
-      }}
-    >
-      {/* Ambient glows */}
-      <div
-        className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full blur-[150px] pointer-events-none opacity-60"
-        style={{ background: 'var(--accent-dim)' }}
-      />
-      <div
-        className="absolute bottom-1/4 right-0 w-[600px] h-[600px] rounded-full blur-[150px] pointer-events-none opacity-30"
-        style={{ background: 'rgba(139, 92, 246, 0.08)' }}
-      />
-
-      <div className="w-[90%] md:w-[80%] mx-auto px-4 md:px-6 py-24 md:py-32 relative z-10">
-
-        {/* --- MASSIVE HERO TYPOGRAPHY --- */}
+    <div className="w-full">
+      {/* HERO / BIO SECTION (Standard Scroll) */}
+      <section className="min-h-screen flex flex-col items-center justify-center pt-24 px-16 text-center relative overflow-hidden">
         <motion.div
-          style={{ opacity }}
-          className="mb-16 md:mb-32 flex flex-col items-center md:items-start"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+          }}
+          className="flex flex-col items-center z-10 max-w-4xl mx-auto"
         >
-          <div
-            className="flex items-center gap-3 font-mono text-sm tracking-[0.2em] uppercase mb-6"
-            style={{ color: 'var(--accent)' }}
+          {/* Identity Card */}
+          <motion.div 
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 1, ease: EASE } } }}
+            className="w-48 h-48 sm:w-64 sm:h-64 rounded-full overflow-hidden relative border-2 border-border shadow-2xl bg-surface mb-12"
           >
-            <Terminal size={16} />
-            <span>Identity Verified</span>
-            <span className="w-12 h-[1px]" style={{ background: 'var(--accent-rule)' }} />
-          </div>
-          <h1 className="sr-only">About Karrtik Gupta</h1>
-          <h2
-            className="text-[13vw] md:text-8xl lg:text-[9rem] font-black tracking-tighter leading-[0.85] uppercase"
-            style={{ color: 'var(--ink)' }}
+            <Image
+              src="https://res.cloudinary.com/f8njovya/image/upload/v1783444605/karrtik_oxxcds.png"
+              alt="Karrtik Gupta"
+              fill
+              className="object-cover grayscale opacity-90 hover:grayscale-0 hover:opacity-100 transition-all duration-700 ease-out"
+              sizes="256px"
+              priority
+            />
+          </motion.div>
+
+          <motion.h1 
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: EASE } } }}
+            className="font-display text-7xl lg:text-8xl text-text tracking-tight mb-8"
           >
-            System <br />
-            <span style={{ color: 'var(--ink-faint)' }}>
-              Architect.
-            </span>
-          </h2>
+            Karrtik Gupta.
+          </motion.h1>
+          <motion.p 
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: EASE } } }}
+            className="font-sans text-xl lg:text-2xl text-textSecondary font-light leading-relaxed text-balance"
+          >
+            {BIO_TEXT}
+          </motion.p>
         </motion.div>
+      </section>
 
-        {/* --- THE SPLIT LAYOUT --- */}
-        <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 relative">
+      {/* EXPERIENCE SECTION (Pinned Horizontal Exhibition) */}
+      <section ref={scrollRef} className="h-[400vh] relative bg-background">
+        
+        {/* The Sticky Viewport (The Camera) */}
+        <div className="sticky top-0 h-screen flex items-center overflow-hidden w-full">
+          
+          {/* Aligned Section Title */}
+          <div className="w-[85%] mx-auto absolute top-32 left-0 right-0 z-10 pointer-events-none">
+            <h2 className="font-mono text-accent uppercase tracking-widest text-sm">Experience Matrix</h2>
+            <span className="font-display text-textSecondary block mt-2 text-3xl">Professional Ledger</span>
+          </div>
 
-          {/* LEFT: STICKY IDENTITY CARD */}
-          <div className="lg:w-1/3 relative">
-            <div className="lg:sticky lg:top-32 space-y-8">
-
-              {/* Profile Image */}
-              <div
-                className="group relative w-40 h-40 md:w-64 md:h-64 rounded-3xl overflow-hidden shadow-2xl"
-                style={{
-                  background: 'var(--bg-raised)',
-                  border: '1px solid var(--border-card)',
-                }}
+          {/* The Motion Track (The Moving Elements) */}
+          <motion.div style={{ x: xTransform }} className="flex gap-32 items-center pl-[7.5vw] mt-24">
+            {systemLogs.map((log, i) => (
+              <div 
+                key={i} 
+                className="w-[70vw] max-w-[900px] bg-background border border-border rounded-2xl relative overflow-hidden flex flex-col justify-center p-12 md:p-16 shadow-2xl shrink-0"
               >
-                <Image
-                  src="https://res.cloudinary.com/f8njovya/image/upload/v1783444605/karrtik_oxxcds.png"
-                  alt="Karrtik Gupta"
-                  width={400}
-                  height={400}
-                  className="w-full h-full object-cover filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-in-out"
-                  priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-                {/* Live Status Indicator */}
-                <div
-                  className="absolute bottom-4 left-4 right-4 flex items-center justify-between backdrop-blur-md rounded-full px-4 py-2"
-                  style={{
-                    background: 'rgba(0,0,0,0.45)',
-                    border: '1px solid rgba(255,255,255,0.10)',
-                  }}
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="relative flex h-2 w-2">
-                      <span
-                        className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-                        style={{ background: 'var(--accent)' }}
-                      />
-                      <span
-                        className="relative inline-flex rounded-full h-2 w-2"
-                        style={{ background: 'var(--accent)' }}
-                      />
-                    </div>
-                    <span className="text-xs font-mono text-gray-300">SYSTEM_ONLINE</span>
-                  </div>
+                {/* Giant Watermark Year Fixed */}
+                <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none">
+                  <span className="text-[35vw] md:text-[25vw] leading-none font-mono text-text opacity-[0.03] select-none font-black tracking-tighter">
+                    {log.year}
+                  </span>
                 </div>
-              </div>
-
-              {/* Bio Block */}
-              <div className="space-y-6">
-                <h3 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--ink)' }}>
-                  Karrtik Gupta
-                </h3>
-                <div className="text-base leading-relaxed space-y-4 font-light" style={{ color: 'var(--ink-dim)' }}>
-                  <p>I bridge the gap between complex algorithms and scalable human experiences.</p>
-                  <p>
-                    From engineering end-to-end NLP pipelines at{' '}
-                    <span style={{ color: 'var(--ink)', fontWeight: 500 }}>IIIT Delhi</span>{' '}
-                    to architecting strategies for large-scale tech summits, I build systems that solve real problems.
+                
+                {/* Foreground Content */}
+                <div className="z-10 flex flex-col gap-6 max-w-[85%] relative">
+                  <span className="font-mono text-sm text-textSecondary uppercase tracking-widest">{log.date}</span>
+                  <h3 className="font-display text-6xl xl:text-7xl text-text leading-[1.1]">{log.role}</h3>
+                  <span className="font-mono text-xl text-accent uppercase tracking-widest">{log.company}</span>
+                  <p className="font-sans text-xl text-textSecondary leading-relaxed mt-2 text-balance">
+                    {log.description}
                   </p>
                 </div>
               </div>
-
-              {/* Scroll prompt — desktop */}
-              <div
-                className="hidden lg:flex items-center gap-3 font-mono text-sm pt-8"
-                style={{ color: 'var(--ink-faint)', borderTop: '1px solid var(--border-card)' }}
-              >
-                <ArrowDown size={16} className="animate-bounce" />
-                <span>Scroll to trace execution path</span>
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT: SCROLLING TIMELINE */}
-          <div className="lg:w-2/3 relative">
-            {loading ? (
-              <div
-                className="h-64 flex items-center justify-center font-mono animate-pulse"
-                style={{ color: 'var(--accent)' }}
-              >
-                Fetching execution logs...
-              </div>
-            ) : (
-              <div className="relative">
-                {/* Timeline thread line */}
-                <div
-                  className="absolute top-0 bottom-0 left-[27px] w-[2px]"
-                  style={{ background: 'linear-gradient(to bottom, transparent, var(--rule-strong), transparent)' }}
-                />
-
-                <div className="space-y-12 lg:space-y-24">
-                  {timeline.map((item: any, index: number) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 50 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, margin: "-100px" }}
-                      transition={{ duration: 0.6, ease: "easeOut" }}
-                      className="relative pl-16 lg:pl-24"
-                    >
-                      {/* Timeline Node */}
-                      <div
-                        className="absolute left-[24px] top-6 w-2 h-2 rounded-full"
-                        style={{
-                          background: 'var(--accent)',
-                          boxShadow: '0 0 15px var(--accent-glow)',
-                        }}
-                      />
-                      <div
-                        className="absolute left-[15px] top-[15px] w-6 h-6 rounded-full"
-                        style={{
-                          border: '1px solid var(--accent-rule)',
-                          background: 'var(--bg-hero)',
-                        }}
-                      />
-
-                      {/* Content Card */}
-                      <div
-                        className="group rounded-3xl p-6 md:p-8 transition-all duration-500 relative overflow-hidden"
-                        style={{
-                          background: 'var(--bg-pill)',
-                          border: '1px solid var(--border-card)',
-                        }}
-                        onMouseEnter={(e) => {
-                          (e.currentTarget as HTMLElement).style.background = 'var(--rule)';
-                          (e.currentTarget as HTMLElement).style.borderColor = 'var(--rule-strong)';
-                        }}
-                        onMouseLeave={(e) => {
-                          (e.currentTarget as HTMLElement).style.background = 'var(--bg-pill)';
-                          (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-card)';
-                        }}
-                      >
-                        <div className="relative z-10">
-                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                            <h4
-                              className="text-xl md:text-2xl font-bold transition-colors"
-                              style={{ color: 'var(--ink)' }}
-                            >
-                              {item.title}
-                            </h4>
-                            <div
-                              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono whitespace-nowrap"
-                              style={{
-                                background: 'var(--bg-pill)',
-                                border: '1px solid var(--border-card)',
-                                color: 'var(--ink-dim)',
-                              }}
-                            >
-                              <Crosshair size={12} />
-                              {item.year}
-                            </div>
-                          </div>
-
-                          <p
-                            className="text-sm font-mono mb-6 uppercase tracking-wider"
-                            style={{ color: 'var(--accent)' }}
-                          >
-                            {item.place}
-                          </p>
-
-                          <div
-                            className="leading-relaxed text-base"
-                            style={{ color: 'var(--ink-dim)' }}
-                          >
-                            {item.desc}
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+            ))}
+          </motion.div>
         </div>
-      </div>
+      </section>
+    </div>
+  );
+};
 
-      {/* --- INFINITE TECH STACK MARQUEE --- */}
-      <div
-        className="relative mt-16 md:mt-24 py-12 overflow-hidden flex items-center"
-        style={{
-          borderTop: '1px solid var(--border-card)',
-          borderBottom: '1px solid var(--border-card)',
-          background: 'var(--bg-raised)',
-        }}
-      >
-        <div
-          className="absolute left-0 w-32 h-full z-10"
-          style={{ background: 'linear-gradient(to right, var(--bg-hero), transparent)' }}
-        />
-        <div
-          className="absolute right-0 w-32 h-full z-10"
-          style={{ background: 'linear-gradient(to left, var(--bg-hero), transparent)' }}
-        />
 
-        <div
-          className="flex items-center gap-4 px-6 absolute z-20 left-6"
-          style={{ color: 'var(--ink-faint)' }}
-        >
-          <Sparkles size={20} />
-          <span className="font-mono text-sm tracking-widest uppercase hidden md:inline-block">
-            Core Modules
-          </span>
-        </div>
-
+// --- MOBILE VIEW ---
+const MobileView = () => {
+  return (
+    <div className="w-full">
+      {/* HERO / BIO SECTION */}
+      <section className="min-h-[80vh] flex flex-col items-center justify-center px-6 text-center pt-24 pb-16">
         <motion.div
-          className="flex gap-6 whitespace-nowrap pl-48"
-          animate={{ x: [0, -1500] }}
-          transition={{
-            x: {
-              repeat: Infinity,
-              repeatType: "loop",
-              duration: 35,
-              ease: "linear",
-            },
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
           }}
+          className="flex flex-col items-center w-full"
         >
-          {[...(techStack || []), ...(techStack || [])].map((tech: any, i: number) => (
-            <div
-              key={i}
-              className="inline-flex items-center px-6 py-3 rounded-full font-medium cursor-default transition-colors"
-              style={{
-                background: 'var(--bg-pill)',
-                border: '1px solid var(--border-card)',
-                color: 'var(--ink-dim)',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = 'var(--accent-dim)';
-                (e.currentTarget as HTMLElement).style.color = 'var(--accent)';
-                (e.currentTarget as HTMLElement).style.borderColor = 'var(--accent-rule)';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = 'var(--bg-pill)';
-                (e.currentTarget as HTMLElement).style.color = 'var(--ink-dim)';
-                (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-card)';
-              }}
-            >
-              {tech}
-            </div>
-          ))}
+          {/* Identity Card */}
+          <motion.div 
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 1, ease: EASE } } }}
+            className="w-32 h-32 rounded-full overflow-hidden relative border-2 border-border shadow-xl bg-surface mb-8"
+          >
+            <Image
+              src="https://res.cloudinary.com/f8njovya/image/upload/v1783444605/karrtik_oxxcds.png"
+              alt="Karrtik Gupta"
+              fill
+              className="object-cover grayscale opacity-90"
+              sizes="128px"
+              priority
+            />
+          </motion.div>
+
+          <motion.h1 
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: EASE } } }}
+            className="font-display text-[clamp(2.5rem,10vw,4rem)] text-text tracking-tight leading-[1] mb-6"
+          >
+            Karrtik Gupta.
+          </motion.h1>
+          <motion.p 
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: EASE } } }}
+            className="font-sans text-base text-textSecondary font-light leading-relaxed text-balance px-4"
+          >
+            {BIO_TEXT}
+          </motion.p>
         </motion.div>
+      </section>
+
+      {/* EXPERIENCE SECTION TITLE */}
+      <div className="w-[85%] mx-auto pb-8 pt-16">
+        <h2 className="font-mono text-accent uppercase tracking-widest text-[10px]">Experience Matrix</h2>
+        <span className="font-display text-textSecondary block mt-2 text-2xl">Professional Ledger</span>
       </div>
-    </section>
+
+      {/* EXPERIENCE SECTION (Cinematic Snap Scroll) */}
+      <section className="h-[80vh] w-full bg-surface border-t border-b border-border overflow-y-auto snap-y snap-mandatory hide-scrollbar relative">
+        {systemLogs.map((log, i) => (
+          <div 
+            key={i} 
+            className="h-full w-full snap-center snap-always flex flex-col justify-center py-12 relative"
+          >
+            {/* Inner Wrapper with Strict Boundaries */}
+            <div className="w-[85%] mx-auto relative h-full flex flex-col justify-center">
+              {/* Absolute positioned Date at top left of inner container */}
+              <span className="absolute top-0 left-0 font-mono text-[10px] text-textSecondary uppercase tracking-widest">
+                {log.date}
+              </span>
+              
+              {/* Centered Content */}
+              <div className="flex flex-col gap-4 text-center mt-12">
+                <h3 className="font-display text-[clamp(2.5rem,10vw,4rem)] text-text leading-[1.1]">{log.role}</h3>
+                <span className="font-mono text-[10px] text-accent uppercase tracking-widest block mb-4">{log.company}</span>
+                <p className="font-sans text-sm sm:text-base text-textSecondary leading-loose text-balance">
+                  {log.description}
+                </p>
+              </div>
+
+              {/* Swipe UX Hint (Only on first item) */}
+              {i === 0 && (
+                <motion.div 
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center text-textSecondary opacity-50"
+                >
+                  <span className="font-mono text-[10px] tracking-widest uppercase mb-2">Swipe</span>
+                  <ChevronUp size={16} />
+                </motion.div>
+              )}
+            </div>
+          </div>
+        ))}
+      </section>
+      
+      {/* Footer Buffer space so snap scroll doesn't instantly crash into the global footer */}
+      <div className="h-32 bg-background w-full"></div>
+    </div>
+  );
+};
+
+
+// --- MAIN PAGE (Responsive Switcher) ---
+export default function About() {
+  return (
+    <div className="w-full">
+      <div className="hidden lg:block">
+        <DesktopView />
+      </div>
+      <div className="block lg:hidden">
+        <MobileView />
+      </div>
+    </div>
   );
 }

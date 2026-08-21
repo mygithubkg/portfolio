@@ -7,7 +7,7 @@ const Section = ({
   className = '', 
   container = true,
   maxWidth = '6xl',
-  padding = 'py-16 sm:py-20',
+  padding = 'py-block sm:py-20',
   background = 'bg-transparent',
   fullHeight = false,
   ...props 
@@ -19,7 +19,7 @@ const Section = ({
   return (
     <motion.section
       className={classes}
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
       viewport={{ once: true, margin: "-100px" }}

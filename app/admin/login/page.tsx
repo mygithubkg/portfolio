@@ -196,7 +196,7 @@ const AdminLogin = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5, type: "spring" }}
-              whileHover={{ scale: 1.01 }}
+              whileHover={{ scale: 1.02, rotate: 0.6 }}
             >
               <label className="block text-textSecondary text-sm font-medium mb-2">
                 Email
@@ -229,7 +229,7 @@ const AdminLogin = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.6, type: "spring" }}
-              whileHover={{ scale: 1.01 }}
+              whileHover={{ scale: 1.02, rotate: 0.6 }}
             >
               <label className="block text-textSecondary text-sm font-medium mb-2">
                 Password

@@ -151,7 +151,7 @@ const AdminDashboard = () => {
                 <span className="font-bold tracking-wider text-sm">ADMIN_CORE</span>
               </div>
               {isMobile && (
-                <button onClick={() => setIsSidebarOpen(false)} className="ml-auto text-gray-500">
+                <button onClick={() => setIsSidebarOpen(false)} className="ml-auto text-textSecondary">
                   <X size={20} />
                 </button>
               )}
@@ -170,7 +170,7 @@ const AdminDashboard = () => {
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-md text-sm transition-all duration-200 ${
                       isActive
                         ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
-                        : 'text-gray-400 hover:bg-white/5 hover:text-white border border-transparent'
+                        : 'text-gray-400 hover:bg-background/5 hover:text-white border border-transparent'
                     }`}
                   >
                     <Icon size={18} />
@@ -182,7 +182,7 @@ const AdminDashboard = () => {
             </nav>
 
             {/* Bottom Actions */}
-            <div className="p-4 border-t border-white/10 bg-black/20 space-y-2 shrink-0">
+            <div className="p-4 border-t border-white/10 bg-background/20 space-y-2 shrink-0">
               <div className="text-[10px] text-gray-600 mb-2 pl-2 font-bold tracking-widest">DATA_OPS</div>
 
               {/* SEED_DEFAULTS — pushes JS hardcoded → defaults/ tree */}
@@ -196,7 +196,7 @@ const AdminDashboard = () => {
               </button>
 
               {/* EXPORT — with optional defaults inclusion */}
-              <div className="flex items-center gap-2 px-3 py-2 rounded border border-white/5 hover:bg-white/5 transition-colors group">
+              <div className="flex items-center gap-2 px-3 py-2 rounded border border-white/5 hover:bg-background/5 transition-colors group">
                 <button onClick={handleExport}
                   className="flex items-center gap-2 text-xs text-gray-400 group-hover:text-white flex-1 text-left">
                   <Download size={14} /> EXPORT_JSON
@@ -209,12 +209,12 @@ const AdminDashboard = () => {
                 </label>
               </div>
 
-              <label className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-400 hover:text-white hover:bg-white/5 rounded border border-white/5 transition-colors cursor-pointer">
+              <label className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-400 hover:text-white hover:bg-background/5 rounded border border-white/5 transition-colors cursor-pointer">
                 <Upload size={14} /> IMPORT_PATCH
                 <input type="file" accept=".json" onChange={handleImport} className="hidden" />
               </label>
 
-              <div className="h-px bg-white/10 my-2" />
+              <div className="h-px bg-background/10 my-2" />
 
               {/* User info */}
               {firebaseUser && (
@@ -243,7 +243,7 @@ const AdminDashboard = () => {
             </button>
 
             <div className="flex items-center gap-2 text-xs font-medium">
-              <span className="text-gray-500">SYSTEM</span>
+              <span className="text-textSecondary">SYSTEM</span>
               <ChevronRight size={12} className="text-gray-700" />
               <span className="text-cyan-500 uppercase">{activeTab}</span>
             </div>
@@ -254,7 +254,7 @@ const AdminDashboard = () => {
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
               <span className="text-[10px] font-bold text-green-400 tracking-wider">FIREBASE_AUTH</span>
             </div>
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border border-white/10">
+            <div className="w-8 h-8 rounded-full bg-background/10 flex items-center justify-center border border-white/10">
               <User size={14} className="text-gray-300" />
             </div>
           </div>
@@ -266,7 +266,7 @@ const AdminDashboard = () => {
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
@@ -285,7 +285,7 @@ const AdminDashboard = () => {
 
       {/* Mobile overlay */}
       {isMobile && isSidebarOpen && (
-        <div className="fixed inset-0 bg-black/80 z-40 backdrop-blur-sm"
+        <div className="fixed inset-0 bg-background/80 z-40 backdrop-blur-sm"
           onClick={() => setIsSidebarOpen(false)} />
       )}
     </div>

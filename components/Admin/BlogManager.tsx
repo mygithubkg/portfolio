@@ -20,7 +20,7 @@ const TechInput = ({ label, name, value, onChange, placeholder, type = "text", r
         rows={rows || 3}
         placeholder={placeholder}
         required={required}
-        className="w-full bg-black/40 border border-white/10 p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors resize-none placeholder-gray-700"
+        className="w-full bg-background/40 border border-white/10 p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors resize-none placeholder-gray-700"
       />
     ) : (
       <input
@@ -30,7 +30,7 @@ const TechInput = ({ label, name, value, onChange, placeholder, type = "text", r
         onChange={onChange}
         placeholder={placeholder}
         required={required}
-        className="w-full bg-black/40 border border-white/10 p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors placeholder-gray-700"
+        className="w-full bg-background/40 border border-white/10 p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors placeholder-gray-700"
       />
     )}
   </div>
@@ -38,7 +38,7 @@ const TechInput = ({ label, name, value, onChange, placeholder, type = "text", r
 
 const LIVE_TAB = 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30';
 const DEFAULT_TAB = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
-const INACTIVE_TAB = 'text-gray-500 hover:text-white border-transparent';
+const INACTIVE_TAB = 'text-textSecondary hover:text-white border-transparent';
 
 const BlogManager = () => {
   const [mode, setMode] = useState('live');
@@ -172,14 +172,14 @@ const BlogManager = () => {
             <BookOpen className="text-cyan-500" size={24} />
             BLOG MANAGEMENT
           </h2>
-          <p className="text-xs font-mono text-gray-500 mt-1">
+          <p className="text-xs font-mono text-textSecondary mt-1">
             SYSTEM_STATUS: {blogs.length} ENTRIES_LOADED
           </p>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           {/* Mode toggle */}
-          <div className="flex gap-1 bg-white/5 border border-white/10 p-1">
+          <div className="flex gap-1 bg-background/5 border border-white/10 p-1">
             {[['live', '⬤ LIVE_DATA', LIVE_TAB], ['defaults', '◎ DEFAULTS', DEFAULT_TAB]].map(([val, label, active]) => (
               <button key={val} onClick={() => setMode(val)}
                 className={`px-4 py-2 text-xs font-mono transition-all border ${mode === val ? active : INACTIVE_TAB}`}>
@@ -226,7 +226,7 @@ const BlogManager = () => {
               <div className="flex-1">
                 <span className="text-[9px] font-mono text-gray-600">{blog.id}</span>
                 <h3 className="text-base font-bold text-white mt-1 line-clamp-2">{blog.title}</h3>
-                <div className="flex items-center gap-2 mt-2 text-[10px] text-gray-500 font-mono">
+                <div className="flex items-center gap-2 mt-2 text-[10px] text-textSecondary font-mono">
                   <Calendar size={10} />
                   <span>{blog.publishDate}</span>
                   <span>•</span>
@@ -249,7 +249,7 @@ const BlogManager = () => {
             </div>
 
             {/* Excerpt */}
-            <p className="text-xs text-gray-500 mb-4 line-clamp-2">{blog.excerpt}</p>
+            <p className="text-xs text-textSecondary mb-4 line-clamp-2">{blog.excerpt}</p>
 
             {/* Hashtags */}
             <div className="flex flex-wrap gap-1 mb-4">
@@ -264,7 +264,7 @@ const BlogManager = () => {
             <div className="flex gap-2 pt-4 border-t border-white/5">
               <button
                 onClick={() => handleOpenModal(blog)}
-                className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white text-[10px] font-mono transition-all"
+                className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-background/5 hover:bg-background/10 border border-white/10 text-white text-[10px] font-mono transition-all"
               >
                 <Edit size={12} /> EDIT
               </button>
@@ -286,7 +286,7 @@ const BlogManager = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-background/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={() => setIsModalOpen(false)}
           >
             <motion.div
@@ -304,7 +304,7 @@ const BlogManager = () => {
                 </h3>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="text-gray-500 hover:text-white transition-colors"
+                  className="text-textSecondary hover:text-white transition-colors"
                 >
                   <X size={20} />
                 </button>
@@ -407,7 +407,7 @@ const BlogManager = () => {
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-400 font-mono text-sm transition-all"
+                    className="px-6 py-3 bg-background/5 hover:bg-background/10 border border-white/10 text-gray-400 font-mono text-sm transition-all"
                   >
                     CANCEL
                   </button>
@@ -423,24 +423,24 @@ const BlogManager = () => {
           <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setDeleteModal({ open: false, blogId: null, blogTitle: '' })}
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+              className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
               className="relative w-full max-w-md bg-[#0a0a0a] border border-red-500/50 shadow-2xl z-10">
               <div className="flex items-center gap-2 px-6 py-4 border-b border-red-500/30 bg-red-500/10">
                 <AlertTriangle size={18} className="text-red-500" />
                 <h2 className="text-sm font-bold text-white font-mono">DELETION_WARNING</h2>
-                <button onClick={() => setDeleteModal({ open: false, blogId: null, blogTitle: '' })} className="ml-auto text-gray-500 hover:text-white"><X size={18} /></button>
+                <button onClick={() => setDeleteModal({ open: false, blogId: null, blogTitle: '' })} className="ml-auto text-textSecondary hover:text-white"><X size={18} /></button>
               </div>
               <div className="p-6">
                 <p className="text-gray-300 text-sm mb-3">Permanently delete:</p>
-                <div className="bg-white/5 border border-white/10 p-3 mb-6 font-mono">
+                <div className="bg-background/5 border border-white/10 p-3 mb-6 font-mono">
                   <p className="text-cyan-400 text-sm font-bold">{deleteModal.blogTitle}</p>
                   <p className="text-gray-600 text-xs mt-1">{deleteModal.blogId}</p>
                 </div>
                 <p className="text-red-400 text-xs font-mono mb-6">⚠ THIS ACTION CANNOT BE UNDONE</p>
                 <div className="flex gap-3">
                   <button onClick={() => setDeleteModal({ open: false, blogId: null, blogTitle: '' })}
-                    className="flex-1 py-3 border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 text-xs font-bold font-mono">CANCEL</button>
+                    className="flex-1 py-3 border border-white/10 text-gray-400 hover:text-white hover:bg-background/5 text-xs font-bold font-mono">CANCEL</button>
                   <button onClick={handleDelete}
                     className="flex-1 py-3 bg-red-500 hover:bg-red-400 text-white text-xs font-bold font-mono flex items-center justify-center gap-2">
                     <Trash2 size={14} /> CONFIRM_DELETE

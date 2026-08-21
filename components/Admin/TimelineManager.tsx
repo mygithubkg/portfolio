@@ -14,7 +14,7 @@ import { auditLog } from '@/lib/utils/security';
 // ── Mode badge colours ────────────────────────────────────────────────────────
 const LIVE_TAB     = 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30';
 const DEFAULT_TAB  = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
-const INACTIVE_TAB = 'text-gray-500 hover:text-white border-transparent';
+const INACTIVE_TAB = 'text-textSecondary hover:text-white border-transparent';
 
 // ── Empty entry template ──────────────────────────────────────────────────────
 const emptyEntry = () => ({
@@ -37,14 +37,14 @@ const Field = ({ label, value, onChange, multiline = false }: any) => (
         value={value}
         onChange={onChange}
         rows={2}
-        className="w-full bg-black/40 border border-white/10 p-2 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none resize-none placeholder-gray-700 transition-colors"
+        className="w-full bg-background/40 border border-white/10 p-2 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none resize-none placeholder-gray-700 transition-colors"
       />
     ) : (
       <input
         type="text"
         value={value}
         onChange={onChange}
-        className="w-full bg-black/40 border border-white/10 p-2 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none placeholder-gray-700 transition-colors"
+        className="w-full bg-background/40 border border-white/10 p-2 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none placeholder-gray-700 transition-colors"
       />
     )}
   </div>
@@ -153,7 +153,7 @@ const TimelineManager = () => {
 
         {/* Mode toggle */}
         <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex gap-1 bg-white/5 border border-white/10 p-1">
+          <div className="flex gap-1 bg-background/5 border border-white/10 p-1">
             {[['live', 'LIVE_DATA', LIVE_TAB], ['defaults', 'DEFAULTS', DEFAULT_TAB]].map(([val, label, active]) => (
               <button key={val} onClick={() => setMode(val)}
                 className={`px-4 py-2 text-xs font-mono transition-all border ${mode === val ? active : INACTIVE_TAB}`}>
@@ -225,11 +225,11 @@ const TimelineManager = () => {
                         <span className="text-sm font-bold text-white truncate">{entry.title || '(untitled)'}</span>
                       </div>
                       <div className="text-[10px] text-cyan-600 font-mono mb-1">{entry.place || ''}</div>
-                      <p className="text-xs text-gray-500 line-clamp-2">{entry.desc || ''}</p>
+                      <p className="text-xs text-textSecondary line-clamp-2">{entry.desc || ''}</p>
                     </div>
                     <div className="flex gap-2 shrink-0">
-                      <button onClick={() => handleStartEdit(entry)} className="text-gray-500 hover:text-cyan-400 transition-colors"><Edit size={14} /></button>
-                      <button onClick={() => handleDelete(entry._localId)} className="text-gray-500 hover:text-red-500 transition-colors"><Trash2 size={14} /></button>
+                      <button onClick={() => handleStartEdit(entry)} className="text-textSecondary hover:text-cyan-400 transition-colors"><Edit size={14} /></button>
+                      <button onClick={() => handleDelete(entry._localId)} className="text-textSecondary hover:text-red-500 transition-colors"><Trash2 size={14} /></button>
                     </div>
                   </div>
                 )}
@@ -238,7 +238,7 @@ const TimelineManager = () => {
           </AnimatePresence>
 
           {entries.length === 0 && (
-            <div className="text-center py-16 border border-dashed border-white/10">
+            <div className="text-center py-block border border-dashed border-white/10">
               <Terminal size={32} className="mx-auto text-gray-700 mb-2" />
               <p className="text-gray-600 text-sm">No entries. Click ADD_ENTRY to begin.</p>
             </div>
@@ -249,7 +249,7 @@ const TimelineManager = () => {
       {/* Footer actions */}
       <div className="flex flex-wrap items-center gap-3 pt-6 border-t border-white/10">
         <button onClick={handleSaveAll} disabled={isSaving || loading}
-          className="flex items-center gap-2 px-6 py-3 bg-white text-black text-xs font-bold hover:bg-cyan-400 transition-colors disabled:opacity-40">
+          className="flex items-center gap-2 px-6 py-3 bg-background text-black text-xs font-bold hover:bg-cyan-400 transition-colors disabled:opacity-40">
           <Save size={14} />
           {isSaving ? 'SAVING...' : `SAVE_${mode.toUpperCase()}_TIMELINE`}
         </button>

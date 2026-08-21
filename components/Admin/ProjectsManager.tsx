@@ -23,7 +23,7 @@ const TechInput = ({ label, name, value, onChange, placeholder, type = "text", r
         onChange={onChange}
         rows={rows || 3}
         placeholder={placeholder}
-        className={`w-full bg-black/40 border ${error ? 'border-red-500' : 'border-white/10'} p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors resize-none placeholder-gray-700`}
+        className={`w-full bg-background/40 border ${error ? 'border-red-500' : 'border-white/10'} p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors resize-none placeholder-gray-700`}
       />
     ) : type === 'select' ? (
       <select
@@ -31,7 +31,7 @@ const TechInput = ({ label, name, value, onChange, placeholder, type = "text", r
         value={value}
         onChange={onChange}
         required={required}
-        className={`w-full bg-black/40 border ${error ? 'border-red-500' : 'border-white/10'} p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors`}
+        className={`w-full bg-background/40 border ${error ? 'border-red-500' : 'border-white/10'} p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors`}
       >
         <option value="" disabled>{placeholder || 'Select an option'}</option>
         {options && options.map((opt: string) => (
@@ -46,7 +46,7 @@ const TechInput = ({ label, name, value, onChange, placeholder, type = "text", r
         onChange={onChange}
         placeholder={placeholder}
         required={required}
-        className={`w-full bg-black/40 border ${error ? 'border-red-500' : 'border-white/10'} p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors placeholder-gray-700`}
+        className={`w-full bg-background/40 border ${error ? 'border-red-500' : 'border-white/10'} p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors placeholder-gray-700`}
       />
     )}
     {error && <p className="mt-1 text-[10px] text-red-500 font-mono animate-pulse">{error}</p>}
@@ -55,7 +55,7 @@ const TechInput = ({ label, name, value, onChange, placeholder, type = "text", r
 
 const LIVE_TAB = 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30';
 const DEFAULT_TAB = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
-const INACTIVE_TAB = 'text-gray-500 hover:text-white border-transparent';
+const INACTIVE_TAB = 'text-textSecondary hover:text-white border-transparent';
 
 const ProjectsManager = () => {
   const { isAuthenticated, logout } = useAdminAuth();
@@ -260,7 +260,7 @@ const ProjectsManager = () => {
       <div className="max-w-7xl mx-auto relative z-10">
 
         {/* --- HEADER --- */}
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-white/10 pb-6 gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-group border-b border-white/10 pb-6 gap-6">
           <div>
             <div className="flex items-center gap-2 text-cyan-500 text-xs mb-2">
               <FolderGit2 size={16} />
@@ -273,7 +273,7 @@ const ProjectsManager = () => {
 
           <div className="flex items-center gap-3 flex-wrap">
             {/* Mode toggle */}
-            <div className="flex gap-1 bg-white/5 border border-white/10 p-1">
+            <div className="flex gap-1 bg-background/5 border border-white/10 p-1">
               {[['live', '⬤ LIVE_DATA', LIVE_TAB], ['defaults', '◎ DEFAULTS', DEFAULT_TAB]].map(([val, label, active]) => (
                 <button key={val} onClick={() => setMode(val)}
                   className={`px-4 py-2 text-xs font-mono transition-all border ${mode === val ? active : INACTIVE_TAB}`}>
@@ -319,11 +319,11 @@ const ProjectsManager = () => {
                 className="group relative bg-[#0a0a0a] border border-white/10 hover:border-cyan-500/50 transition-colors"
               >
                 {/* Header Bar */}
-                <div className="h-8 bg-white/5 border-b border-white/10 flex items-center justify-between px-3">
-                  <span className="text-[10px] text-gray-500">ID: {project.id.toString().padStart(4, '0')}</span>
+                <div className="h-8 bg-background/5 border-b border-white/10 flex items-center justify-between px-3">
+                  <span className="text-[10px] text-textSecondary">ID: {project.id.toString().padStart(4, '0')}</span>
                   <div className="flex gap-2">
-                    <button onClick={() => handleOpenModal(project)} className="text-gray-500 hover:text-cyan-400 transition-colors"><Edit size={12} /></button>
-                    <button onClick={() => openDeleteConfirmation(project)} className="text-gray-500 hover:text-red-500 transition-colors"><Trash2 size={12} /></button>
+                    <button onClick={() => handleOpenModal(project)} className="text-textSecondary hover:text-cyan-400 transition-colors"><Edit size={12} /></button>
+                    <button onClick={() => openDeleteConfirmation(project)} className="text-textSecondary hover:text-red-500 transition-colors"><Trash2 size={12} /></button>
                   </div>
                 </div>
 
@@ -334,14 +334,14 @@ const ProjectsManager = () => {
                     {project.featured && <Star size={14} className="text-yellow-500 shrink-0" fill="currentColor" />}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-[10px] text-gray-500 mb-4 border-l-2 border-white/10 pl-3">
+                  <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-[10px] text-textSecondary mb-4 border-l-2 border-white/10 pl-3">
                     <div>CAT: <span className="text-gray-300">{project.category}</span></div>
                     <div>YEAR: <span className="text-gray-300">{project.year}</span></div>
                     <div className="col-span-2 truncate">TECH: <span className="text-gray-300">{Array.isArray(project.tech) ? project.tech.join(', ') : project.tech}</span></div>
                   </div>
 
                   {/* Image Preview (Small) */}
-                  <div className="w-full h-24 bg-black border border-white/5 overflow-hidden relative grayscale group-hover:grayscale-0 transition-all duration-500 opacity-60 group-hover:opacity-100">
+                  <div className="w-full h-24 bg-background border border-white/5 overflow-hidden relative grayscale group-hover:grayscale-0 transition-all duration-500 opacity-60 group-hover:opacity-100">
                     {project.image ? (
                       <img src={project.image} alt="preview" className="w-full h-full object-cover" />
                     ) : (
@@ -361,7 +361,7 @@ const ProjectsManager = () => {
         {projects.length === 0 && (
           <div className="border border-dashed border-white/10 rounded-lg p-20 text-center">
             <Terminal size={40} className="mx-auto text-gray-700 mb-4" />
-            <p className="text-gray-500 text-sm">DATABASE_EMPTY // WAITING_FOR_INPUT</p>
+            <p className="text-textSecondary text-sm">DATABASE_EMPTY // WAITING_FOR_INPUT</p>
           </div>
         )}
       </div>
@@ -375,7 +375,7 @@ const ProjectsManager = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
             />
 
             <motion.div
@@ -385,14 +385,14 @@ const ProjectsManager = () => {
               className="relative w-full max-w-2xl bg-[#0a0a0a] border border-white/20 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             >
               {/* Modal Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/5">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-background/5">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-cyan-500 animate-pulse" />
                   <h2 className="text-sm font-bold text-white tracking-widest">
                     {editingProject ? 'MODIFY_ENTITY_PARAMETERS' : 'NEW_ENTRY_PROTOCOL'}
                   </h2>
                 </div>
-                <button onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-white"><X size={18} /></button>
+                <button onClick={() => setIsModalOpen(false)} className="text-textSecondary hover:text-white"><X size={18} /></button>
               </div>
 
               {/* Modal Body */}
@@ -438,13 +438,13 @@ const ProjectsManager = () => {
                   </div>
 
                   {/* Featured Toggle */}
-                  <div className="col-span-2 flex items-center gap-3 border border-white/10 p-4 bg-white/5">
+                  <div className="col-span-2 flex items-center gap-3 border border-white/10 p-4 bg-background/5">
                     <input
                       type="checkbox"
                       name="featured"
                       checked={formData.featured}
                       onChange={handleChange}
-                      className="w-4 h-4 accent-cyan-500 bg-black border-white/20"
+                      className="w-4 h-4 accent-cyan-500 bg-background border-white/20"
                     />
                     <label className="text-xs font-mono text-gray-300">FLAG_AS_FEATURED_ENTRY</label>
                   </div>
@@ -455,7 +455,7 @@ const ProjectsManager = () => {
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="flex-1 py-3 border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 text-xs font-bold transition-colors"
+                    className="flex-1 py-3 border border-white/10 text-gray-400 hover:text-white hover:bg-background/5 text-xs font-bold transition-colors"
                   >
                     ABORT
                   </button>
@@ -491,7 +491,7 @@ const ProjectsManager = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setDeleteConfirmation({ open: false, projectId: null, projectTitle: '' })}
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
             />
 
             <motion.div
@@ -508,7 +508,7 @@ const ProjectsManager = () => {
                 </div>
                 <button
                   onClick={() => setDeleteConfirmation({ open: false, projectId: null, projectTitle: '' })}
-                  className="text-gray-500 hover:text-white"
+                  className="text-textSecondary hover:text-white"
                 >
                   <X size={18} />
                 </button>
@@ -519,9 +519,9 @@ const ProjectsManager = () => {
                 <p className="text-gray-300 text-sm mb-4">
                   You are about to permanently delete:
                 </p>
-                <div className="bg-white/5 border border-white/10 p-4 mb-6">
+                <div className="bg-background/5 border border-white/10 p-4 mb-6">
                   <p className="text-cyan-400 font-mono text-sm font-bold">{deleteConfirmation.projectTitle}</p>
-                  <p className="text-gray-500 text-xs mt-1">ID: {deleteConfirmation.projectId}</p>
+                  <p className="text-textSecondary text-xs mt-1">ID: {deleteConfirmation.projectId}</p>
                 </div>
 
                 <p className="text-red-400 text-xs mb-4 font-mono">
@@ -537,7 +537,7 @@ const ProjectsManager = () => {
                     value={confirmText}
                     onChange={(e) => setConfirmText(e.target.value)}
                     placeholder="DELETE"
-                    className="w-full bg-black/40 border border-white/10 p-3 text-white font-mono text-xs focus:border-red-500 focus:outline-none transition-colors"
+                    className="w-full bg-background/40 border border-white/10 p-3 text-white font-mono text-xs focus:border-red-500 focus:outline-none transition-colors"
                   />
                 </div>
 
@@ -555,7 +555,7 @@ const ProjectsManager = () => {
                       setConfirmText('');
                       setErrors({});
                     }}
-                    className="flex-1 py-3 border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 text-xs font-bold transition-colors"
+                    className="flex-1 py-3 border border-white/10 text-gray-400 hover:text-white hover:bg-background/5 text-xs font-bold transition-colors"
                   >
                     CANCEL
                   </button>
