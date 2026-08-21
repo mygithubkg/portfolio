@@ -159,28 +159,26 @@ const MobileEditor = ({ formData, handleChange, handleSubmit, editingBlog, onClo
           </div>
         </div>
 
-        <div className="flex-1 px-4 py-8 flex flex-col">
-          <input 
-            name="title" 
-            value={formData.title} 
-            onChange={handleChange}
-            placeholder="Title your journal entry..."
-            className="w-full bg-transparent border-0 outline-none font-display text-3xl text-text placeholder-textSecondary/30 resize-none mb-4"
-          />
-          <textarea 
-            name="content"
-            value={formData.content}
-            onChange={handleChange}
-            placeholder="Begin writing..."
-            className="w-full bg-transparent border-0 outline-none font-sans text-base leading-relaxed text-text placeholder-textSecondary/40 resize-none min-h-[50vh] focus:ring-0 py-4 flex-1"
-          />
-        </div>
+        <div className="flex-1 flex flex-col overflow-y-auto px-4 pt-8">
+          {/* Title */}
+          <div className="w-full">
+            <input 
+              name="title" 
+              value={formData.title} 
+              onChange={handleChange}
+              placeholder="Title your journal entry..."
+              className="w-full bg-transparent border-0 outline-none font-display text-3xl text-text placeholder-textSecondary/30 resize-none mb-4 px-2"
+            />
+            <div className="border-b border-border mt-2 mb-0" />
+          </div>
 
-        <div className="sticky bottom-0 h-12 border-t border-border bg-background/90 backdrop-blur-md flex items-center gap-4 px-4 shrink-0">
-          <button type="button" onClick={() => insertMarkdown('## ')} className="font-mono text-xs text-textSecondary hover:text-accent px-3 py-2 border border-border hover:border-accent transition-colors">H</button>
-          <button type="button" onClick={() => insertMarkdown('```\n\n```')} className="font-mono text-xs text-textSecondary hover:text-accent px-3 py-2 border border-border hover:border-accent transition-colors">&lt;/&gt;</button>
-          <button type="button" onClick={() => insertMarkdown('![]()')} className="font-mono text-xs text-textSecondary hover:text-accent px-3 py-2 border border-border hover:border-accent transition-colors">IMG</button>
-          <button type="button" onClick={() => insertMarkdown('\n---\n')} className="font-mono text-xs text-textSecondary hover:text-accent px-3 py-2 border border-border hover:border-accent transition-colors">---</button>
+          <div className="flex-1 w-full relative">
+            <RichBlogEditor
+              content={formData.content}
+              onChange={(md: string) => handleChange({ target: { name: 'content', value: md } })}
+              isMobile={true}
+            />
+          </div>
         </div>
       </form>
 

@@ -27,7 +27,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https://firebasestorage.googleapis.com https://images.unsplash.com https://*.clarity.ms https://c.bing.com https://res.cloudinary.com",
-      "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://api.emailjs.com wss://*.firebaseio.com https://www.clarity.ms https://*.clarity.ms wss://ws-us3.pusher.com https://sockjs-us3.pusher.com",
+      "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://api.emailjs.com wss://*.firebaseio.com https://www.clarity.ms https://*.clarity.ms wss://ws-us3.pusher.com https://sockjs-us3.pusher.com https://api.cloudinary.com",
       "frame-src https://vercel.live https://*.firebaseapp.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",

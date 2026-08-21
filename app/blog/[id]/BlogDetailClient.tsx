@@ -81,18 +81,6 @@ export default function BlogDetailClient({ blog, id }: { blog: any; id: string }
 
   const tocItems = useMemo(() => {
     if (!blog?.content) return [];
-    const isHtml = blog.content.trimStart().startsWith('<');
-    if (isHtml) {
-      // Parse HTML headings
-      const regex = /<h([23])[^>]*>(.*?)<\/h[23]>/gi;
-      const items = [];
-      let m;
-      while ((m = regex.exec(blog.content)) !== null) {
-        const text = m[2].replace(/<[^>]+>/g, '');
-        items.push({ id: slugify(text), text, level: parseInt(m[1]) });
-      }
-      return items;
-    }
     // Legacy Markdown headings
     const regex = /^(#{2,3})\s+(.+)$/gm;
     const items = [];
@@ -169,9 +157,6 @@ export default function BlogDetailClient({ blog, id }: { blog: any; id: string }
     }
   };
 
-  // Detect if content is HTML (from TipTap editor) or legacy Markdown
-  const isHtmlContent = blog.content?.trimStart().startsWith('<');
-
   const ProseContent = () => (
     <div className="prose prose-lg dark:prose-invert max-w-[65ch] w-full
       prose-p:font-sans prose-p:leading-relaxed prose-p:text-textSecondary
@@ -187,11 +172,7 @@ export default function BlogDetailClient({ blog, id }: { blog: any; id: string }
       prose-code:font-mono prose-code:text-sm prose-code:bg-surface prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:border prose-code:border-border
       prose-pre:bg-surface prose-pre:border prose-pre:border-border prose-pre:rounded-xl prose-pre:p-0
     ">
-      {isHtmlContent ? (
-        <div dangerouslySetInnerHTML={{ __html: blog.content }} />
-      ) : (
-        <ReactMarkdown components={mdComponents}>{blog.content}</ReactMarkdown>
-      )}
+      <ReactMarkdown components={mdComponents}>{blog.content}</ReactMarkdown>
     </div>
   );
 
