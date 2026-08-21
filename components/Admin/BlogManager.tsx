@@ -1,40 +1,231 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Edit, Trash2, X, Save, BookOpen, Calendar, Tag, User, Hash, Eye, RotateCcw, AlertTriangle } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Save, BookOpen, Calendar, Tag, User, Hash, Eye, RotateCcw, AlertTriangle, Settings } from 'lucide-react';
 import { getBlogs, addBlog, updateBlog, deleteBlog } from '@/lib/utils/blogData';
 import { getDefaultBlogs, addDefaultBlog, updateDefaultBlog, deleteDefaultBlog, resetSectionToDefault } from '@/lib/utils/defaultsManager';
 import ResetToDefaultModal from './ResetToDefaultModal';
 
-// Reusable Input Component
-const TechInput = ({ label, name, value, onChange, placeholder, type = "text", required = false, rows }: any) => (
-  <div className="group relative">
-    <label className="block text-[10px] font-mono text-textSecondary mb-1 uppercase tracking-widest group-focus-within:text-accent">
-      {label} {required && '*'}
-    </label>
-    {type === 'textarea' ? (
-      <textarea
-        name={name}
-        value={value}
-        onChange={onChange}
-        rows={rows || 3}
-        placeholder={placeholder}
-        required={required}
-        className="w-full bg-background border border-border p-3 text-text font-mono text-xs focus:border-accent focus:outline-none transition-colors resize-none placeholder-textSecondary/40"
-      />
-    ) : (
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required={required}
-        className="w-full bg-background border border-border p-3 text-text font-mono text-xs focus:border-accent focus:outline-none transition-colors placeholder-textSecondary/40"
-      />
-    )}
-  </div>
-);
+const DesktopEditor = ({ formData, handleChange, handleSubmit, editingBlog, onClose }: any) => {
+  const [showDossier, setShowDossier] = useState(false);
+  const [currentLine, setCurrentLine] = useState('');
+  const [showPlusBtn, setShowPlusBtn] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleKeyUp = (e: any) => {
+    const text = e.target.value;
+    const cursor = e.target.selectionStart;
+    const lastNewline = text.lastIndexOf('\n', cursor - 1);
+    const nextNewline = text.indexOf('\n', cursor);
+    const end = nextNewline === -1 ? text.length : nextNewline;
+    const line = text.substring(lastNewline + 1, end);
+    setCurrentLine(line);
+    if (line === '') {
+      setShowPlusBtn(true);
+    } else {
+      setShowPlusBtn(false);
+      setMenuOpen(false);
+    }
+  };
+
+  const insertMarkdown = (snippet: string) => {
+    handleChange({ target: { name: 'content', value: formData.content + snippet } });
+    setMenuOpen(false);
+  };
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-50 bg-background flex-col hidden lg:flex"
+    >
+      <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden h-full">
+        {/* Top bar */}
+        <div className="h-16 border-b border-border flex items-center justify-between px-8 shrink-0">
+          <div className="flex items-center gap-4">
+            <button type="button" onClick={onClose} className="text-text hover:text-accent font-sans text-sm transition-colors flex items-center gap-2">
+              &larr; Discard
+            </button>
+            <span className="font-mono text-xs text-textSecondary bg-surface px-2 py-1 rounded">Unsaved changes</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <button type="button" onClick={() => setShowDossier(!showDossier)} className="text-text hover:text-accent font-sans text-sm flex items-center gap-2 transition-colors">
+              <Settings size={16} /> Dossier
+            </button>
+            <button type="submit" className="bg-accent text-background px-6 py-2 font-mono text-xs hover:opacity-90 transition-opacity">
+              {editingBlog ? 'Update Records' : 'Publish Entry'}
+            </button>
+          </div>
+        </div>
+
+        {/* Main area */}
+        <div className="flex flex-1 overflow-hidden">
+          {/* Canvas */}
+          <div className="flex-1 overflow-y-auto py-20 relative">
+            <div className="max-w-[750px] mx-auto px-6 relative">
+              <input 
+                name="title" 
+                value={formData.title} 
+                onChange={handleChange}
+                placeholder="Title your journal entry..."
+                className="w-full bg-transparent border-0 outline-none font-display text-5xl text-text placeholder-textSecondary/30 resize-none"
+              />
+              <div className="border-b border-border my-6"></div>
+              
+              <div className="relative">
+                {showPlusBtn && (
+                  <div className="absolute -left-12 top-0 mt-1 flex gap-2 z-10">
+                    <button type="button" onClick={() => setMenuOpen(!menuOpen)} className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-textSecondary hover:text-accent hover:border-accent bg-background transition-colors">
+                      <Plus size={16} className={`transition-transform ${menuOpen ? 'rotate-45' : ''}`} />
+                    </button>
+                    {menuOpen && (
+                      <div className="absolute left-10 top-0 flex gap-2 bg-surface border border-border p-1 rounded shadow-lg">
+                        <button type="button" onClick={() => insertMarkdown('![alt text](url)')} className="px-2 py-1 font-mono text-xs text-textSecondary hover:text-accent whitespace-nowrap">[ IMAGE ]</button>
+                        <button type="button" onClick={() => insertMarkdown('```\n\n```')} className="px-2 py-1 font-mono text-xs text-textSecondary hover:text-accent whitespace-nowrap">[ CODE ]</button>
+                        <button type="button" onClick={() => insertMarkdown('\n---\n')} className="px-2 py-1 font-mono text-xs text-textSecondary hover:text-accent whitespace-nowrap">[ DIVIDER ]</button>
+                      </div>
+                    )}
+                  </div>
+                )}
+                <textarea 
+                  name="content"
+                  value={formData.content}
+                  onChange={handleChange}
+                  onKeyUp={handleKeyUp}
+                  placeholder="Begin writing..."
+                  className="w-full bg-transparent border-0 outline-none font-sans text-lg leading-relaxed text-text placeholder-textSecondary/40 resize-none min-h-[60vh] focus:ring-0"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Dossier */}
+          <AnimatePresence>
+            {showDossier && (
+              <motion.div 
+                initial={{ x: 320 }} 
+                animate={{ x: 0 }} 
+                exit={{ x: 320 }}
+                transition={{ duration: 0.2 }}
+                className="w-80 border-l border-border bg-surface flex flex-col overflow-y-auto p-8 space-y-8 shrink-0"
+              >
+                <div className="font-mono text-[10px] uppercase tracking-widest text-textSecondary">DOSSIER_SETTINGS</div>
+                
+                <input name="author" value={formData.author} onChange={handleChange} placeholder="Author" className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40" />
+                <input type="date" name="publishDate" value={formData.publishDate} onChange={handleChange} className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40" />
+                <select name="category" value={formData.category} onChange={handleChange} className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none text-textSecondary">
+                  <option value="Web Development">Web Development</option>
+                  <option value="AI/ML">AI/ML</option>
+                  <option value="Tutorial">Tutorial</option>
+                  <option value="DevOps">DevOps</option>
+                  <option value="Other">Other</option>
+                </select>
+                <input name="readTime" value={formData.readTime} onChange={handleChange} placeholder="Read Time" className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40" />
+                <textarea name="excerpt" value={formData.excerpt} onChange={handleChange} rows={4} placeholder="Excerpt" className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40 resize-none" />
+                <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="Image URL" className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40" />
+                <input name="hashtags" value={formData.hashtags} onChange={handleChange} placeholder="react, nextjs, typescript" className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </form>
+    </motion.div>
+  );
+};
+
+const MobileEditor = ({ formData, handleChange, handleSubmit, editingBlog, onClose }: any) => {
+  const [showDossier, setShowDossier] = useState(false);
+
+  const insertMarkdown = (snippet: string) => {
+    handleChange({ target: { name: 'content', value: formData.content + snippet } });
+  };
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-50 bg-background flex flex-col overflow-y-auto lg:hidden"
+    >
+      <form onSubmit={handleSubmit} className="flex flex-col min-h-screen relative">
+        <div className="h-14 border-b border-border flex items-center justify-between px-4 shrink-0 sticky top-0 bg-background/90 backdrop-blur-md z-10">
+          <button type="button" onClick={onClose} className="text-text hover:text-accent font-sans text-sm flex items-center gap-2">
+            &larr; Discard
+          </button>
+          <div className="flex items-center gap-4">
+            <button type="button" onClick={() => setShowDossier(true)} className="text-text hover:text-accent">
+              <Settings size={18} />
+            </button>
+            <button type="submit" className="bg-accent text-background px-4 py-1.5 text-xs font-mono">
+              Publish
+            </button>
+          </div>
+        </div>
+
+        <div className="flex-1 px-4 py-8 flex flex-col">
+          <input 
+            name="title" 
+            value={formData.title} 
+            onChange={handleChange}
+            placeholder="Title your journal entry..."
+            className="w-full bg-transparent border-0 outline-none font-display text-3xl text-text placeholder-textSecondary/30 resize-none mb-4"
+          />
+          <textarea 
+            name="content"
+            value={formData.content}
+            onChange={handleChange}
+            placeholder="Begin writing..."
+            className="w-full bg-transparent border-0 outline-none font-sans text-base leading-relaxed text-text placeholder-textSecondary/40 resize-none min-h-[50vh] focus:ring-0 py-4 flex-1"
+          />
+        </div>
+
+        <div className="sticky bottom-0 h-12 border-t border-border bg-background/90 backdrop-blur-md flex items-center gap-4 px-4 shrink-0">
+          <button type="button" onClick={() => insertMarkdown('## ')} className="font-mono text-xs text-textSecondary hover:text-accent px-3 py-2 border border-border hover:border-accent transition-colors">H</button>
+          <button type="button" onClick={() => insertMarkdown('```\n\n```')} className="font-mono text-xs text-textSecondary hover:text-accent px-3 py-2 border border-border hover:border-accent transition-colors">&lt;/&gt;</button>
+          <button type="button" onClick={() => insertMarkdown('![]()')} className="font-mono text-xs text-textSecondary hover:text-accent px-3 py-2 border border-border hover:border-accent transition-colors">IMG</button>
+          <button type="button" onClick={() => insertMarkdown('\n---\n')} className="font-mono text-xs text-textSecondary hover:text-accent px-3 py-2 border border-border hover:border-accent transition-colors">---</button>
+        </div>
+      </form>
+
+      <AnimatePresence>
+        {showDossier && (
+          <motion.div 
+            initial={{ y: "100%" }} 
+            animate={{ y: 0 }} 
+            exit={{ y: "100%" }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex flex-col bg-surface overflow-y-auto"
+          >
+            <div className="p-8 space-y-8 flex-1">
+              <div className="flex justify-between items-center">
+                <div className="font-mono text-[10px] uppercase tracking-widest text-textSecondary">DOSSIER_SETTINGS</div>
+                <button type="button" onClick={() => setShowDossier(false)} className="text-text hover:text-accent font-sans text-sm font-bold">
+                  Done
+                </button>
+              </div>
+              <input name="author" value={formData.author} onChange={handleChange} placeholder="Author" className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40" />
+              <input type="date" name="publishDate" value={formData.publishDate} onChange={handleChange} className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40" />
+              <select name="category" value={formData.category} onChange={handleChange} className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none text-textSecondary">
+                <option value="Web Development">Web Development</option>
+                <option value="AI/ML">AI/ML</option>
+                <option value="Tutorial">Tutorial</option>
+                <option value="DevOps">DevOps</option>
+                <option value="Other">Other</option>
+              </select>
+              <input name="readTime" value={formData.readTime} onChange={handleChange} placeholder="Read Time" className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40" />
+              <textarea name="excerpt" value={formData.excerpt} onChange={handleChange} rows={4} placeholder="Excerpt" className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40 resize-none" />
+              <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="Image URL" className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40" />
+              <input name="hashtags" value={formData.hashtags} onChange={handleChange} placeholder="react, nextjs, typescript" className="border-b border-border bg-transparent w-full py-3 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
 
 const BlogManager = () => {
   const [mode, setMode] = useState('live');
@@ -327,145 +518,25 @@ const BlogManager = () => {
         </div>
       )}
 
-      {/* --- ADD/EDIT MODAL --- */}
+      {/* --- NEW EDITOR MODALS --- */}
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+          <>
+            <DesktopEditor 
+              formData={formData} 
+              handleChange={handleChange} 
+              handleSubmit={handleSubmit}
+              editingBlog={editingBlog}
+              onClose={() => setIsModalOpen(false)}
             />
-
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="relative w-full max-w-4xl bg-surface border border-border shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
-            >
-              {/* Modal Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-background/50">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-accent animate-pulse" />
-                  <h2 className="text-xs font-mono font-bold text-text uppercase tracking-widest">
-                    {editingBlog ? 'MODIFY_JOURNAL_ENTRY' : 'INITIALIZE_JOURNAL_ENTRY'}
-                  </h2>
-                </div>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="text-textSecondary hover:text-text transition-colors"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              {/* Modal Form */}
-              <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <TechInput
-                    label="ENTRY_TITLE"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    placeholder="Enter blog title"
-                    required
-                  />
-                  <TechInput
-                    label="AUTHOR"
-                    name="author"
-                    value={formData.author}
-                    onChange={handleChange}
-                    placeholder="Author name"
-                    required
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <TechInput
-                    label="PUBLISH_DATE"
-                    name="publishDate"
-                    type="date"
-                    value={formData.publishDate}
-                    onChange={handleChange}
-                    required
-                  />
-                  <TechInput
-                    label="CATEGORY"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    placeholder="e.g., Web Development"
-                    required
-                  />
-                  <TechInput
-                    label="READ_TIME"
-                    name="readTime"
-                    value={formData.readTime}
-                    onChange={handleChange}
-                    placeholder="e.g., 5 min read"
-                  />
-                </div>
-
-                <TechInput
-                  label="HASHTAGS"
-                  name="hashtags"
-                  value={formData.hashtags}
-                  onChange={handleChange}
-                  placeholder="react, firebase, javascript (comma separated)"
-                />
-
-                <TechInput
-                  label="IMAGE_ASSET_URL"
-                  name="imageUrl"
-                  value={formData.imageUrl}
-                  onChange={handleChange}
-                  placeholder="/blog-image.png or https://..."
-                />
-
-                <TechInput
-                  label="EXCERPT"
-                  name="excerpt"
-                  type="textarea"
-                  rows={3}
-                  value={formData.excerpt}
-                  onChange={handleChange}
-                  placeholder="Brief summary of the blog post (shown on listing page)"
-                  required
-                />
-
-                <TechInput
-                  label="CONTENT (MARKDOWN)"
-                  name="content"
-                  type="textarea"
-                  rows={12}
-                  value={formData.content}
-                  onChange={handleChange}
-                  placeholder="Full blog content with markdown formatting..."
-                  required
-                />
-
-                {/* Submit Button */}
-                <div className="flex gap-4 pt-4 border-t border-border">
-                  <button
-                    type="button"
-                    onClick={() => setIsModalOpen(false)}
-                    className="flex-1 py-3 border border-border text-textSecondary hover:text-text hover:bg-background/50 font-mono text-xs font-bold transition-colors uppercase tracking-widest"
-                  >
-                    ABORT
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 py-3 bg-accent text-background hover:opacity-90 font-mono text-xs font-bold transition-opacity flex items-center justify-center gap-2 uppercase tracking-widest"
-                  >
-                    <Save size={14} />
-                    {editingBlog ? 'UPDATE_RECORD' : 'EXECUTE_WRITE'}
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          </div>
+            <MobileEditor 
+              formData={formData} 
+              handleChange={handleChange} 
+              handleSubmit={handleSubmit}
+              editingBlog={editingBlog}
+              onClose={() => setIsModalOpen(false)}
+            />
+          </>
         )}
       </AnimatePresence>
 
