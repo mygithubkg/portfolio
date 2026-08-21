@@ -1,12 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Providers } from './providers';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import ClientLoadingWrapper from '@/components/ClientLoadingWrapper';
+import LayoutWrapper from '@/components/LayoutWrapper';
 import { Fraunces, DM_Sans, JetBrains_Mono } from 'next/font/google';
-
-import AmbientBackground from '@/components/AmbientBackground';
 
 const fraunces = Fraunces({
   subsets: ['latin'],
@@ -123,14 +120,11 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased text-text bg-background min-h-screen flex flex-col">
-        <AmbientBackground />
         <Providers>
           <ClientLoadingWrapper>
-            <Header />
-            <main className="flex-1 w-full flex flex-col pt-20">
+            <LayoutWrapper>
               {children}
-            </main>
-            <Footer />
+            </LayoutWrapper>
           </ClientLoadingWrapper>
         </Providers>
       </body>

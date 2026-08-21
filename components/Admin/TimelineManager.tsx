@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Edit, Trash2, X, Save, Clock, Terminal, RotateCcw, AlertTriangle } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, Terminal, RotateCcw } from 'lucide-react';
 import { getTimeline, saveTimeline } from '@/lib/utils/dataManager';
 import {
   getDefaultTimeline,
@@ -10,11 +10,6 @@ import {
 } from '@/lib/utils/defaultsManager';
 import ResetToDefaultModal from './ResetToDefaultModal';
 import { auditLog } from '@/lib/utils/security';
-
-// ── Mode badge colours ────────────────────────────────────────────────────────
-const LIVE_TAB     = 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30';
-const DEFAULT_TAB  = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
-const INACTIVE_TAB = 'text-textSecondary hover:text-white border-transparent';
 
 // ── Empty entry template ──────────────────────────────────────────────────────
 const emptyEntry = () => ({
@@ -29,7 +24,7 @@ const emptyEntry = () => ({
 // ── Inline field editor ───────────────────────────────────────────────────────
 const Field = ({ label, value, onChange, multiline = false }: any) => (
   <div className="group">
-    <label className="block text-[10px] font-mono text-cyan-600 mb-1 uppercase tracking-widest group-focus-within:text-cyan-400">
+    <label className="block text-[10px] font-mono text-textSecondary mb-1 uppercase tracking-widest group-focus-within:text-accent">
       {label}
     </label>
     {multiline ? (
@@ -37,14 +32,14 @@ const Field = ({ label, value, onChange, multiline = false }: any) => (
         value={value}
         onChange={onChange}
         rows={2}
-        className="w-full bg-background/40 border border-white/10 p-2 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none resize-none placeholder-gray-700 transition-colors"
+        className="w-full bg-background border border-border p-2 text-text font-mono text-xs focus:border-accent focus:outline-none resize-none placeholder-textSecondary/40 transition-colors"
       />
     ) : (
       <input
         type="text"
         value={value}
         onChange={onChange}
-        className="w-full bg-background/40 border border-white/10 p-2 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none placeholder-gray-700 transition-colors"
+        className="w-full bg-background border border-border p-2 text-text font-mono text-xs focus:border-accent focus:outline-none placeholder-textSecondary/40 transition-colors"
       />
     )}
   </div>
@@ -140,32 +135,43 @@ const TimelineManager = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white p-6 md:p-10 font-mono">
+    <div className="w-full relative z-10 flex flex-col min-h-full p-6 md:p-10 font-mono text-text">
 
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 pb-6 border-b border-white/10 gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-cyan-500 text-xs mb-1">
-            <Clock size={14} /> <span>/ TIMELINE_DB</span>
-          </div>
-          <h1 className="text-2xl font-black tracking-tight">Timeline <span className="text-gray-600">Entries</span></h1>
+      {/* --- HEADER --- */}
+      <div className="mb-12 border-b border-border pb-8">
+        <div className="font-mono text-[10px] uppercase tracking-widest text-textSecondary mb-4">
+          / ROOT / TIMELINE_DB
         </div>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+          <h1 className="font-display text-5xl xl:text-6xl text-text tracking-tight">
+            Timeline Nodes.
+          </h1>
 
-        {/* Mode toggle */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex gap-1 bg-background/5 border border-white/10 p-1">
-            {[['live', 'LIVE_DATA', LIVE_TAB], ['defaults', 'DEFAULTS', DEFAULT_TAB]].map(([val, label, active]) => (
-              <button key={val} onClick={() => setMode(val)}
-                className={`px-4 py-2 text-xs font-mono transition-all border ${mode === val ? active : INACTIVE_TAB}`}>
-                {val === 'live' ? '⬤' : '◎'} {label}
+          <div className="flex items-center gap-4 flex-wrap">
+            {/* Mode toggle */}
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setMode('live')}
+                className={`px-4 py-2 font-mono text-xs transition-colors border ${mode === 'live' ? 'border-accent text-accent' : 'border-transparent text-textSecondary hover:text-text'}`}
+              >
+                [ LIVE_DATA ]
               </button>
-            ))}
-          </div>
+              <button 
+                onClick={() => setMode('defaults')}
+                className={`px-4 py-2 font-mono text-xs transition-colors border ${mode === 'defaults' ? 'border-accent text-accent' : 'border-transparent text-textSecondary hover:text-text'}`}
+              >
+                [ DEFAULTS ]
+              </button>
+            </div>
 
-          <button onClick={handleAdd}
-            className="flex items-center gap-2 px-4 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-xs font-mono transition-all">
-            <Plus size={14} /> ADD_ENTRY
-          </button>
+            <button
+              onClick={handleAdd}
+              className="border border-border hover:border-accent hover:text-accent px-4 py-2 font-mono text-xs transition-colors flex items-center gap-2 text-text"
+            >
+              <Plus size={14} />
+              + Initialize New Entry
+            </button>
+          </div>
         </div>
       </div>
 
@@ -173,7 +179,7 @@ const TimelineManager = () => {
       <AnimatePresence>
         {status && (
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            className={`mb-6 px-4 py-2 text-xs font-mono border ${status.isError ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-green-500/10 border-green-500/30 text-green-400'}`}>
+            className={`mb-6 px-4 py-2 text-xs font-mono border ${status.isError ? 'bg-error/10 border-error/30 text-error' : 'bg-success/10 border-success/30 text-success'}`}>
             {status.msg}
           </motion.div>
         )}
@@ -181,56 +187,114 @@ const TimelineManager = () => {
 
       {/* Defaults mode banner */}
       {mode === 'defaults' && (
-        <div className="mb-6 px-4 py-2 bg-amber-500/5 border border-amber-500/20 text-amber-400 text-xs font-mono">
+        <div className="mb-6 px-4 py-2 bg-accent/5 border border-accent/20 text-accent text-xs font-mono">
           ◎ EDITING DEFAULTS — Changes here do not affect the live site until you "Reset to Default".
         </div>
       )}
 
-      {/* Entry list */}
+      {/* Entry list / grid */}
       {loading ? (
-        <div className="text-gray-600 text-sm font-mono">LOADING_TIMELINE...</div>
+        <div className="text-textSecondary text-sm font-mono">LOADING_TIMELINE...</div>
       ) : (
-        <div className="space-y-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <AnimatePresence>
             {entries.map((entry, idx) => (
-              <motion.div key={entry._localId} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className={`border p-5 transition-colors ${editingId === entry._localId ? 'border-cyan-500/50 bg-[#0e1318]' : 'border-white/10 bg-[#0a0a0a] hover:border-white/20'}`}>
-                
+              <motion.div
+                key={entry._localId}
+                layout
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.2 }}
+                className={`group relative bg-surface border flex flex-col hover:border-accent transition-colors overflow-hidden ${
+                  editingId === entry._localId ? 'border-accent p-5' : 'border-border p-5'
+                }`}
+              >
                 {editingId === entry._localId ? (
                   // Edit form
-                  <div>
-                    <div className="text-[10px] text-cyan-500 font-mono mb-4">EDITING ENTRY_{String(idx + 1).padStart(2, '0')}</div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      <Field label="Year / Range" value={editForm.year || ''} onChange={(e: any) => setEditForm((p: any) => ({ ...p, year: e.target.value }))} />
-                      <Field label="Title / Role" value={editForm.title || ''} onChange={(e: any) => setEditForm((p: any) => ({ ...p, title: e.target.value }))} />
-                      <Field label="Place / Organisation" value={editForm.place || ''} onChange={(e: any) => setEditForm((p: any) => ({ ...p, place: e.target.value }))} />
-                      <Field label="Icon (Lucide name)" value={editForm.icon || ''} onChange={(e: any) => setEditForm((p: any) => ({ ...p, icon: e.target.value }))} />
+                  <div className="flex flex-col h-full">
+                    <div className="text-[10px] text-accent font-mono mb-4 uppercase tracking-widest">
+                      EDITING ENTRY_{String(idx + 1).padStart(2, '0')}
                     </div>
-                    <Field label="Description" value={editForm.desc || ''} onChange={(e: any) => setEditForm((p: any) => ({ ...p, desc: e.target.value }))} multiline />
-                    <div className="flex gap-2 mt-4">
-                      <button onClick={handleCommitEdit} className="flex items-center gap-1 px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-bold transition-colors">
+                    <div className="grid grid-cols-1 gap-4 mb-4">
+                      <Field
+                        label="Year / Range"
+                        value={editForm.year || ''}
+                        onChange={(e: any) => setEditForm((p: any) => ({ ...p, year: e.target.value }))}
+                      />
+                      <Field
+                        label="Title / Role"
+                        value={editForm.title || ''}
+                        onChange={(e: any) => setEditForm((p: any) => ({ ...p, title: e.target.value }))}
+                      />
+                      <Field
+                        label="Place / Organisation"
+                        value={editForm.place || ''}
+                        onChange={(e: any) => setEditForm((p: any) => ({ ...p, place: e.target.value }))}
+                      />
+                      <Field
+                        label="Icon (Lucide name)"
+                        value={editForm.icon || ''}
+                        onChange={(e: any) => setEditForm((p: any) => ({ ...p, icon: e.target.value }))}
+                      />
+                      <Field
+                        label="Description"
+                        value={editForm.desc || ''}
+                        onChange={(e: any) => setEditForm((p: any) => ({ ...p, desc: e.target.value }))}
+                        multiline
+                      />
+                    </div>
+                    <div className="flex gap-2 mt-auto pt-4 border-t border-border">
+                      <button
+                        onClick={handleCommitEdit}
+                        className="flex items-center gap-1 px-4 py-2 bg-accent text-background text-xs font-bold font-mono transition-opacity hover:opacity-90"
+                      >
                         <Save size={12} /> APPLY
                       </button>
-                      <button onClick={handleCancelEdit} className="px-4 py-2 border border-white/10 text-gray-400 hover:text-white text-xs font-mono transition-colors">
+                      <button
+                        onClick={handleCancelEdit}
+                        className="px-4 py-2 border border-border text-textSecondary hover:text-text text-xs font-mono transition-colors"
+                      >
                         CANCEL
                       </button>
                     </div>
                   </div>
                 ) : (
                   // Read view
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-1">
-                        <span className="text-[10px] text-gray-600 font-mono shrink-0">{entry.year || '—'}</span>
-                        <span className="text-sm font-bold text-white truncate">{entry.title || '(untitled)'}</span>
+                  <div className="flex flex-col h-full">
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                      <span className="font-mono text-[10px] text-textSecondary uppercase tracking-widest">
+                        {entry.year || '—'}
+                      </span>
+                      <div className="flex gap-3 shrink-0">
+                        <button
+                          onClick={() => handleStartEdit(entry)}
+                          className="text-textSecondary hover:text-accent transition-colors font-mono text-[10px] uppercase tracking-widest flex items-center gap-1"
+                        >
+                          <Edit size={12} /> Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(entry._localId)}
+                          className="text-textSecondary hover:text-error transition-colors font-mono text-[10px] uppercase tracking-widest flex items-center gap-1"
+                        >
+                          <Trash2 size={12} /> Delete
+                        </button>
                       </div>
-                      <div className="text-[10px] text-cyan-600 font-mono mb-1">{entry.place || ''}</div>
-                      <p className="text-xs text-textSecondary line-clamp-2">{entry.desc || ''}</p>
                     </div>
-                    <div className="flex gap-2 shrink-0">
-                      <button onClick={() => handleStartEdit(entry)} className="text-textSecondary hover:text-cyan-400 transition-colors"><Edit size={14} /></button>
-                      <button onClick={() => handleDelete(entry._localId)} className="text-textSecondary hover:text-red-500 transition-colors"><Trash2 size={14} /></button>
+                    <h3 className="font-sans font-bold text-base text-text mb-1 line-clamp-1 group-hover:text-accent transition-colors">
+                      {entry.title || '(untitled)'}
+                    </h3>
+                    <div className="text-[11px] text-textSecondary font-mono mb-3 uppercase tracking-wider">
+                      {entry.place || ''}
                     </div>
+                    <p className="text-xs text-textSecondary/80 line-clamp-3 mb-4 font-mono leading-relaxed">
+                      {entry.desc || ''}
+                    </p>
+                    {entry.icon && (
+                      <div className="mt-auto pt-3 border-t border-border flex items-center justify-between text-[10px] font-mono text-textSecondary">
+                        <span>ICON: {entry.icon}</span>
+                      </div>
+                    )}
                   </div>
                 )}
               </motion.div>
@@ -238,25 +302,30 @@ const TimelineManager = () => {
           </AnimatePresence>
 
           {entries.length === 0 && (
-            <div className="text-center py-block border border-dashed border-white/10">
-              <Terminal size={32} className="mx-auto text-gray-700 mb-2" />
-              <p className="text-gray-600 text-sm">No entries. Click ADD_ENTRY to begin.</p>
+            <div className="col-span-full border border-dashed border-border p-20 text-center">
+              <Terminal size={40} className="mx-auto text-textSecondary/40 mb-4" />
+              <p className="text-textSecondary text-sm font-mono">DATABASE_EMPTY // WAITING_FOR_INPUT</p>
             </div>
           )}
         </div>
       )}
 
       {/* Footer actions */}
-      <div className="flex flex-wrap items-center gap-3 pt-6 border-t border-white/10">
-        <button onClick={handleSaveAll} disabled={isSaving || loading}
-          className="flex items-center gap-2 px-6 py-3 bg-background text-black text-xs font-bold hover:bg-cyan-400 transition-colors disabled:opacity-40">
+      <div className="flex flex-wrap items-center gap-4 pt-8 border-t border-border mt-auto">
+        <button
+          onClick={handleSaveAll}
+          disabled={isSaving || loading}
+          className="flex items-center gap-2 px-6 py-3 bg-accent text-background text-xs font-bold font-mono hover:opacity-90 transition-opacity disabled:opacity-40"
+        >
           <Save size={14} />
           {isSaving ? 'SAVING...' : `SAVE_${mode.toUpperCase()}_TIMELINE`}
         </button>
 
         <div className="ml-auto">
-          <button onClick={() => setShowReset(true)}
-            className="flex items-center gap-2 px-4 py-3 border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 text-xs font-mono transition-colors">
+          <button
+            onClick={() => setShowReset(true)}
+            className="flex items-center gap-2 px-4 py-3 border border-border text-text hover:border-accent hover:text-accent text-xs font-mono transition-colors"
+          >
             <RotateCcw size={14} /> RESET_LIVE_TO_DEFAULTS
           </button>
         </div>

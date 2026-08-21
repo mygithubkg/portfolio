@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Save, Code2, RotateCcw, X } from 'lucide-react';
+import { Plus, Save, Code2, RotateCcw, X } from 'lucide-react';
 import { getTechStack, saveTechStack } from '@/lib/utils/dataManager';
 import {
   getDefaultTechStack,
@@ -10,10 +10,6 @@ import {
 } from '@/lib/utils/defaultsManager';
 import ResetToDefaultModal from './ResetToDefaultModal';
 import { auditLog } from '@/lib/utils/security';
-
-const LIVE_TAB     = 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30';
-const DEFAULT_TAB  = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
-const INACTIVE_TAB = 'text-textSecondary hover:text-white border-transparent';
 
 const TechStackManager = () => {
   const [mode, setMode]       = useState('live');
@@ -52,7 +48,10 @@ const TechStackManager = () => {
   };
 
   const handleAddKey = (e: any) => {
-    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); handleAdd(); }
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      handleAdd();
+    }
   };
 
   const handleRemove = (item: string) => setItems(prev => prev.filter(i => i !== item));
@@ -87,95 +86,153 @@ const TechStackManager = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white p-6 md:p-10 font-mono">
-
+    <div className="w-full relative z-10 flex flex-col min-h-full p-6 md:p-10 font-mono text-text bg-background">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 pb-6 border-b border-white/10 gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-cyan-500 text-xs mb-1">
-            <Code2 size={14} /> <span>/ TECH_STACK_DB</span>
-          </div>
-          <h1 className="text-2xl font-black tracking-tight">Tech Stack <span className="text-gray-600">Skills</span></h1>
-          <p className="text-gray-600 text-xs mt-1">Each chip is one technology. Shown on the About page.</p>
+      <div className="mb-12 border-b border-border pb-8">
+        <div className="font-mono text-[10px] uppercase tracking-widest text-textSecondary mb-4">
+          / ROOT / TECH_DB
         </div>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+          <div>
+            <h1 className="font-display text-5xl xl:text-6xl text-text tracking-tight">
+              Tech Stack.
+            </h1>
+            <p className="text-textSecondary text-xs font-mono mt-2">
+              Technical stack database and competency ledger. Displayed across the interface.
+            </p>
+          </div>
 
-        {/* Mode toggle */}
-        <div className="flex gap-1 bg-background/5 border border-white/10 p-1">
-          {[['live', 'LIVE_DATA', LIVE_TAB], ['defaults', 'DEFAULTS', DEFAULT_TAB]].map(([val, label, active]) => (
-            <button key={val} onClick={() => setMode(val)}
-              className={`px-4 py-2 text-xs font-mono transition-all border ${mode === val ? active : INACTIVE_TAB}`}>
-              {val === 'live' ? '⬤' : '◎'} {label}
-            </button>
-          ))}
+          {/* Mode toggle */}
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex gap-2">
+              <button
+                onClick={() => setMode('live')}
+                className={`px-4 py-2 font-mono text-xs transition-colors border ${mode === 'live' ? 'border-accent text-accent' : 'border-transparent text-textSecondary hover:text-text'}`}
+              >
+                [ LIVE_DATA ]
+              </button>
+              <button
+                onClick={() => setMode('defaults')}
+                className={`px-4 py-2 font-mono text-xs transition-colors border ${mode === 'defaults' ? 'border-accent text-accent' : 'border-transparent text-textSecondary hover:text-text'}`}
+              >
+                [ DEFAULTS ]
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Status */}
+      {/* Status Bar */}
       <AnimatePresence>
         {status && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            className={`mb-6 px-4 py-2 text-xs font-mono border ${status.isError ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-green-500/10 border-green-500/30 text-green-400'}`}>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className={`mb-6 px-4 py-2 text-xs font-mono border ${
+              status.isError
+                ? 'bg-error/10 border-error/30 text-error'
+                : 'bg-success/10 border-success/30 text-success'
+            }`}
+          >
             {status.msg}
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* Defaults Mode Warning */}
       {mode === 'defaults' && (
-        <div className="mb-6 px-4 py-2 bg-amber-500/5 border border-amber-500/20 text-amber-400 text-xs font-mono">
+        <div className="mb-6 px-4 py-2 bg-accent/5 border border-accent/20 text-accent text-xs font-mono">
           ◎ EDITING DEFAULTS — Changes here do not affect the live site until you "Reset to Default".
         </div>
       )}
 
-      {/* Add new item */}
-      <div className="mb-8 flex gap-2">
-        <input
-          type="text"
-          value={newItem}
-          onChange={e => setNewItem(e.target.value)}
-          onKeyDown={handleAddKey}
-          placeholder="e.g. TypeScript (press Enter)"
-          className="flex-1 bg-background/40 border border-white/10 focus:border-cyan-500 p-3 text-white font-mono text-sm focus:outline-none placeholder-gray-700 transition-colors"
-        />
-        <button onClick={handleAdd}
-          className="flex items-center gap-2 px-4 py-3 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-xs font-mono transition-colors">
-          <Plus size={14} /> ADD
+      {/* Add New Item */}
+      <div className="mb-8 flex flex-col sm:flex-row gap-3">
+        <div className="flex-1 relative">
+          <input
+            type="text"
+            value={newItem}
+            onChange={e => setNewItem(e.target.value)}
+            onKeyDown={handleAddKey}
+            placeholder="e.g. TypeScript, Next.js, Rust (press Enter or Comma)"
+            className="w-full bg-background border border-border focus:border-accent p-3 text-text font-mono text-xs focus:outline-none placeholder:text-textSecondary/50 transition-colors"
+          />
+        </div>
+        <button
+          onClick={handleAdd}
+          className="border border-border hover:border-accent hover:text-accent px-6 py-3 font-mono text-xs transition-colors flex items-center justify-center gap-2 text-text"
+        >
+          <Plus size={14} /> + Add Technology
         </button>
       </div>
 
-      {/* Chips */}
+      {/* Grid of Items */}
       {loading ? (
-        <div className="text-gray-600 text-sm">LOADING_STACK...</div>
+        <div className="text-textSecondary text-sm font-mono py-8">LOADING_STACK...</div>
       ) : (
-        <div className="flex flex-wrap gap-3 mb-8 min-h-[80px] p-4 bg-background/[0.02] border border-white/5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
           <AnimatePresence>
-            {items.map((item) => (
-              <motion.div key={item} layout initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
-                className="group flex items-center gap-2 px-3 py-1.5 bg-background/5 border border-white/15 hover:border-cyan-500/40 text-sm text-white font-mono transition-colors">
-                <span>{item}</span>
-                <button onClick={() => handleRemove(item)}
-                  className="text-gray-600 hover:text-red-400 transition-colors ml-1 opacity-0 group-hover:opacity-100">
-                  <X size={12} />
-                </button>
+            {items.map((item, index) => (
+              <motion.div
+                key={item}
+                layout
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.15 }}
+                className="group relative bg-surface border border-border flex flex-col justify-between hover:border-accent transition-colors p-4"
+              >
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <span className="font-mono text-[9px] text-textSecondary uppercase tracking-widest">
+                    TECH_{String(index + 1).padStart(2, '0')}
+                  </span>
+                  <button
+                    onClick={() => handleRemove(item)}
+                    className="text-textSecondary hover:text-error transition-colors opacity-60 group-hover:opacity-100"
+                    title="Delete technology"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+                <div className="font-mono font-bold text-sm text-text group-hover:text-accent transition-colors truncate">
+                  {item}
+                </div>
               </motion.div>
             ))}
           </AnimatePresence>
-          {items.length === 0 && <p className="text-gray-700 text-sm">No technologies. Add one above.</p>}
+
+          {items.length === 0 && (
+            <div className="col-span-full border border-dashed border-border p-12 text-center">
+              <Code2 size={32} className="mx-auto text-textSecondary mb-3 opacity-40" />
+              <p className="text-textSecondary text-xs font-mono uppercase tracking-widest">
+                NO_ENTRIES_FOUND // INITIALIZE_FIRST_RECORD
+              </p>
+            </div>
+          )}
         </div>
       )}
 
-      <p className="text-gray-700 text-xs mb-8 font-mono">{items.length} TECHNOLOGIES_LOADED</p>
+      <p className="font-mono text-[10px] text-textSecondary uppercase tracking-widest mb-8">
+        {items.length} TECHNOLOGIES_LOADED
+      </p>
 
-      {/* Footer actions */}
-      <div className="flex flex-wrap items-center gap-3 pt-6 border-t border-white/10">
-        <button onClick={handleSave} disabled={isSaving || loading}
-          className="flex items-center gap-2 px-6 py-3 bg-background text-black text-xs font-bold hover:bg-cyan-400 transition-colors disabled:opacity-40">
+      {/* Footer Actions */}
+      <div className="flex flex-wrap items-center gap-4 pt-6 border-t border-border mt-auto">
+        <button
+          onClick={handleSave}
+          disabled={isSaving || loading}
+          className="flex items-center gap-2 px-6 py-3 bg-accent text-background font-mono font-bold text-xs hover:opacity-90 transition-opacity disabled:opacity-40"
+        >
           <Save size={14} />
           {isSaving ? 'SAVING...' : `SAVE_${mode.toUpperCase()}_STACK`}
         </button>
 
         <div className="ml-auto">
-          <button onClick={() => setShowReset(true)}
-            className="flex items-center gap-2 px-4 py-3 border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 text-xs font-mono transition-colors">
+          <button
+            onClick={() => setShowReset(true)}
+            className="flex items-center gap-2 px-4 py-3 border border-border hover:border-accent text-textSecondary hover:text-accent text-xs font-mono transition-colors"
+          >
             <RotateCcw size={14} /> RESET_LIVE_TO_DEFAULTS
           </button>
         </div>

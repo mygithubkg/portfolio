@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Save, FileText, Mail, Terminal, Plus, Trash2, CheckCircle, Cpu, RotateCcw } from 'lucide-react';
+import { Save, FileText, Mail, Plus, Trash2, CheckCircle, Cpu, RotateCcw } from 'lucide-react';
 import {
   getAboutContent, saveAboutContent,
   getServicesContent, saveServicesContent,
@@ -16,14 +16,14 @@ import {
 import ResetToDefaultModal from './ResetToDefaultModal';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
-const LIVE_TAB     = 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30';
-const DEFAULT_TAB  = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
-const INACTIVE_TAB = 'text-textSecondary hover:text-white border-transparent';
+const LIVE_TAB     = 'border-accent text-accent';
+const DEFAULT_TAB  = 'border-accent text-accent';
+const INACTIVE_TAB = 'border-transparent text-textSecondary hover:text-text';
 
 // ── Shared input component ────────────────────────────────────────────────────
 const TechInput = ({ label, value, onChange, placeholder, type = 'text', rows }: any) => (
   <div className="group relative mb-6">
-    <label className="block text-xs font-mono text-textSecondary mb-2 group-focus-within:text-cyan-500 transition-colors uppercase tracking-widest">
+    <label className="block text-xs font-mono text-textSecondary mb-2 group-focus-within:text-accent transition-colors uppercase tracking-widest">
       // {label}
     </label>
     {type === 'textarea' ? (
@@ -32,7 +32,7 @@ const TechInput = ({ label, value, onChange, placeholder, type = 'text', rows }:
         onChange={onChange}
         rows={rows || 4}
         placeholder={placeholder}
-        className="w-full bg-[#0a0a0a] border-b border-white/20 p-3 text-white font-mono text-sm focus:border-cyan-500 focus:outline-none transition-colors resize-none placeholder-gray-700"
+        className="w-full bg-background border border-border p-3 text-text font-mono text-xs focus:border-accent focus:outline-none transition-colors resize-none placeholder:text-textSecondary/40"
       />
     ) : (
       <input
@@ -40,26 +40,35 @@ const TechInput = ({ label, value, onChange, placeholder, type = 'text', rows }:
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full bg-[#0a0a0a] border-b border-white/20 p-3 text-white font-mono text-sm focus:border-cyan-500 focus:outline-none transition-colors placeholder-gray-700"
+        className="w-full bg-background border border-border p-3 text-text font-mono text-xs focus:border-accent focus:outline-none transition-colors placeholder:text-textSecondary/40"
       />
     )}
-    <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-cyan-500 group-focus-within:w-full transition-all duration-500" />
   </div>
 );
 
 const SaveButton = ({ label }: any) => (
-  <button type="submit"
-    className="flex items-center gap-2 bg-background text-black px-6 py-3 font-bold text-xs tracking-widest hover:bg-cyan-400 transition-colors">
-    <Save size={16} /> {label}
+  <button
+    type="submit"
+    className="flex items-center gap-2 border border-border hover:border-accent hover:text-accent bg-surface text-text px-6 py-3 font-mono text-xs transition-colors uppercase tracking-widest"
+  >
+    <Save size={14} /> {label}
   </button>
 );
 
 // ── Mode Toggle ───────────────────────────────────────────────────────────────
 const ModeToggle = ({ mode, setMode }: any) => (
-  <div className="flex gap-1 bg-background/5 border border-white/10 p-1 mb-6">
-    {[['live', '⬤ LIVE_DATA', LIVE_TAB], ['defaults', '◎ DEFAULTS', DEFAULT_TAB]].map(([val, label, active]) => (
-      <button key={val} onClick={() => setMode(val)}
-        className={`px-4 py-1.5 text-xs font-mono transition-all border ${mode === val ? active : INACTIVE_TAB}`}>
+  <div className="flex gap-2">
+    {[
+      ['live', '[ LIVE_DATA ]'],
+      ['defaults', '[ DEFAULTS ]'],
+    ].map(([val, label]) => (
+      <button
+        key={val}
+        onClick={() => setMode(val)}
+        className={`px-4 py-2 font-mono text-xs transition-colors border ${
+          mode === val ? 'border-accent text-accent' : 'border-transparent text-textSecondary hover:text-text'
+        }`}
+      >
         {label}
       </button>
     ))}
@@ -73,9 +82,9 @@ const ContentManager = () => {
   const [statusLog, setStatusLog] = useState<string | null>(null);
 
   // Live state
-  const [aboutContent, setAboutContent]     = useState({ title: '', subtitle: '', description: '', skills: '' });
+  const [aboutContent, setAboutContent]       = useState({ title: '', subtitle: '', description: '', skills: '' });
   const [servicesContent, setServicesContent] = useState<any[]>([]);
-  const [contactContent, setContactContent] = useState({ email: '', phone: '', location: '', availability: '' });
+  const [contactContent, setContactContent]   = useState({ email: '', phone: '', location: '', availability: '' });
 
   // Defaults state (loaded when mode switches to 'defaults')
   const [defaultAbout, setDefaultAbout]       = useState({ title: '', subtitle: '', description: '', skills: '' });
@@ -197,197 +206,265 @@ const ContentManager = () => {
   const setContact = mode === 'live' ? setContactContent : setDefaultContact;
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white p-6 md:p-12 font-mono">
+    <div className="w-full relative z-10 flex flex-col min-h-full p-6 md:p-10 font-mono text-text bg-background">
 
-      {/* Background */}
-      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-900/10 via-[#050505] to-[#050505]" />
-
-      <div className="max-w-5xl mx-auto relative z-10">
-
-        {/* Header */}
-        <div className="flex justify-between items-end mb-group border-b border-white/10 pb-6">
+      {/* --- HEADER --- */}
+      <div className="mb-12 border-b border-border pb-8">
+        <div className="font-mono text-[10px] uppercase tracking-widest text-textSecondary mb-4">
+          / ROOT / CONTENT_DB
+        </div>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
-            <div className="flex items-center gap-2 text-cyan-500 text-xs mb-2">
-              <Terminal size={14} /> <span>ADMIN_ACCESS_GRANTED</span>
-            </div>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight">
-              SYSTEM <span className="text-gray-600">CONFIGURATION</span>
+            <h1 className="font-display text-5xl text-text tracking-tight">
+              Core Content.
             </h1>
+            <p className="text-textSecondary text-xs font-mono mt-2">
+              Primary profile parameters, biography, uplink endpoints, and system modules.
+            </p>
           </div>
 
-          {/* Status */}
-          <div className="hidden md:block">
-            <AnimatePresence mode="wait">
-              {statusLog ? (
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}
-                  className="flex items-center gap-2 text-green-400 bg-green-900/10 border border-green-500/20 px-4 py-2 rounded">
-                  <CheckCircle size={14} />
-                  <span className="text-xs">{statusLog}</span>
-                </motion.div>
-              ) : (
-                <div className="text-xs text-gray-600 flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
-                  WAITING_FOR_INPUT
-                </div>
-              )}
-            </AnimatePresence>
+          <div className="flex items-center gap-4 flex-wrap">
+            <ModeToggle mode={mode} setMode={setMode} />
           </div>
         </div>
+      </div>
 
-        <div className="grid lg:grid-cols-12 gap-group">
+      {/* Status Bar */}
+      <AnimatePresence mode="wait">
+        {statusLog && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className={`mb-6 px-4 py-2 text-xs font-mono border flex items-center gap-2 ${
+              statusLog.startsWith('ERROR')
+                ? 'bg-error/10 border-error/30 text-error'
+                : 'bg-success/10 border-success/30 text-success'
+            }`}
+          >
+            <CheckCircle size={14} />
+            <span>{statusLog}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-3 space-y-2">
-            <div className="text-xs text-textSecondary mb-4 pl-2">SELECT_PARTITION</div>
-            {sections.map((section) => {
-              const Icon = section.icon;
-              const isActive = activeSection === section.id;
-              return (
-                <button key={section.id} onClick={() => setActiveSection(section.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-all duration-300 border-l-2 ${isActive
-                    ? 'border-cyan-500 bg-cyan-500/5 text-cyan-400'
-                    : 'border-transparent text-textSecondary hover:text-white hover:bg-background/5'}`}>
-                  <Icon size={16} />
-                  <span>{section.label}</span>
-                </button>
-              );
-            })}
+      {/* Defaults Mode Warning */}
+      {mode === 'defaults' && (
+        <div className="mb-6 px-4 py-2 bg-accent/5 border border-accent/20 text-accent text-xs font-mono">
+          ◎ EDITING DEFAULTS — Changes here do not affect live visitors until you reset or sync.
+        </div>
+      )}
+
+      {/* Main Grid Layout */}
+      <div className="grid lg:grid-cols-12 gap-8">
+
+        {/* Sidebar */}
+        <div className="lg:col-span-3 space-y-2">
+          <div className="text-[10px] text-textSecondary mb-4 pl-2 font-bold tracking-widest uppercase font-mono">
+            SELECT_PARTITION
           </div>
+          {sections.map((section) => {
+            const Icon = section.icon;
+            const isActive = activeSection === section.id;
+            return (
+              <button
+                key={section.id}
+                onClick={() => setActiveSection(section.id)}
+                className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-mono transition-all duration-200 border-l-2 ${
+                  isActive
+                    ? 'border-accent bg-surface text-accent font-bold'
+                    : 'border-transparent text-textSecondary hover:text-text hover:bg-surface/50'
+                }`}
+              >
+                <Icon size={16} />
+                <span>{section.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-          {/* Editor */}
-          <div className="lg:col-span-9">
-            {/* Mode Toggle — applies to the active section */}
-            <ModeToggle mode={mode} setMode={setMode} />
+        {/* Editor */}
+        <div className="lg:col-span-9">
+          <motion.div
+            key={activeSection + mode}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className="bg-surface border border-border p-6 md:p-8"
+          >
+            {/* ══ ABOUT ══ */}
+            {activeSection === 'about' && (
+              <form onSubmit={onSaveAbout}>
+                <div className="flex items-center justify-between mb-8 pb-4 border-b border-border">
+                  <div className="flex items-center gap-2">
+                    <FileText className="text-accent" size={18} />
+                    <h2 className="text-sm font-bold text-text font-mono tracking-wider uppercase">EDIT_BIO_DATA</h2>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => openReset('about')}
+                    className="flex items-center gap-1.5 px-3 py-1.5 border border-border text-textSecondary hover:text-accent hover:border-accent text-xs font-mono transition-colors"
+                  >
+                    <RotateCcw size={12} /> RESET_TO_DEFAULT
+                  </button>
+                </div>
 
-            {mode === 'defaults' && (
-              <div className="mb-6 px-4 py-2 bg-amber-500/5 border border-amber-500/20 text-amber-400 text-xs font-mono rounded">
-                ◎ EDITING DEFAULTS — Changes here do not affect live visitors.
-              </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <TechInput
+                    label="DISPLAY_TITLE"
+                    value={about.title}
+                    onChange={(e: any) => setAbout({ ...about, title: e.target.value })}
+                    placeholder="e.g. About Me"
+                  />
+                  <TechInput
+                    label="SUBTITLE_ROLE"
+                    value={about.subtitle}
+                    onChange={(e: any) => setAbout({ ...about, subtitle: e.target.value })}
+                    placeholder="e.g. Full Stack Developer"
+                  />
+                </div>
+                <TechInput
+                  label="CORE_DESCRIPTION"
+                  value={about.description}
+                  onChange={(e: any) => setAbout({ ...about, description: e.target.value })}
+                  type="textarea"
+                  placeholder="Enter main biography..."
+                />
+                <TechInput
+                  label="SKILL_MATRIX (CSV)"
+                  value={about.skills}
+                  onChange={(e: any) => setAbout({ ...about, skills: e.target.value })}
+                  placeholder="React, Node, AI, etc."
+                />
+
+                <div className="mt-8 flex justify-end">
+                  <SaveButton label="COMMIT_CHANGES" />
+                </div>
+              </form>
             )}
 
-            <motion.div key={activeSection + mode} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="bg-[#0a0a0a] border border-white/10 p-8 rounded-xl shadow-2xl relative overflow-hidden">
-
-              {/* Scanline accent */}
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent opacity-50" />
-
-              {/* ══ ABOUT ══ */}
-              {activeSection === 'about' && (
-                <form onSubmit={onSaveAbout}>
-                  <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
-                    <div className="flex items-center gap-2">
-                      <FileText className="text-cyan-500" size={18} />
-                      <h2 className="text-lg font-bold text-white">EDIT_BIO_DATA</h2>
-                    </div>
-                    <button type="button" onClick={() => openReset('about')}
-                      className="flex items-center gap-1.5 px-3 py-1.5 border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 text-[10px] font-mono transition-colors">
-                      <RotateCcw size={11} /> RESET_TO_DEFAULT
+            {/* ══ SERVICES ══ */}
+            {activeSection === 'services' && (
+              <form onSubmit={onSaveServices}>
+                <div className="flex items-center justify-between mb-8 pb-4 border-b border-border">
+                  <div className="flex items-center gap-2">
+                    <Cpu className="text-accent" size={18} />
+                    <h2 className="text-sm font-bold text-text font-mono tracking-wider uppercase">SYSTEM_MODULES</h2>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => openReset('services')}
+                      className="flex items-center gap-1.5 px-3 py-1.5 border border-border text-textSecondary hover:text-accent hover:border-accent text-xs font-mono transition-colors"
+                    >
+                      <RotateCcw size={12} /> RESET
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAddService}
+                      className="flex items-center gap-2 px-3 py-1.5 border border-border hover:border-accent hover:text-accent text-xs font-mono transition-colors"
+                    >
+                      <Plus size={14} /> NEW_MODULE
                     </button>
                   </div>
+                </div>
 
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <TechInput label="DISPLAY_TITLE" value={about.title}
-                      onChange={(e: any) => setAbout({ ...about, title: e.target.value })} placeholder="e.g. About Me" />
-                    <TechInput label="SUBTITLE_ROLE" value={about.subtitle}
-                      onChange={(e: any) => setAbout({ ...about, subtitle: e.target.value })} placeholder="e.g. Full Stack Developer" />
-                  </div>
-                  <TechInput label="CORE_DESCRIPTION" value={about.description}
-                    onChange={(e: any) => setAbout({ ...about, description: e.target.value })} type="textarea" placeholder="Enter main biography..." />
-                  <TechInput label="SKILL_MATRIX (CSV)" value={about.skills}
-                    onChange={(e: any) => setAbout({ ...about, skills: e.target.value })} placeholder="React, Node, AI, etc." />
-
-                  <div className="mt-8 flex justify-end">
-                    <SaveButton label="COMMIT_CHANGES" />
-                  </div>
-                </form>
-              )}
-
-              {/* ══ SERVICES ══ */}
-              {activeSection === 'services' && (
-                <form onSubmit={onSaveServices}>
-                  <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
-                    <div className="flex items-center gap-2">
-                      <Cpu className="text-cyan-500" size={18} />
-                      <h2 className="text-lg font-bold text-white">SYSTEM_MODULES</h2>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button type="button" onClick={() => openReset('services')}
-                        className="flex items-center gap-1.5 px-3 py-1.5 border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 text-[10px] font-mono transition-colors">
-                        <RotateCcw size={11} /> RESET
-                      </button>
-                      <button type="button" onClick={handleAddService}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-cyan-500/10 text-cyan-400 text-xs hover:bg-cyan-500/20 transition-colors border border-cyan-500/20 rounded">
-                        <Plus size={14} /> NEW_MODULE
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6">
-                    {target.map((service, index) => (
-                      <div key={service.id}
-                        className="group border border-white/10 bg-background/20 p-6 rounded relative hover:border-white/20 transition-colors">
-                        <div className="absolute -left-[1px] top-0 bottom-0 w-[2px] bg-gray-800 group-hover:bg-cyan-500 transition-colors" />
-                        <div className="flex justify-between items-start mb-4">
-                          <span className="text-xs text-gray-600 font-mono">MODULE_0{index + 1}</span>
-                          <button type="button" onClick={() => handleRemoveService(service.id)}
-                            className="text-gray-600 hover:text-red-500 transition-colors">
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <TechInput label="MODULE_NAME" value={service.title}
-                            onChange={(e: any) => handleUpdateService(service.id, 'title', e.target.value)} />
-                          <TechInput label="ICON_KEY" value={service.icon}
-                            onChange={(e: any) => handleUpdateService(service.id, 'icon', e.target.value)} />
-                        </div>
-                        <TechInput label="FUNCTION_DESC" value={service.description}
-                          onChange={(e: any) => handleUpdateService(service.id, 'description', e.target.value)}
-                          type="textarea" rows={2} />
+                <div className="space-y-6">
+                  {target.map((service, index) => (
+                    <div
+                      key={service.id}
+                      className="group bg-surface border border-border flex flex-col hover:border-accent p-6 transition-colors relative"
+                    >
+                      <div className="flex justify-between items-start mb-4">
+                        <span className="text-xs text-textSecondary font-mono uppercase tracking-widest">
+                          MODULE_0{index + 1}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveService(service.id)}
+                          className="text-textSecondary hover:text-error transition-colors p-1"
+                          title="Remove Module"
+                        >
+                          <Trash2 size={16} />
+                        </button>
                       </div>
-                    ))}
-                  </div>
-
-                  {target.length > 0 && (
-                    <div className="mt-8 flex justify-end">
-                      <SaveButton label="UPDATE_MODULES" />
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <TechInput
+                          label="MODULE_NAME"
+                          value={service.title}
+                          onChange={(e: any) => handleUpdateService(service.id, 'title', e.target.value)}
+                        />
+                        <TechInput
+                          label="ICON_KEY"
+                          value={service.icon}
+                          onChange={(e: any) => handleUpdateService(service.id, 'icon', e.target.value)}
+                        />
+                      </div>
+                      <TechInput
+                        label="FUNCTION_DESC"
+                        value={service.description}
+                        onChange={(e: any) => handleUpdateService(service.id, 'description', e.target.value)}
+                        type="textarea"
+                        rows={2}
+                      />
                     </div>
-                  )}
-                </form>
-              )}
+                  ))}
+                </div>
 
-              {/* ══ CONTACT ══ */}
-              {activeSection === 'contact' && (
-                <form onSubmit={onSaveContact}>
-                  <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
-                    <div className="flex items-center gap-2">
-                      <Mail className="text-cyan-500" size={18} />
-                      <h2 className="text-lg font-bold text-white">UPLINK_CONFIG</h2>
-                    </div>
-                    <button type="button" onClick={() => openReset('contact')}
-                      className="flex items-center gap-1.5 px-3 py-1.5 border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 text-[10px] font-mono transition-colors">
-                      <RotateCcw size={11} /> RESET_TO_DEFAULT
-                    </button>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <TechInput label="CONTACT_EMAIL" value={contact.email}
-                      onChange={(e: any) => setContact({ ...contact, email: e.target.value })} />
-                    <TechInput label="PHONE_NO" value={contact.phone}
-                      onChange={(e: any) => setContact({ ...contact, phone: e.target.value })} />
-                  </div>
-                  <TechInput label="PHYSICAL_LOCATION" value={contact.location}
-                    onChange={(e: any) => setContact({ ...contact, location: e.target.value })} />
-                  <TechInput label="CURRENT_STATUS" value={contact.availability}
-                    onChange={(e: any) => setContact({ ...contact, availability: e.target.value })} />
-
+                {target.length > 0 && (
                   <div className="mt-8 flex justify-end">
-                    <SaveButton label="SYNC_CONTACT_INFO" />
+                    <SaveButton label="UPDATE_MODULES" />
                   </div>
-                </form>
-              )}
-            </motion.div>
-          </div>
+                )}
+              </form>
+            )}
+
+            {/* ══ CONTACT ══ */}
+            {activeSection === 'contact' && (
+              <form onSubmit={onSaveContact}>
+                <div className="flex items-center justify-between mb-8 pb-4 border-b border-border">
+                  <div className="flex items-center gap-2">
+                    <Mail className="text-accent" size={18} />
+                    <h2 className="text-sm font-bold text-text font-mono tracking-wider uppercase">UPLINK_CONFIG</h2>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => openReset('contact')}
+                    className="flex items-center gap-1.5 px-3 py-1.5 border border-border text-textSecondary hover:text-accent hover:border-accent text-xs font-mono transition-colors"
+                  >
+                    <RotateCcw size={12} /> RESET_TO_DEFAULT
+                  </button>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  <TechInput
+                    label="CONTACT_EMAIL"
+                    value={contact.email}
+                    onChange={(e: any) => setContact({ ...contact, email: e.target.value })}
+                  />
+                  <TechInput
+                    label="PHONE_NO"
+                    value={contact.phone}
+                    onChange={(e: any) => setContact({ ...contact, phone: e.target.value })}
+                  />
+                </div>
+                <TechInput
+                  label="PHYSICAL_LOCATION"
+                  value={contact.location}
+                  onChange={(e: any) => setContact({ ...contact, location: e.target.value })}
+                />
+                <TechInput
+                  label="CURRENT_STATUS"
+                  value={contact.availability}
+                  onChange={(e: any) => setContact({ ...contact, availability: e.target.value })}
+                />
+
+                <div className="mt-8 flex justify-end">
+                  <SaveButton label="SYNC_CONTACT_INFO" />
+                </div>
+              </form>
+            )}
+          </motion.div>
         </div>
       </div>
 
@@ -404,3 +481,4 @@ const ContentManager = () => {
 };
 
 export default ContentManager;
+

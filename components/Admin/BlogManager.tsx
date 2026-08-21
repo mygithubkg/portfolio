@@ -9,7 +9,7 @@ import ResetToDefaultModal from './ResetToDefaultModal';
 // Reusable Input Component
 const TechInput = ({ label, name, value, onChange, placeholder, type = "text", required = false, rows }: any) => (
   <div className="group relative">
-    <label className="block text-[10px] font-mono text-cyan-600 mb-1 uppercase tracking-widest group-focus-within:text-cyan-400">
+    <label className="block text-[10px] font-mono text-textSecondary mb-1 uppercase tracking-widest group-focus-within:text-accent">
       {label} {required && '*'}
     </label>
     {type === 'textarea' ? (
@@ -20,7 +20,7 @@ const TechInput = ({ label, name, value, onChange, placeholder, type = "text", r
         rows={rows || 3}
         placeholder={placeholder}
         required={required}
-        className="w-full bg-background/40 border border-white/10 p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors resize-none placeholder-gray-700"
+        className="w-full bg-background border border-border p-3 text-text font-mono text-xs focus:border-accent focus:outline-none transition-colors resize-none placeholder-textSecondary/40"
       />
     ) : (
       <input
@@ -30,15 +30,11 @@ const TechInput = ({ label, name, value, onChange, placeholder, type = "text", r
         onChange={onChange}
         placeholder={placeholder}
         required={required}
-        className="w-full bg-background/40 border border-white/10 p-3 text-white font-mono text-xs focus:border-cyan-500 focus:outline-none transition-colors placeholder-gray-700"
+        className="w-full bg-background border border-border p-3 text-text font-mono text-xs focus:border-accent focus:outline-none transition-colors placeholder-textSecondary/40"
       />
     )}
   </div>
 );
-
-const LIVE_TAB = 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30';
-const DEFAULT_TAB = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
-const INACTIVE_TAB = 'text-textSecondary hover:text-white border-transparent';
 
 const BlogManager = () => {
   const [mode, setMode] = useState('live');
@@ -105,7 +101,9 @@ const BlogManager = () => {
     e.preventDefault();
     const blogData = {
       ...formData,
-      hashtags: formData.hashtags.split(',').map((t: string) => t.trim()).filter((t: string) => t),
+      hashtags: typeof formData.hashtags === 'string'
+        ? formData.hashtags.split(',').map((t: string) => t.trim()).filter((t: string) => t)
+        : formData.hashtags,
     };
 
     try {
@@ -164,157 +162,210 @@ const BlogManager = () => {
   };
 
   return (
-    <div className="min-h-screen p-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 pb-6 border-b border-white/10 gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-            <BookOpen className="text-cyan-500" size={24} />
-            BLOG MANAGEMENT
-          </h2>
-          <p className="text-xs font-mono text-textSecondary mt-1">
-            SYSTEM_STATUS: {blogs.length} ENTRIES_LOADED
-          </p>
+    <div className="w-full relative z-10 flex flex-col min-h-full">
+      {/* --- HEADER --- */}
+      <div className="border-b border-border mb-12 pb-8">
+        <div className="font-mono text-[10px] uppercase tracking-widest text-textSecondary mb-4">
+          / ROOT / BLOGS_DB
         </div>
-
-        <div className="flex items-center gap-2 flex-wrap">
-          {/* Mode toggle */}
-          <div className="flex gap-1 bg-background/5 border border-white/10 p-1">
-            {[['live', '⬤ LIVE_DATA', LIVE_TAB], ['defaults', '◎ DEFAULTS', DEFAULT_TAB]].map(([val, label, active]) => (
-              <button key={val} onClick={() => setMode(val)}
-                className={`px-4 py-2 text-xs font-mono transition-all border ${mode === val ? active : INACTIVE_TAB}`}>
-                {label}
-              </button>
-            ))}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+          <div>
+            <h1 className="font-display text-5xl xl:text-6xl text-text tracking-tight">
+              Journal Entries.
+            </h1>
+            <p className="text-xs font-mono text-textSecondary mt-2 uppercase tracking-widest">
+              SYSTEM_STATUS: {blogs.length} ENTRIES_LOADED
+            </p>
           </div>
-          <button
-            onClick={() => handleOpenModal()}
-            className="flex items-center gap-2 px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 text-cyan-400 font-mono text-xs transition-all"
-          >
-            <Plus size={16} /> ADD_NEW_POST
-          </button>
+
+          <div className="flex items-center gap-4 flex-wrap">
+            {/* Mode toggle */}
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setMode('live')}
+                className={`px-4 py-2 font-mono text-xs transition-colors border ${mode === 'live' ? 'border-accent text-accent' : 'border-transparent text-textSecondary hover:text-text'}`}
+              >
+                [ LIVE_DATA ]
+              </button>
+              <button 
+                onClick={() => setMode('defaults')}
+                className={`px-4 py-2 font-mono text-xs transition-colors border ${mode === 'defaults' ? 'border-accent text-accent' : 'border-transparent text-textSecondary hover:text-text'}`}
+              >
+                [ DEFAULTS ]
+              </button>
+            </div>
+
+            <button
+              onClick={() => handleOpenModal()}
+              className="border border-border hover:border-accent hover:text-accent px-4 py-2 font-mono text-xs transition-colors flex items-center gap-2 text-text"
+            >
+              <Plus size={14} />
+              + Initialize New Entry
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Status bar */}
       <AnimatePresence>
         {status && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            className={`mb-6 px-4 py-2 text-xs font-mono border ${status.isError ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-green-500/10 border-green-500/30 text-green-400'}`}>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className={`mb-6 px-4 py-2 text-xs font-mono border ${status.isError ? 'bg-error/10 border-error/30 text-error' : 'bg-success/10 border-success/30 text-success'}`}
+          >
             {status.msg}
           </motion.div>
         )}
       </AnimatePresence>
 
       {mode === 'defaults' && (
-        <div className="mb-6 px-4 py-2 bg-amber-500/5 border border-amber-500/20 text-amber-400 text-xs font-mono">
+        <div className="mb-6 px-4 py-2 bg-accent/5 border border-accent/20 text-accent text-xs font-mono">
           ◎ EDITING DEFAULTS — Changes here do not affect live visitors.
         </div>
       )}
 
-      {/* Blog List */}
+      {/* --- GRID LAYOUT --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {blogs.map((blog) => (
-          <motion.div
-            key={blog.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-[#0a0a0a] border border-white/10 p-6 hover:border-cyan-500/50 transition-all"
-          >
-            {/* Blog Header */}
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex-1">
-                <span className="text-[9px] font-mono text-gray-600">{blog.id}</span>
-                <h3 className="text-base font-bold text-white mt-1 line-clamp-2">{blog.title}</h3>
-                <div className="flex items-center gap-2 mt-2 text-[10px] text-textSecondary font-mono">
-                  <Calendar size={10} />
-                  <span>{blog.publishDate}</span>
-                  <span>•</span>
-                  <Eye size={10} />
-                  <span>{blog.views || 0}</span>
+        <AnimatePresence>
+          {blogs.map((blog, index) => (
+            <motion.div
+              key={blog.id}
+              layout
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.2, delay: index * 0.02 }}
+              className="bg-surface border border-border flex flex-col hover:border-accent transition-colors overflow-hidden group relative"
+            >
+              {/* Image Preview on Top if present */}
+              {blog.imageUrl && (
+                <div className="w-full aspect-video border-b border-border bg-background relative overflow-hidden">
+                  <img
+                    src={blog.imageUrl}
+                    alt={blog.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                </div>
+              )}
+
+              {/* Content */}
+              <div className="p-6 flex-1 flex flex-col">
+                {/* Header & Meta */}
+                <div className="flex justify-between items-start mb-3">
+                  <span className="font-mono text-[10px] text-textSecondary uppercase tracking-widest">{blog.id}</span>
+                  <div className="flex items-center gap-2 text-[10px] text-textSecondary font-mono uppercase tracking-widest">
+                    <Calendar size={11} />
+                    <span>{blog.publishDate}</span>
+                    <span>•</span>
+                    <Eye size={11} />
+                    <span>{blog.views || 0}</span>
+                  </div>
+                </div>
+
+                <h3 className="font-sans font-bold text-lg text-text mb-2 line-clamp-2 group-hover:text-accent transition-colors">
+                  {blog.title}
+                </h3>
+
+                <div className="space-y-1.5 mb-4 font-mono text-[10px] text-textSecondary uppercase tracking-widest">
+                  <div className="flex items-center gap-2">
+                    <User size={12} className="text-textSecondary" />
+                    <span className="text-text">{blog.author}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Tag size={12} className="text-textSecondary" />
+                    <span className="text-text">{blog.category}</span>
+                  </div>
+                </div>
+
+                {/* Excerpt */}
+                <p className="text-xs text-textSecondary mb-4 line-clamp-2 flex-1 leading-relaxed">
+                  {blog.excerpt}
+                </p>
+
+                {/* Hashtags */}
+                {blog.hashtags && blog.hashtags.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-6">
+                    {blog.hashtags.slice(0, 3).map((tag: string, i: number) => (
+                      <span key={i} className="text-[10px] font-mono text-accent bg-accent/10 border border-accent/20 px-2 py-0.5">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="mt-auto pt-4 border-t border-border flex justify-between items-center">
+                  <span className="font-mono text-[10px] text-textSecondary">{blog.readTime || '5 min read'}</span>
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => handleOpenModal(blog)}
+                      className="text-textSecondary hover:text-accent transition-colors uppercase font-mono text-[10px] tracking-widest flex items-center gap-1"
+                    >
+                      <Edit size={12} /> EDIT
+                    </button>
+                    <button
+                      onClick={() => openDeleteModal(blog)}
+                      className="text-textSecondary hover:text-error transition-colors uppercase font-mono text-[10px] tracking-widest flex items-center gap-1"
+                    >
+                      <Trash2 size={12} /> DELETE
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Blog Info */}
-            <div className="space-y-2 mb-4">
-              <div className="flex items-center gap-2 text-xs">
-                <User size={12} className="text-gray-600" />
-                <span className="text-gray-400">{blog.author}</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs">
-                <Tag size={12} className="text-gray-600" />
-                <span className="text-gray-400">{blog.category}</span>
-              </div>
-            </div>
-
-            {/* Excerpt */}
-            <p className="text-xs text-textSecondary mb-4 line-clamp-2">{blog.excerpt}</p>
-
-            {/* Hashtags */}
-            <div className="flex flex-wrap gap-1 mb-4">
-              {blog.hashtags?.slice(0, 3).map((tag: string, i: number) => (
-                <span key={i} className="text-[9px] font-mono text-cyan-500 bg-cyan-500/10 px-2 py-0.5">
-                  #{tag}
-                </span>
-              ))}
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-2 pt-4 border-t border-white/5">
-              <button
-                onClick={() => handleOpenModal(blog)}
-                className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-background/5 hover:bg-background/10 border border-white/10 text-white text-[10px] font-mono transition-all"
-              >
-                <Edit size={12} /> EDIT
-              </button>
-              <button
-                onClick={() => openDeleteModal(blog)}
-                className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-red-500/10 hover:red-500/20 border border-red-500/30 text-red-400 text-[10px] font-mono transition-all"
-              >
-                <Trash2 size={12} /> DELETE
-              </button>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
 
-      {/* Add/Edit Modal */}
+      {/* --- EMPTY STATE --- */}
+      {blogs.length === 0 && (
+        <div className="border border-dashed border-border rounded-none p-20 text-center">
+          <BookOpen size={40} className="mx-auto text-textSecondary mb-4 opacity-40" />
+          <p className="text-textSecondary font-mono text-xs uppercase tracking-widest">DATABASE_EMPTY // NO_ENTRIES_FOUND</p>
+        </div>
+      )}
+
+      {/* --- ADD/EDIT MODAL --- */}
       <AnimatePresence>
         {isModalOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-background/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={() => setIsModalOpen(false)}
-          >
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsModalOpen(false)}
+              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+            />
+
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-[#0a0a0a] border border-cyan-500/30 w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-4xl bg-surface border border-border shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             >
               {/* Modal Header */}
-              <div className="sticky top-0 bg-[#0a0a0a] border-b border-white/10 p-6 flex justify-between items-center z-10">
-                <h3 className="text-lg font-bold text-white font-mono flex items-center gap-2">
-                  <BookOpen className="text-cyan-500" />
-                  {editingBlog ? 'EDIT_BLOG_ENTRY' : 'NEW_BLOG_ENTRY'}
-                </h3>
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-background/50">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-accent animate-pulse" />
+                  <h2 className="text-xs font-mono font-bold text-text uppercase tracking-widest">
+                    {editingBlog ? 'MODIFY_JOURNAL_ENTRY' : 'INITIALIZE_JOURNAL_ENTRY'}
+                  </h2>
+                </div>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="text-textSecondary hover:text-white transition-colors"
+                  className="text-textSecondary hover:text-text transition-colors"
                 >
-                  <X size={20} />
+                  <X size={18} />
                 </button>
               </div>
 
               {/* Modal Form */}
-              <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <TechInput
-                    label="Title"
+                    label="ENTRY_TITLE"
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
@@ -322,7 +373,7 @@ const BlogManager = () => {
                     required
                   />
                   <TechInput
-                    label="Author"
+                    label="AUTHOR"
                     name="author"
                     value={formData.author}
                     onChange={handleChange}
@@ -333,7 +384,7 @@ const BlogManager = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <TechInput
-                    label="Publish Date"
+                    label="PUBLISH_DATE"
                     name="publishDate"
                     type="date"
                     value={formData.publishDate}
@@ -341,7 +392,7 @@ const BlogManager = () => {
                     required
                   />
                   <TechInput
-                    label="Category"
+                    label="CATEGORY"
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
@@ -349,7 +400,7 @@ const BlogManager = () => {
                     required
                   />
                   <TechInput
-                    label="Read Time"
+                    label="READ_TIME"
                     name="readTime"
                     value={formData.readTime}
                     onChange={handleChange}
@@ -358,7 +409,7 @@ const BlogManager = () => {
                 </div>
 
                 <TechInput
-                  label="Hashtags"
+                  label="HASHTAGS"
                   name="hashtags"
                   value={formData.hashtags}
                   onChange={handleChange}
@@ -366,7 +417,7 @@ const BlogManager = () => {
                 />
 
                 <TechInput
-                  label="Image URL"
+                  label="IMAGE_ASSET_URL"
                   name="imageUrl"
                   value={formData.imageUrl}
                   onChange={handleChange}
@@ -374,7 +425,7 @@ const BlogManager = () => {
                 />
 
                 <TechInput
-                  label="Excerpt"
+                  label="EXCERPT"
                   name="excerpt"
                   type="textarea"
                   rows={3}
@@ -385,10 +436,10 @@ const BlogManager = () => {
                 />
 
                 <TechInput
-                  label="Content (Markdown Supported)"
+                  label="CONTENT (MARKDOWN)"
                   name="content"
                   type="textarea"
-                  rows={15}
+                  rows={12}
                   value={formData.content}
                   onChange={handleChange}
                   placeholder="Full blog content with markdown formatting..."
@@ -396,53 +447,75 @@ const BlogManager = () => {
                 />
 
                 {/* Submit Button */}
-                <div className="flex gap-3 pt-4">
-                  <button
-                    type="submit"
-                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 text-cyan-400 font-mono text-sm transition-all"
-                  >
-                    <Save size={16} />
-                    {editingBlog ? 'UPDATE_ENTRY' : 'CREATE_ENTRY'}
-                  </button>
+                <div className="flex gap-4 pt-4 border-t border-border">
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="px-6 py-3 bg-background/5 hover:bg-background/10 border border-white/10 text-gray-400 font-mono text-sm transition-all"
+                    className="flex-1 py-3 border border-border text-textSecondary hover:text-text hover:bg-background/50 font-mono text-xs font-bold transition-colors uppercase tracking-widest"
                   >
-                    CANCEL
+                    ABORT
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 py-3 bg-accent text-background hover:opacity-90 font-mono text-xs font-bold transition-opacity flex items-center justify-center gap-2 uppercase tracking-widest"
+                  >
+                    <Save size={14} />
+                    {editingBlog ? 'UPDATE_RECORD' : 'EXECUTE_WRITE'}
                   </button>
                 </div>
               </form>
             </motion.div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
-      {/* Delete confirmation modal */}
+
+      {/* --- DELETE CONFIRMATION MODAL --- */}
       <AnimatePresence>
         {deleteModal.open && (
           <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               onClick={() => setDeleteModal({ open: false, blogId: null, blogTitle: '' })}
-              className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="relative w-full max-w-md bg-[#0a0a0a] border border-red-500/50 shadow-2xl z-10">
-              <div className="flex items-center gap-2 px-6 py-4 border-b border-red-500/30 bg-red-500/10">
-                <AlertTriangle size={18} className="text-red-500" />
-                <h2 className="text-sm font-bold text-white font-mono">DELETION_WARNING</h2>
-                <button onClick={() => setDeleteModal({ open: false, blogId: null, blogTitle: '' })} className="ml-auto text-textSecondary hover:text-white"><X size={18} /></button>
+              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-md bg-surface border border-error/50 shadow-2xl overflow-hidden"
+            >
+              <div className="flex items-center justify-between px-6 py-4 border-b border-error/30 bg-error/10">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle size={18} className="text-error" />
+                  <h2 className="text-xs font-bold text-text font-mono tracking-widest uppercase">DELETION_WARNING</h2>
+                </div>
+                <button
+                  onClick={() => setDeleteModal({ open: false, blogId: null, blogTitle: '' })}
+                  className="text-textSecondary hover:text-text transition-colors"
+                >
+                  <X size={18} />
+                </button>
               </div>
               <div className="p-6">
-                <p className="text-gray-300 text-sm mb-3">Permanently delete:</p>
-                <div className="bg-background/5 border border-white/10 p-3 mb-6 font-mono">
-                  <p className="text-cyan-400 text-sm font-bold">{deleteModal.blogTitle}</p>
-                  <p className="text-gray-600 text-xs mt-1">{deleteModal.blogId}</p>
+                <p className="text-textSecondary text-xs font-mono uppercase tracking-widest mb-3">Permanently delete entry:</p>
+                <div className="bg-background border border-border p-4 mb-6 font-mono">
+                  <p className="text-text text-sm font-bold">{deleteModal.blogTitle}</p>
+                  <p className="text-textSecondary text-xs mt-1">ID: {deleteModal.blogId}</p>
                 </div>
-                <p className="text-red-400 text-xs font-mono mb-6">⚠ THIS ACTION CANNOT BE UNDONE</p>
-                <div className="flex gap-3">
-                  <button onClick={() => setDeleteModal({ open: false, blogId: null, blogTitle: '' })}
-                    className="flex-1 py-3 border border-white/10 text-gray-400 hover:text-white hover:bg-background/5 text-xs font-bold font-mono">CANCEL</button>
-                  <button onClick={handleDelete}
-                    className="flex-1 py-3 bg-red-500 hover:bg-red-400 text-white text-xs font-bold font-mono flex items-center justify-center gap-2">
+                <p className="text-error text-xs font-mono mb-6 uppercase tracking-widest">⚠️ THIS ACTION CANNOT BE UNDONE</p>
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => setDeleteModal({ open: false, blogId: null, blogTitle: '' })}
+                    className="flex-1 py-3 border border-border text-textSecondary hover:text-text hover:bg-background text-xs font-bold font-mono uppercase tracking-widest transition-colors"
+                  >
+                    CANCEL
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    className="flex-1 py-3 bg-error text-white hover:bg-error/90 text-xs font-bold font-mono uppercase tracking-widest flex items-center justify-center gap-2 transition-colors"
+                  >
                     <Trash2 size={14} /> CONFIRM_DELETE
                   </button>
                 </div>
@@ -463,8 +536,10 @@ const BlogManager = () => {
 
       {/* Reset button (floating) */}
       <div className="fixed bottom-6 right-6 z-50">
-        <button onClick={() => setShowReset(true)}
-          className="flex items-center gap-2 px-4 py-3 bg-[#0a0a0a] border border-amber-500/40 text-amber-400 hover:bg-amber-500/10 text-xs font-mono transition-colors shadow-xl">
+        <button
+          onClick={() => setShowReset(true)}
+          className="flex items-center gap-2 px-4 py-3 bg-surface border border-accent/40 text-accent hover:bg-accent/10 text-xs font-mono transition-colors shadow-xl"
+        >
           <RotateCcw size={14} /> RESET_BLOGS_TO_DEFAULT
         </button>
       </div>
