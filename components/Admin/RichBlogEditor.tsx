@@ -42,9 +42,7 @@ export default function RichBlogEditor({ content, onChange, isMobile = false }: 
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        codeBlock: false, // disable starter-kit code block to avoid conflicts if we add specific ones, but we'll use default
-      }),
+      StarterKit,
       ImageExtension.configure({
         HTMLAttributes: { class: 'tiptap-image' },
       }),
