@@ -395,8 +395,13 @@ const MobileView = ({ projects, blogs, skills }: { projects: any[], blogs: any[]
 export default function Home() {
   const { data } = useData();
   
-  // Constrain to exactly 3 projects
-  const projects = data?.projects?.slice(0, 3) || [];
+  // Show the 3 spotlight projects (sorted by rank), falling back to first 3 if none set
+  const allProjects = data?.projects || [];
+  const spotlightSorted = allProjects
+    .filter((p: any) => p.spotlightRank > 0)
+    .sort((a: any, b: any) => a.spotlightRank - b.spotlightRank)
+    .slice(0, 3);
+  const projects = spotlightSorted.length > 0 ? spotlightSorted : allProjects.slice(0, 3);
   
   const techStack = data?.techStack || [];
   const skills = techStack.length > 0 ? techStack.map((t: any) => t.name) : ["React", "Next.js", "Python", "Generative AI", "Firebase", "Node.js", "TypeScript"];

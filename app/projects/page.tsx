@@ -257,16 +257,15 @@ export default function Projects() {
   const [selectedProject, setSelectedProject] = useState<any>(null);
   const projects = data?.projects || [];
 
-  // 1. Filter out the chosen Spotlight projects
-  const spotlightNames = ["Personal Portfolio", "AI Summary Pro", "Voice-Enabled Commerce"];
-  
-  // We want to keep the exact order of the spotlightNames array
-  const spotlightProjects = spotlightNames.map(name => 
-    projects.find((p: any) => p.title === name)
-  ).filter(Boolean);
+  // 1. Filter Spotlight projects by the spotlightRank field set in the admin panel
+  // Sort them in order: rank 1, 2, 3
+  const spotlightProjects = projects
+    .filter((p: any) => p.spotlightRank > 0)
+    .sort((a: any, b: any) => a.spotlightRank - b.spotlightRank)
+    .slice(0, 3);
 
-  // 2. The rest become Archive projects
-  const archiveProjects = projects.filter((p: any) => !spotlightNames.includes(p.title));
+  // 2. The rest become Archive projects (no spotlightRank or rank 0)
+  const archiveProjects = projects.filter((p: any) => !p.spotlightRank || p.spotlightRank === 0);
 
   return (
     <div className="w-full relative">

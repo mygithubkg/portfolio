@@ -40,18 +40,26 @@ const DesktopView = ({
   handleExport, exportIncludeDefaults, setExportIncludeDefaults, 
   handleImport, handleLogout, firebaseUser, renderActiveManager 
 }: any) => {
+  const [collapsed, setCollapsed] = React.useState(false);
   return (
     <div className="hidden lg:flex h-screen w-full overflow-hidden bg-background">
       {/* The Left Sidebar (The Actual Header) */}
-      <aside className="w-64 shrink-0 h-full border-r border-border bg-surface flex flex-col z-20">
-        {/* Top Branding */}
-        <div className="h-20 flex items-center px-8 border-b border-border shrink-0">
-          <span className="font-mono font-bold tracking-widest text-sm text-text">K.G. // ADMIN_CORE</span>
+      <aside className={`${collapsed ? 'w-16' : 'w-64'} shrink-0 h-full border-r border-border bg-surface flex flex-col z-20 transition-all duration-300`}>
+        {/* Top Branding + Collapse Toggle */}
+        <div className="h-20 flex items-center justify-between px-4 border-b border-border shrink-0">
+          {!collapsed && <span className="font-mono font-bold tracking-widest text-sm text-text">K.G. // ADMIN_CORE</span>}
+          <button
+            onClick={() => setCollapsed(c => !c)}
+            className={`p-2 text-textSecondary hover:text-text transition-colors ${collapsed ? 'mx-auto' : 'ml-auto'}`}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            <Menu size={18} />
+          </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 py-8 space-y-2 overflow-y-auto px-4">
-          <div className="text-[10px] text-textSecondary mb-4 pl-4 font-bold tracking-widest uppercase font-mono">Modules</div>
+        <nav className="flex-1 py-8 space-y-2 overflow-y-auto px-2">
+          {!collapsed && <div className="text-[10px] text-textSecondary mb-4 pl-4 font-bold tracking-widest uppercase font-mono">Modules</div>}
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -59,56 +67,68 @@ const DesktopView = ({
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-4 px-4 py-3 transition-all duration-200 ${
+                title={collapsed ? item.label : undefined}
+                className={`w-full flex items-center ${collapsed ? 'justify-center px-2' : 'gap-4 px-4'} py-3 transition-all duration-200 ${
                   isActive
                     ? 'text-accent font-bold border-l-2 border-accent bg-background/50'
                     : 'text-textSecondary hover:text-text border-l-2 border-transparent hover:bg-background/30'
                 }`}
               >
                 <Icon size={16} />
-                <span className="uppercase tracking-widest font-mono text-xs">{item.label}</span>
+                {!collapsed && <span className="uppercase tracking-widest font-mono text-xs">{item.label}</span>}
               </button>
             );
           })}
         </nav>
 
         {/* Bottom Actions */}
-        <div className="p-6 border-t border-border space-y-4 shrink-0 bg-background/30">
-          <div className="text-[10px] text-textSecondary font-bold tracking-widest uppercase font-mono mb-2">Data_Ops</div>
+        <div className={`border-t border-border shrink-0 bg-background/30 ${collapsed ? 'p-2 space-y-2 flex flex-col items-center' : 'p-6 space-y-4'}`}>
+          {!collapsed && <div className="text-[10px] text-textSecondary font-bold tracking-widest uppercase font-mono mb-2">Data_Ops</div>}
 
           <button
             onClick={handleSeedDefaults}
-            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-mono text-text hover:text-accent hover:bg-surface rounded border border-border transition-colors"
+            title="SEED_DEFAULTS"
+            className={`flex items-center gap-2 text-xs font-mono text-text hover:text-accent hover:bg-surface rounded border border-border transition-colors ${collapsed ? 'p-2 justify-center' : 'w-full px-3 py-2'}`}
           >
             <Layers size={14} />
-            {seedStatus || 'SEED_DEFAULTS'}
+            {!collapsed && (seedStatus || 'SEED_DEFAULTS')}
           </button>
 
-          <div className="flex items-center gap-2 px-3 py-2 rounded border border-border hover:bg-surface transition-colors group">
-            <button onClick={handleExport} className="flex items-center gap-2 text-xs font-mono text-textSecondary group-hover:text-text flex-1 text-left">
-              <Download size={14} /> EXPORT
-            </button>
-            <label className="flex items-center gap-1 cursor-pointer shrink-0">
-              <input type="checkbox" checked={exportIncludeDefaults} onChange={e => setExportIncludeDefaults(e.target.checked)} className="w-3 h-3 accent-accent" />
-              <span className="text-[9px] font-mono text-textSecondary">+DEF</span>
-            </label>
-          </div>
+          {!collapsed && (
+            <div className="flex items-center gap-2 px-3 py-2 rounded border border-border hover:bg-surface transition-colors group">
+              <button onClick={handleExport} className="flex items-center gap-2 text-xs font-mono text-textSecondary group-hover:text-text flex-1 text-left">
+                <Download size={14} /> EXPORT
+              </button>
+              <label className="flex items-center gap-1 cursor-pointer shrink-0">
+                <input type="checkbox" checked={exportIncludeDefaults} onChange={e => setExportIncludeDefaults(e.target.checked)} className="w-3 h-3 accent-accent" />
+                <span className="text-[9px] font-mono text-textSecondary">+DEF</span>
+              </label>
+            </div>
+          )}
 
-          <label className="w-full flex items-center gap-2 px-3 py-2 text-xs font-mono text-textSecondary hover:text-text hover:bg-surface rounded border border-border transition-colors cursor-pointer">
-            <Upload size={14} /> IMPORT
+          {collapsed && (
+            <button onClick={handleExport} title="EXPORT" className="p-2 text-xs font-mono text-textSecondary hover:text-text hover:bg-surface rounded border border-border transition-colors">
+              <Download size={14} />
+            </button>
+          )}
+
+          <label className={`flex items-center gap-2 text-xs font-mono text-textSecondary hover:text-text hover:bg-surface rounded border border-border transition-colors cursor-pointer ${collapsed ? 'p-2 justify-center' : 'w-full px-3 py-2'}`}>
+            <Upload size={14} />
+            {!collapsed && 'IMPORT'}
             <input type="file" accept=".json" onChange={handleImport} className="hidden" />
           </label>
 
-          <div className="h-px w-full bg-border my-4" />
+          {!collapsed && <div className="h-px w-full bg-border my-2" />}
 
-          {firebaseUser && (
+          {firebaseUser && !collapsed && (
             <div className="px-3 py-2 text-[10px] text-textSecondary font-mono truncate border border-border rounded bg-surface">
               <span className="text-success mr-2">●</span>{firebaseUser.email}
             </div>
           )}
 
-          <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-3 py-2 mt-2 text-xs font-mono text-error hover:bg-error/10 rounded transition-colors border border-transparent hover:border-error/20">
-            <LogOut size={14} /> TERMINATE
+          <button onClick={handleLogout} title="TERMINATE" className={`flex items-center justify-center gap-2 text-xs font-mono text-error hover:bg-error/10 rounded transition-colors border border-transparent hover:border-error/20 ${collapsed ? 'p-2' : 'w-full px-3 py-2 mt-2'}`}>
+            <LogOut size={14} />
+            {!collapsed && 'TERMINATE'}
           </button>
         </div>
       </aside>

@@ -694,20 +694,6 @@ const ProjectsManager = () => {
           </div>
         )}
       </AnimatePresence>
-      <ResetToDefaultModal
-        isOpen={showReset}
-        onClose={() => setShowReset(false)}
-        onConfirm={handleReset}
-        sectionName="Projects"
-        isLoading={isResetting}
-      />
-
-      <div className="fixed bottom-6 right-6 z-50">
-        <button onClick={() => setShowReset(true)}
-          className="flex items-center gap-2 px-4 py-3 bg-surface border border-accent/40 text-accent hover:bg-accent/10 text-xs font-mono transition-colors shadow-xl">
-          <RotateCcw size={14} /> RESET_PROJECTS_TO_DEFAULT
-        </button>
-      </div>
     </div>
   );
 };
