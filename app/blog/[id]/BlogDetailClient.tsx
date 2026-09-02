@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import { incrementBlogViews } from '@/lib/utils/blogData';
 import ReactMarkdown from 'react-markdown';
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
@@ -168,11 +170,18 @@ export default function BlogDetailClient({ blog, id }: { blog: any; id: string }
       prose-strong:text-text prose-strong:font-bold
       prose-ul:text-textSecondary prose-ol:text-textSecondary
       prose-li:marker:text-accent
-      prose-img:rounded-2xl prose-img:border prose-img:border-border prose-img:w-full prose-img:object-cover
+      prose-img:rounded-2xl prose-img:border prose-img:border-border prose-img:w-full prose-img:object-contain prose-img:cursor-zoom-in prose-img:transition-transform prose-img:hover:scale-[1.01]
       prose-code:font-mono prose-code:text-sm prose-code:bg-surface prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:border prose-code:border-border
       prose-pre:bg-surface prose-pre:border prose-pre:border-border prose-pre:rounded-xl prose-pre:p-0
     ">
-      <ReactMarkdown components={mdComponents}>{blog.content}</ReactMarkdown>
+      <ReactMarkdown components={{
+        ...mdComponents,
+        img: ({node, ...props}) => (
+          <Zoom wrapElement="span">
+            <img {...props} className="rounded-2xl border border-border w-full object-contain cursor-zoom-in transition-transform duration-200 hover:scale-[1.01]" />
+          </Zoom>
+        )
+      }}>{blog.content}</ReactMarkdown>
     </div>
   );
 

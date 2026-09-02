@@ -134,8 +134,11 @@ export default function RichBlogEditor({ content, onChange, isMobile = false }: 
         className="hidden"
         onChange={(e) => {
           const file = e.target.files?.[0];
-          if (file) handleImageFile(file, editor);
-          e.target.value = '';
+          if (file) {
+            handleImageFile(file, editor).finally(() => {
+              e.target.value = '';
+            });
+          }
         }}
       />
 

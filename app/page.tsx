@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import ZoomableImage from '@/components/ui/ZoomableImage';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '@/context/DataContext';
 import { getBlogs } from '@/lib/utils/blogData';
@@ -71,11 +72,11 @@ const DesktopView = ({ projects, blogs, skills }: { projects: any[], blogs: any[
                   {/* Image Block (60%) */}
                   <div className="w-[60%] h-[550px] relative rounded-2xl overflow-hidden border border-border bg-background shadow-2xl group">
                     {project.image ? (
-                      <Image 
+                      <ZoomableImage 
                         src={project.image} 
                         alt={project.title} 
                         fill 
-                        className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
+                        className="object-contain opacity-90 group-hover:opacity-100 transition-all duration-700 ease-out"
                         sizes="(max-width: 1400px) 60vw, 840px"
                       />
                     ) : (
@@ -284,7 +285,7 @@ const MobileView = ({ projects, blogs, skills }: { projects: any[], blogs: any[]
               {/* Project Image Frame (Natural Scaling) */}
               {project.image && (
                 <div className="w-full bg-surface rounded-xl overflow-hidden border border-border flex items-center justify-center p-2 mb-4">
-                  <Image 
+                  <ZoomableImage 
                     src={project.image} 
                     alt={project.title} 
                     width={800}

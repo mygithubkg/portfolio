@@ -199,7 +199,7 @@ const DesktopModal = ({ formData, handleChange, handleSubmit, setIsModalOpen, ed
               
               {formData.image && (
                 <div className="mt-4 border border-border bg-background aspect-video flex items-center justify-center overflow-hidden">
-                   <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                   <img src={formData.image} alt="Preview" className="w-full h-full object-contain" />
                 </div>
               )}
             </div>

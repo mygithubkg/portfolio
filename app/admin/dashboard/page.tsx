@@ -1,5 +1,12 @@
 "use client"
 import React, { useState, useEffect } from 'react';
+import * as yup from 'yup';
+import {
+  aboutSchema,
+  contactSchema,
+  projectSchema,
+  blogSchema,
+} from '@/lib/utils/validation';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAdminAuth } from '@/context/AdminAuthContext';
@@ -283,11 +290,23 @@ export default function AdminDashboard() {
       reader.onload = async (event: any) => {
         try {
           const data = JSON.parse(event.target.result);
+          
+          // Validate using Yup schemas
+          if (data.about) await aboutSchema.validate(data.about, { abortEarly: false });
+          if (data.contact) await contactSchema.validate(data.contact, { abortEarly: false });
+          if (data.projects) await yup.array().of(projectSchema).validate(data.projects, { abortEarly: false });
+          if (data.blogs) await yup.array().of(blogSchema).validate(data.blogs, { abortEarly: false });
+
           await importAllData(data);
           alert('SYSTEM_PATCH_SUCCESSFUL');
           window.location.reload();
         } catch (error: any) {
-          alert('ERROR: CORRUPTED_FILE — ' + error.message);
+          if (error instanceof yup.ValidationError) {
+            const errors = error.inner.map((err: any) => `${err.path}: ${err.message}`).join('\n');
+            alert(`VALIDATION_FAILED:\n${errors}`);
+          } else {
+            alert('ERROR: CORRUPTED_FILE — ' + error.message);
+          }
         }
       };
       reader.readAsText(file);

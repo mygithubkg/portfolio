@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import Image from 'next/image';
+import ZoomableImage from '@/components/ui/ZoomableImage';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ArrowUpRight, X } from 'lucide-react';
 import { useData } from '@/context/DataContext';
@@ -38,15 +39,14 @@ const DesktopView = ({ spotlightProjects, archiveProjects, onOpenModal }: any) =
             >
               {/* Image Block (60%) */}
               <div 
-                className="w-[60%] aspect-[4/3] xl:aspect-[16/9] relative rounded-2xl overflow-hidden border border-border shadow-2xl bg-surface group shrink-0 cursor-pointer"
-                onClick={() => onOpenModal(project)}
+                className="w-[60%] aspect-[4/3] xl:aspect-[16/9] relative rounded-2xl overflow-hidden border border-border shadow-2xl bg-surface group shrink-0 cursor-zoom-in"
               >
-                <Image 
+                <ZoomableImage 
                   src={project.image || "/fallback.jpg"} 
                   alt={project.title} 
                   fill 
                   sizes="(max-width: 1600px) 60vw, 900px"
-                  className="object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 ease-out transform group-hover:scale-105" 
+                  className="object-contain grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 ease-out transform group-hover:scale-105" 
                 />
               </div>
               
@@ -126,12 +126,12 @@ const MobileView = ({ spotlightProjects, archiveProjects, onOpenModal }: any) =>
            >
              {/* Image */}
              <div className="w-full aspect-video relative border-b border-border bg-surface">
-               <Image 
+               <ZoomableImage 
                  src={project.image || "/fallback.jpg"} 
                  alt={project.title} 
                  fill 
                  sizes="(max-width: 768px) 90vw, 400px"
-                 className="object-cover grayscale" 
+                 className="object-contain grayscale" 
                />
              </div>
              
@@ -202,8 +202,8 @@ const ProjectModal = ({ project, onClose }: { project: any, onClose: () => void 
         </button>
 
         {project.image && (
-          <div className="w-full aspect-video sm:aspect-[21/9] relative border-b border-border">
-            <Image src={project.image} alt={project.title} fill className="object-cover" />
+          <div className="w-full aspect-video sm:aspect-[21/9] relative border-b border-border bg-surface">
+            <ZoomableImage src={project.image} alt={project.title} fill className="object-contain" />
           </div>
         )}
         

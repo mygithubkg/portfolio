@@ -114,7 +114,7 @@ const DesktopEditor = ({ formData, handleChange, handleSubmit, editingBlog, onCl
                 <div className="space-y-1">
                   <label className="font-mono text-[9px] uppercase tracking-widest text-textSecondary">Cover Image URL</label>
                   <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="https://res.cloudinary.com/..." className="border-b border-border bg-transparent w-full py-2 text-text font-sans text-sm focus:outline-none placeholder-textSecondary/40 focus:border-accent transition-colors" />
-                  {formData.imageUrl && <img src={formData.imageUrl} alt="cover" className="w-full aspect-video object-cover mt-2 border border-border" />}
+                  {formData.imageUrl && <img src={formData.imageUrl} alt="cover" className="w-full aspect-video object-contain mt-2 border border-border" />}
                 </div>
                 <div className="space-y-1">
                   <label className="font-mono text-[9px] uppercase tracking-widest text-textSecondary">Hashtags (comma separated)</label>
@@ -428,7 +428,7 @@ const BlogManager = () => {
                   <img
                     src={blog.imageUrl}
                     alt={blog.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
               )}

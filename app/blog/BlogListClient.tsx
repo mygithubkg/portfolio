@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useSpring, useMotionValue } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import ZoomableImage from '@/components/ui/ZoomableImage';
 import { ArrowRight } from 'lucide-react';
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -195,7 +196,7 @@ function DesktopView({ featuredPosts, archivePosts, router }: any) {
                    }}
                    className="w-[320px] aspect-[4/3] overflow-hidden shadow-2xl border border-border pointer-events-none"
                  >
-                   <Image src={hoveredImage} alt="Preview" fill sizes="320px" className="object-cover" />
+                   <Image src={hoveredImage} alt="Preview" fill sizes="320px" className="object-contain" />
                  </motion.div>
                )}
              </AnimatePresence>
@@ -224,7 +225,7 @@ function MobileView({ featuredPosts, archivePosts, router }: any) {
                className="min-w-[85vw] snap-center flex flex-col gap-6 cursor-pointer"
              >
                <div className="w-full aspect-[4/3] relative rounded-none border border-border bg-surface">
-                 <Image src={post.image || post.coverImage || "/fallback.jpg"} alt={post.title} fill sizes="(max-width: 768px) 85vw" className="object-cover grayscale" />
+                 <ZoomableImage src={post.image || post.coverImage || "/fallback.jpg"} alt={post.title} fill sizes="(max-width: 768px) 85vw" className="object-contain grayscale" />
                </div>
                <div className="flex flex-col gap-2">
                  <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-textSecondary">

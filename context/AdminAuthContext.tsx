@@ -38,7 +38,7 @@ const clearLockout  = () => {
 };
 
 // ─── Session cookie helpers (H-1 fix) ──────────────────────────────────────
-const setSessionCookie  = () => fetch('/api/admin-session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'set'   }) });
+const setSessionCookie  = (idToken: string) => fetch('/api/admin-session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'set', idToken }) });
 const clearSessionCookie = () => fetch('/api/admin-session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'clear' }) });
 
 export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -116,9 +116,14 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+      
+      const idToken = await user.getIdToken();
 
       // Set the httpOnly session cookie for middleware.ts (H-1 fix)
-      await setSessionCookie();
+      const sessionResponse = await setSessionCookie(idToken);
+      if (!sessionResponse.ok) {
+         throw new Error('Failed to set secure session cookie');
+      }
 
       // onAuthStateChanged will handle setIsAuthenticated(true) + CSRF generation
       setLoginAttempts(0);

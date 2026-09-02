@@ -11,7 +11,7 @@ type FieldErrors = { name?: string; email?: string; message?: string };
 const RESET_DELAY_MS = 5000;
 
 // --- DESKTOP VIEW ---
-function DesktopView({ form, status, errorMessage, fieldErrors, handleChange, handleSubmit, socials }: any) {
+function DesktopView({ form, status, errorMessage, fieldErrors, handleChange, handleSubmit, socials, contactDetails }: any) {
   return (
     <div className="hidden lg:grid grid-cols-12 max-w-[1400px] mx-auto min-h-[80vh] items-start pt-24 px-12 pb-32">
       {/* Left Column: The Identity Hook */}
@@ -26,21 +26,34 @@ function DesktopView({ form, status, errorMessage, fieldErrors, handleChange, ha
           </h1>
         </div>
 
-        <div className="mt-auto pt-24 flex flex-col gap-4">
-          <span className="font-mono text-[10px] text-textSecondary uppercase tracking-widest">Global Links</span>
-          <div className="flex flex-col gap-3">
-            {socials.map((social: any) => (
-              <a 
-                key={social.label} 
-                href={social.url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="font-mono text-sm text-text hover:text-accent flex items-center gap-1 group w-fit transition-colors"
-              >
-                <span className="group-hover:underline underline-offset-4 decoration-accent">{social.label}</span>
-                <ArrowRight size={12} className="opacity-50 group-hover:opacity-100 group-hover:-rotate-45 transition-all" />
-              </a>
-            ))}
+        <div className="mt-auto pt-24 flex gap-16">
+          {contactDetails && (
+            <div className="flex flex-col gap-4">
+              <span className="font-mono text-[10px] text-textSecondary uppercase tracking-widest">Direct Comm</span>
+              <div className="flex flex-col gap-2 font-mono text-sm text-text">
+                {contactDetails.email && <div>{contactDetails.email}</div>}
+                {contactDetails.phone && <div>{contactDetails.phone}</div>}
+                {contactDetails.location && <div className="text-textSecondary">{contactDetails.location}</div>}
+                {contactDetails.availability && <div className="text-accent">{contactDetails.availability}</div>}
+              </div>
+            </div>
+          )}
+          <div className="flex flex-col gap-4">
+            <span className="font-mono text-[10px] text-textSecondary uppercase tracking-widest">Global Links</span>
+            <div className="flex flex-col gap-3">
+              {socials.map((social: any) => (
+                <a 
+                  key={social.label} 
+                  href={social.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="font-mono text-sm text-text hover:text-accent flex items-center gap-1 group w-fit transition-colors"
+                >
+                  <span className="group-hover:underline underline-offset-4 decoration-accent">{social.label}</span>
+                  <ArrowRight size={12} className="opacity-50 group-hover:opacity-100 group-hover:-rotate-45 transition-all" />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -134,7 +147,7 @@ function DesktopView({ form, status, errorMessage, fieldErrors, handleChange, ha
 }
 
 // --- MOBILE VIEW ---
-function MobileView({ form, status, errorMessage, fieldErrors, handleChange, handleSubmit, socials }: any) {
+function MobileView({ form, status, errorMessage, fieldErrors, handleChange, handleSubmit, socials, contactDetails }: any) {
   return (
     <div className="block lg:hidden w-full min-h-screen px-6 pt-24 pb-32 flex flex-col">
       {/* Header */}
@@ -146,6 +159,12 @@ function MobileView({ form, status, errorMessage, fieldErrors, handleChange, han
          <h1 className="font-display text-5xl sm:text-6xl tracking-tight leading-tight text-text">
            Initiate<br/>Contact.
          </h1>
+         {contactDetails && (
+           <div className="mt-4 font-mono text-xs text-textSecondary flex flex-col gap-1">
+             {contactDetails.email && <div>{contactDetails.email}</div>}
+             {contactDetails.phone && <div>{contactDetails.phone}</div>}
+           </div>
+         )}
       </div>
 
       {/* The Form */}
@@ -254,7 +273,7 @@ export default function Contact() {
 
   const { data } = useData();
   const socials = data?.socials || [];
-
+  const contactDetails = data?.contact || null;
   const clearFieldError = (field: keyof FieldErrors) => {
     setFieldErrors(prev => {
       if (!prev[field]) return prev;

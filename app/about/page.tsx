@@ -1,6 +1,7 @@
 "use client";
 import React, { useRef } from 'react';
 import Image from 'next/image';
+import ZoomableImage from '@/components/ui/ZoomableImage';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ChevronUp } from 'lucide-react';
 
@@ -40,7 +41,7 @@ const systemLogs = [
 ];
 
 // --- DESKTOP VIEW ---
-const DesktopView = () => {
+const DesktopView = ({ bioText, logs }: { bioText: string, logs: typeof systemLogs }) => {
   const scrollRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: scrollRef,
@@ -69,11 +70,11 @@ const DesktopView = () => {
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 1, ease: EASE } } }}
             className="w-48 h-48 sm:w-64 sm:h-64 rounded-full overflow-hidden relative border-2 border-border shadow-2xl bg-surface mb-12"
           >
-            <Image
+            <ZoomableImage
               src="https://res.cloudinary.com/f8njovya/image/upload/v1783444605/karrtik_oxxcds.png"
               alt="Karrtik Gupta"
               fill
-              className="object-cover grayscale opacity-90 hover:grayscale-0 hover:opacity-100 transition-all duration-700 ease-out"
+              className="object-contain grayscale opacity-90 hover:grayscale-0 hover:opacity-100 transition-all duration-700 ease-out"
               sizes="256px"
               priority
             />
@@ -89,7 +90,7 @@ const DesktopView = () => {
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: EASE } } }}
             className="font-sans text-xl lg:text-2xl text-textSecondary font-light leading-relaxed text-balance"
           >
-            {BIO_TEXT}
+            {bioText}
           </motion.p>
         </motion.div>
       </section>
@@ -108,7 +109,7 @@ const DesktopView = () => {
 
           {/* The Motion Track (The Moving Elements) */}
           <motion.div style={{ x: xTransform }} className="flex gap-32 items-center pl-[7.5vw] mt-24">
-            {systemLogs.map((log, i) => (
+            {logs.map((log, i) => (
               <div 
                 key={i} 
                 className="w-[70vw] max-w-[900px] bg-background border border-border rounded-2xl relative overflow-hidden flex flex-col justify-center p-12 md:p-16 shadow-2xl shrink-0"
@@ -140,7 +141,7 @@ const DesktopView = () => {
 
 
 // --- MOBILE VIEW ---
-const MobileView = () => {
+const MobileView = ({ bioText, logs }: { bioText: string, logs: typeof systemLogs }) => {
   return (
     <div className="w-full">
       {/* HERO / BIO SECTION */}
@@ -159,11 +160,11 @@ const MobileView = () => {
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 1, ease: EASE } } }}
             className="w-32 h-32 rounded-full overflow-hidden relative border-2 border-border shadow-xl bg-surface mb-8"
           >
-            <Image
+            <ZoomableImage
               src="https://res.cloudinary.com/f8njovya/image/upload/v1783444605/karrtik_oxxcds.png"
               alt="Karrtik Gupta"
               fill
-              className="object-cover grayscale opacity-90"
+              className="object-contain grayscale opacity-90 hover:grayscale-0 hover:opacity-100 transition-all duration-700 ease-out"
               sizes="128px"
               priority
             />
@@ -179,7 +180,7 @@ const MobileView = () => {
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: EASE } } }}
             className="font-sans text-base text-textSecondary font-light leading-relaxed text-balance px-4"
           >
-            {BIO_TEXT}
+            {bioText}
           </motion.p>
         </motion.div>
       </section>
@@ -192,7 +193,7 @@ const MobileView = () => {
 
       {/* EXPERIENCE SECTION (Cinematic Snap Scroll) */}
       <section className="h-[80vh] w-full bg-surface border-t border-b border-border overflow-y-auto snap-y snap-mandatory hide-scrollbar relative">
-        {systemLogs.map((log, i) => (
+        {logs.map((log, i) => (
           <div 
             key={i} 
             className="h-full w-full snap-center snap-always flex flex-col justify-center py-12 relative"
@@ -236,16 +237,23 @@ const MobileView = () => {
 };
 
 
+import { useData } from '@/context/DataContext';
+
 // --- MAIN PAGE (Responsive Switcher) ---
 export default function About() {
+  const { data } = useData();
+  const bioText = data?.about?.description || BIO_TEXT;
+  const logs = data?.timeline?.length ? data.timeline : systemLogs;
+
   return (
     <div className="w-full">
       <div className="hidden lg:block">
-        <DesktopView />
+        <DesktopView bioText={bioText} logs={logs} />
       </div>
       <div className="block lg:hidden">
-        <MobileView />
+        <MobileView bioText={bioText} logs={logs} />
       </div>
     </div>
   );
 }
+

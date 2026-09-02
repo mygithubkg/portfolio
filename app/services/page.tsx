@@ -119,7 +119,11 @@ function SkillCard({ skill, idx }: { skill: Skill; idx: number }) {
   );
 }
 
+import { useData } from '@/context/DataContext';
+
 export default function Skills() {
+  const { data } = useData();
+
   return (
     <section
       className="py-block sm:py-section lg:py-section pb-32 md:pb-24 relative"
@@ -151,18 +155,40 @@ export default function Skills() {
 
         {/* Skill Categories */}
         <div className="space-y-12 sm:space-y-16 mb-16 sm:mb-20">
-          {categories.map((category) => (
-            <div key={category.id}>
+          {data?.services?.length > 0 ? (
+            <div>
               <div className="font-mono text-xs tracking-[0.2em] uppercase mb-4 sm:mb-5" style={{ color: 'var(--ink-faint)' }}>
-                {category.label}
+                System Modules
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-                {category.skills.map((skill, idx) => (
-                  <SkillCard key={skill.name} skill={skill} idx={idx} />
+                {data.services.map((service: any, idx: number) => (
+                  <SkillCard 
+                    key={service.title || idx} 
+                    skill={{
+                      name: service.title,
+                      icon: <span className="font-mono text-sm">{service.icon}</span>,
+                      description: service.description,
+                      tier: 'core'
+                    }} 
+                    idx={idx} 
+                  />
                 ))}
               </div>
             </div>
-          ))}
+          ) : (
+            categories.map((category) => (
+              <div key={category.id}>
+                <div className="font-mono text-xs tracking-[0.2em] uppercase mb-4 sm:mb-5" style={{ color: 'var(--ink-faint)' }}>
+                  {category.label}
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                  {category.skills.map((skill, idx) => (
+                    <SkillCard key={skill.name} skill={skill} idx={idx} />
+                  ))}
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         {/* CTA Section */}
