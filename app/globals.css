@@ -8,12 +8,16 @@
     --bg-raised: #FDFBF7;
     --text: #1C1B19;
     --text-muted: #6B6459;
-    --accent: #C4552B;       /* primary - Terracotta */
-    --accent-secondary: #5C6B47;  /* secondary - Olive */
-    --accent-tertiary: #C9A24B;   /* highlight - Gold */
+    --accent: #C4552B;
+    /* primary - Terracotta */
+    --accent-secondary: #5C6B47;
+    /* secondary - Olive */
+    --accent-tertiary: #C9A24B;
+    /* highlight - Gold */
     --border: #E4DCCB;
     --success: #4C7A4C;
     --error: #B3402E;
+    --glow-color: rgba(196, 85, 43, 0.25);
   }
 
   .dark {
@@ -25,6 +29,7 @@
     --accent-secondary: #8FB37A;
     --accent-tertiary: #E0B968;
     --border: #2C2933;
+    --glow-color: rgba(232, 115, 74, 0.12);
   }
 
   /* Universal smooth transition for theme switching */
@@ -35,7 +40,7 @@
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
   }
-  
+
   * {
     border-color: var(--border);
   }
@@ -43,6 +48,7 @@
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;

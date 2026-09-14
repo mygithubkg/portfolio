@@ -3,6 +3,8 @@ import './globals.css';
 import { Providers } from './providers';
 import ClientLoadingWrapper from '@/components/ClientLoadingWrapper';
 import LayoutWrapper from '@/components/LayoutWrapper';
+import CursorGlow from '@/components/ui/CursorGlow';
+import BackgroundBubble from '@/components/ui/BackgroundBubble';
 import { Fraunces, DM_Sans, JetBrains_Mono } from 'next/font/google';
 
 const fraunces = Fraunces({
@@ -120,6 +122,8 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased text-text bg-background min-h-screen flex flex-col">
+        <BackgroundBubble />
+        <CursorGlow />
         <Providers>
           <ClientLoadingWrapper>
             <LayoutWrapper>
