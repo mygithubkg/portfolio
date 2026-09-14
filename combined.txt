@@ -1,21 +1,5 @@
 ﻿
 
---- FILE: C:\Users\karrt\.vscode\my_portfolio\latest-portfolio\.env ---
-
-NEXT_PUBLIC_EMAILJS_SERVICE_ID=service_e62qwhk
-NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=template_hlzysr5
-NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=7GTQtTLgaQ0SdspcL
-NEXT_PUBLIC_ADMIN_UID=lWIOtJ3nlRXFzuG9sGKz8TpUVZ03
-# NEXT_PUBLIC_ADMIN_USERNAME=admin@gmail.com
-# NEXT_PUBLIC_ADMIN_PASSWORD=MyPortfolio
-NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyACmF99wkNJSDoZbjAqkHFN8WPbOtUeg38
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=portfolio-c42b9.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=portfolio-c42b9
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=portfolio-c42b9.firebasestorage.app
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=338494397520
-NEXT_PUBLIC_FIREBASE_APP_ID=1:338494397520:web:a563b62dcee273777e0555
-
-
 --- FILE: C:\Users\karrt\.vscode\my_portfolio\latest-portfolio\eslint.config.mjs ---
 
 import { defineConfig, globalIgnores } from "eslint/config";
