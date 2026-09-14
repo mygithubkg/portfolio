@@ -41,7 +41,7 @@ const systemLogs = [
 ];
 
 // --- DESKTOP VIEW ---
-const DesktopView = ({ bioText, logs }: { bioText: string, logs: typeof systemLogs }) => {
+const DesktopView = ({ bioText, logs }: { bioText: string, logs: any[] }) => {
   const scrollRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: scrollRef,
@@ -141,7 +141,7 @@ const DesktopView = ({ bioText, logs }: { bioText: string, logs: typeof systemLo
 
 
 // --- MOBILE VIEW ---
-const MobileView = ({ bioText, logs }: { bioText: string, logs: typeof systemLogs }) => {
+const MobileView = ({ bioText, logs }: { bioText: string, logs: any[] }) => {
   return (
     <div className="w-full">
       {/* HERO / BIO SECTION */}
