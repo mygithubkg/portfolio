@@ -19,7 +19,7 @@ const getSecurityHeaders = () => [
     value: [
       "default-src 'self'",
       isProd 
-        ? "script-src 'self' https://cdn.emailjs.com https://vercel.live https://*.vercel-scripts.com https://*.clarity.ms https://apis.google.com"
+        ? "script-src 'self' 'unsafe-inline' https://cdn.emailjs.com https://vercel.live https://*.vercel-scripts.com https://*.clarity.ms https://apis.google.com"
         : "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.emailjs.com https://vercel.live https://*.vercel-scripts.com https://*.clarity.ms https://apis.google.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
