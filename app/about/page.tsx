@@ -123,11 +123,11 @@ const DesktopView = ({ bioText, logs }: { bioText: string, logs: typeof systemLo
                 
                 {/* Foreground Content */}
                 <div className="z-10 flex flex-col gap-6 max-w-[85%] relative">
-                  <span className="font-mono text-sm text-textSecondary uppercase tracking-widest">{log.date}</span>
-                  <h3 className="font-display text-6xl xl:text-7xl text-text leading-[1.1]">{log.role}</h3>
-                  <span className="font-mono text-xl text-accent uppercase tracking-widest">{log.company}</span>
+                  <span className="font-mono text-sm text-textSecondary uppercase tracking-widest">{log.date || log.year}</span>
+                  <h3 className="font-display text-6xl xl:text-7xl text-text leading-[1.1]">{log.role || log.title}</h3>
+                  <span className="font-mono text-xl text-accent uppercase tracking-widest">{log.company || log.place}</span>
                   <p className="font-sans text-xl text-textSecondary leading-relaxed mt-2 text-balance">
-                    {log.description}
+                    {log.description || log.desc}
                   </p>
                 </div>
               </div>
@@ -202,15 +202,15 @@ const MobileView = ({ bioText, logs }: { bioText: string, logs: typeof systemLog
             <div className="w-[85%] mx-auto relative h-full flex flex-col justify-center">
               {/* Absolute positioned Date at top left of inner container */}
               <span className="absolute top-0 left-0 font-mono text-[10px] text-textSecondary uppercase tracking-widest">
-                {log.date}
+                {log.date || log.year}
               </span>
               
               {/* Centered Content */}
               <div className="flex flex-col gap-4 text-center mt-12">
-                <h3 className="font-display text-[clamp(2.5rem,10vw,4rem)] text-text leading-[1.1]">{log.role}</h3>
-                <span className="font-mono text-[10px] text-accent uppercase tracking-widest block mb-4">{log.company}</span>
+                <h3 className="font-display text-[clamp(2.5rem,10vw,4rem)] text-text leading-[1.1]">{log.role || log.title}</h3>
+                <span className="font-mono text-[10px] text-accent uppercase tracking-widest block mb-4">{log.company || log.place}</span>
                 <p className="font-sans text-sm sm:text-base text-textSecondary leading-loose text-balance">
-                  {log.description}
+                  {log.description || log.desc}
                 </p>
               </div>
 
