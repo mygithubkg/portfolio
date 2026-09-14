@@ -77,8 +77,8 @@ export default function BackgroundBubble() {
       if (offCtx) {
         const grad = offCtx.createRadialGradient(radius, radius, 0, radius, radius, radius);
 
-        const intensityCenter = resolvedTheme === 'dark' ? 0.4 : 0.3;
-        const intensityEdge = resolvedTheme === 'dark' ? 0.2 : 0.1;
+        const intensityCenter = resolvedTheme === 'dark' ? 0.4 : 0.15;
+        const intensityEdge = resolvedTheme === 'dark' ? 0.2 : 0.05;
 
         grad.addColorStop(0, hexToRgba(colorHex, intensityCenter));
         grad.addColorStop(0.4, hexToRgba(colorHex, intensityEdge));
